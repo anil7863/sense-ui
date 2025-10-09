@@ -1,10 +1,48 @@
 <!DOCTYPE html>
-<html>
-<html>
+<html lang="en">
+
 <head>
-	<title>Sense UI</title>
+    <meta charset="UTF-8">
+    <title>Sense UI</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
-	<!-- testing -->
+    <nav>
+        <a href="index.html" aria-label="Home">Chat</a>
+        <a href="about.html" aria-label="About">Settings</a>
+        <a href="contact.html" aria-label="Contact">Documentation</a>
+        <a href="contact.html" aria-label="Contact">Report an issue</a>
+    </nav>
+    <main>
+        <section class="intro">
+            <h1>Sense your code</h1>
+            <p class="white">SenseUI provides real-time AI feedback to help visually impaired developers refine their designs.</p>
+            <h2>How to use:</h2>    
+            <ol>
+                <li>
+                    Open the webpage you want feedback on.
+                </li>
+                <li>
+                    To open SenseUI, press <strong>Ctrl+Shift+S</strong> (or <strong>Command+Shift+S</strong> on Mac).
+                </li>
+                <li>Ask a question on the chat or use the commands (/).</li>
+                 <li>To add context or customize the feedback, go to <a href="settings.html">Settings</a></li>
+                 <li>To read more, go to <a href="documentation.html">Documentation</a></li>
+            </ol>
+            <p class="white">SenseUI is still in beta and AI feedback might be inaccurate. Please report any issues.</p>
+        </section>
+        <section class="chat-container" aria-label="Chat interface">
+            <div id="chatMessages" class="chat-messages" role="log" aria-live="polite" aria-relevant="additions"></div>
+            <form class="chat-input-area" id="chatForm" autocomplete="off">
+                <label for="chatInput">Type your message</label>
+                <input id="chatInput" class="chat-input" type="text" aria-label="Type your message or a forward slash" />
+                <button type="submit" class="chat-send" aria-label="Send message">Send</button>
+            </form>
+        </section>
+    </main>
+    <script src="script.js"></script>
 </body>
+
 </html>
