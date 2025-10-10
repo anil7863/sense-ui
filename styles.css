@@ -24,7 +24,8 @@
         html {
             font-size: 16px;
             color: white;
-
+            width: 450px;
+    height: 600px;
         }
 
         body {
@@ -51,7 +52,9 @@
         a {
             color: var(--primary-color);
             text-decoration: none;
+            font-size: 1rem;
         }
+
         a:focus, a:hover {
             text-decoration: underline;
         }
@@ -69,7 +72,7 @@
 
         p {
             color: white;
-            font-size: 1.25rem;
+            font-size: 1rem;
         }
         p.white {
             color: white;
@@ -80,6 +83,10 @@
             display: inline-block;
             margin: 1rem 0;
             padding: 0 1rem;
+        }
+
+        li {
+            font-size: 1rem;
         }
 
         /* INTRO SECTION */
