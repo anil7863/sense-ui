@@ -38,7 +38,11 @@
             <form class="chat-input-area" id="chatForm" autocomplete="off">
                 <label for="chatInput">Type your message</label>
                 <input id="chatInput" class="chat-input" type="text" aria-label="Type your message or a forward slash" />
-                <button type="submit" class="chat-send" aria-label="Send message">Send</button>
+                <div class="button-container">
+                    <button type="submit" class="chat-send" aria-label="Send message">Send</button>
+                <button type="button" id="clearChat" class="chat-clear" aria-label="Clear chat">🗑️</button>
+                <button type="button" id="downloadChat" class="chat-download" aria-label="Download chat">⬇️</button>
+                </div>
             </form>
         </section>
     </main>
