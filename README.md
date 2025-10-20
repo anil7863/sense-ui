@@ -1,154 +1,227 @@
-# SenseUI: AI-Powered Web Design Assistant for Visually Impaired Developers
+# SenseUI
 
-**License:** MIT | **Status:** Open for Contributions
+SenseUI is an open-source Chrome extension that gives blind and low-vision web developers real-time, actionable feedback on their web designs. Get visual descriptions of your pages and receive design recommendations without relying on sighted friends or colleagues. I'm making this project as part of my master's thesis in Human-Computer Interaction, but this repository will **not be deleted or closed** after the completion of my degree. It will remain open-source and everyone is free to fork it, change it, adapt and use freely.
 
-## About SenseUI
+**Looking for:** Blind and low-vision developers to test and provide feedback. Participation is flexible and optional. You can participate in as many Sprints as you can. For more details go to [How to Contribute](#how-to-contribute) or sign up throught the [Participation form](https://tinyurl.com/senseui-form)
 
-SenseUI is a browser extension project designed to empower blind and visually impaired (BVI) developers with AI-generated visual design feedback for web development. By analyzing HTML, CSS, and screenshots, SenseUI will provide contextual, actionable insights that help blind and visually impaired (BVI) developers work more independently on visual UI tasks.
-This project is part of a Master's thesis in Human-Computer Interaction at the University of Siegen, and we want to build this tool together with the BVI development community. Your input, feedback, and experience has the power to shape this project.
-
-<!--## The Problem We're Addressing
-
-BVI developers face significant challenges when working on web design tasks:
-- **Dependency on sighted assistance** for verifying CSS changes and visual layouts
-- **Limited employment opportunities** in UI/web development roles
-- **Generic AI feedback** from tools like ChatGPT that isn't tailored to developers' specific needs
-- **Lack of tools** that enable independent work on visual design tasks
--->
-SenseUI is designed to be a conversational AI assistant that:
-
-- Analyzes any website's HTML, CSS, and visual layout
-- Provides clear, relevant feedback tailored for BVI developers
-- Offers actionable design suggestions based on web design best practices
-- Identifies potential design issues
-- Supports autonomous work and reduces reliance on sighted assistance
-- Can be customized with project-specific design guidelines
-
-## Planned Features
-- Visual description generation for any visited website
-- Design issue identification
-- Conversational interface for asking specific questions
-- Keyboard shortcuts for common tasks
-- Custom design guideline integration
-
-## Current Status
-
-**Active Development** - Prototype phase with planned real-world testing in early 2026
-
-## Contributing
-
-We welcome contributions from developers of all abilities! Please read our Code of Conduct and Contributing Guidelines before getting started.
-
-### Ways to Contribute
-
-- Report bugs and accessibility issues
-- Suggest new features or improvements
-- Improve documentation
-- Submit code improvements
-- Share your experience using the tool
-- Help with testing and quality assurance
-  
-## Participate in the Research Study
-
-We're recruiting participants for real-world testing in early 2026. If you're a BVI developer interested in participating, here's what you need to know:
-
-### Eligibility Requirements
-
-- You are blind or visually impaired
-- You have experience with web development
-- You're working on an active project (personal, open-source, NGO, or learning project)
-- You're willing to use SenseUI in your workflow for 1 to 2 weeks and write about your experiences
-
-### What Participation Involves
-
-- Use SenseUI during your regular development work
-- Optional daily check-ins (brief updates on your experience)
-- One semi-structured interview after the testing period (approximately 60 minutes)
-- Your feedback will directly shape the tool's development
-
-### How to Apply
-
-**Interested in participating?** Contact Regina Castro Espinosa at regina.castroespinosa@student.uni-siegen.de with the subject line "SenseUI Research Study Interest"
-
-<!--
-## Getting Started
-
-### Save locally
-
-Follow these steps to download SenseUI on your local machine:
-
-```bash
-# Step 1: Clone the repository
-git clone https://github.com/reginacas/sense-ui.git
-
-# Step 2: Navigate to the project directory
-cd sense-ui
-
-# Step 3: Install dependencies
-npm install
-
-# Step 4: Build the extension
-npm run build
-```
-
-### Loading the Extension in Chrome
-
-1. Open Chrome and navigate to chrome://extensions/
-2. Enable "Developer mode" using the toggle in the top right corner
-3. Click the "Load unpacked" button
-4. Navigate to and select the `build` folder from the SenseUI directory
-5. SenseUI should now appear in your list of extensions
-
-### Basic Usage
-
-1. Navigate to any website you want to analyze
-2. Open SenseUI using the keyboard shortcut (default: Ctrl+Shift+S on Windows/Linux, Cmd+Shift+S on Mac)
-3. Type or speak your question in the input field
-
-### Example Questions You Can Ask
-
-- "Describe the visual layout of this page"
-- "Are there any design issues with the navigation?"
-- "What CSS changes would improve the hierarchy?"
-- "Does this page follow accessibility best practices?"
-- "How is the color contrast on this page?"
-- "Suggest improvements for the mobile layout"
-
-## Technology Stack
-
-- **Frontend**: React, Chrome Extension API
-- **AI Integration**: OpenAI GPT-4 / Claude API (configurable)
-- **Accessibility**: ARIA labels, keyboard navigation, screen reader optimization
--->
-<!--
-## Community
-
-Join our community of developers working to make web development more accessible:
-
-- **Email**: regina.castroespinosa@student.uni-siegen.de
-- **GitHub Issues**: Report bugs and request features at the Issues page (link will be added once repository is live)
-- **GitHub Discussions**: Join conversations about the project (link will be added once repository is live)
--->
-## Accessibility Commitment
-
-SenseUI is built with accessibility as a core principle. We're committed to ensuring the tool itself is fully accessible to screen reader users. If you encounter any accessibility barriers in the extension, documentation, or any part of this project, please let us know immediately by emailing regina.castroespinosa@student.uni-siegen.de or opening an issue on GitHub.
-
-Accessibility issues will be treated as high-priority bugs.
-
-<!-- ## Acknowledgments
-
-This research is conducted as part of the Human-Computer Interaction Master's program at the University of Siegen. Special thanks to the BVI developer community for their invaluable insights and participation in shaping this project.
-
-## Citation
-
-If you use SenseUI in your research, please cite:
-
-```
-Castro Espinosa, R. (2026). SenseUI: AI-Assisted Web Design for Visually Impaired Developers. 
-Master's Thesis, University of Siegen.
-```
+**Current State:** Sprint 1 (Foundation)
 
 ---
--->
 
-Last updated: October 2025
+## Table of Contents
+1. [Planned Features](#planned-features)
+2. [Roadmap](#roadmap)
+3. [How to Contribute](#how-to-contribute)  
+4. [Installation](#installation)  
+5. [Documentation](#documentation)  
+6. [Project Background](#project-background)  
+7. [License](#license)  
+8. [Contact](#contact)
+
+---
+
+## Planned Features
+### Core features
+1. Accessible, screen-reader friendly interface
+
+2. Keyboard shortcuts such as (Ctrl + Shift + S) to open extension and other common actions.
+
+3. Quick-prompts for tasks such as Generate visual description and Identify design issues
+
+5. Download chat session
+
+6. Session persistence across browser restarts
+
+7. Settings page
+    - Adjust feedback detail level:
+        - Comprehensive — with code examples and explanations that encourage learning visual design best practices and concepts
+        - Balanced (default)
+        - Concise — offers straightforward answers and doesn’t explain concepts or provide code snippets
+    - Text input for additional context or instructions
+    - Chat download settings: 
+        - Download entire chat
+        - Download only favorited messages
+
+8. Structured, navigable feedback
+    - Responses organized with semantic headings to switch easily between conversation turns
+    - Bullet points for lists instead of dense text blocks
+    - Feedback goes from general to specific
+    - Numerical values and specific code parameters highlighted
+    - Clear explanations of why recommendations are made (unless concise mode is on)
+
+9. About page 
+    - Accessibility statement
+    - User manual
+
+### “Nice to have” features
+
+1. Context files: option to upload to add project or brand guidelines to enhance feedback accuracy
+
+2. Individual response confidence level
+    - High, Regular and Low for each of SenseUI’s response
+    - These levels depend on the availability of context files in the Settings (instructions or reference files such as PRDs or design guidelines)
+
+3. Chat download different formats (not just .txt)
+
+
+## Example use cases:
+- Generate visual descriptions of your webpage without uploading screenshots
+
+- Identify design issues (alignment, readability, contrast)
+
+- Get actionable design recommendations (no vague "choose a bolder color" type of comments)
+
+- Review your changes in real time
+
+- Customize your feedback detail level and focus
+
+- Download chat history for team sharing
+
+---
+
+## Roadmap
+
+**Disclaimer:** The following are my initial guesses and not strict timelines
+
+### Current phase
+
+#### Sprint 1: Foundation & Accessibility (until end of October)
+
+- Keyboard navigation
+- ARIA labels
+- focus indicators
+
+### What's next
+
+#### Sprint 2: Core Functionality and AI integration (November 1 - 23)
+
+- Real-time, easy to navigate AI visual feedback
+- Structured responses.
+
+#### Sprint 3: Customization (November 24 - December 7)
+
+- Settings page
+- Favorite messages for selective download
+
+#### Sprint 4: Collaboration (December 8 - 20)
+
+Chat download, team sharing, documentation
+
+#### Holiday Break 
+From Dec 22 to January 4 
+
+#### Sprint 5: Polish and feedback loop (January 5 - 19)
+Nice-to-have's and newer features (if time allows), edge cases
+
+### More details
+
+For detailed progress, visit the [SenseUI GitHub issues page](https://github.com/reginacas/sense-ui/issues)
+
+Look for the issue tagged: "current-sprint"
+
+---
+
+## How to Contribute
+
+### As a Tester
+
+Testers help us find issues and improve accessibility. Requirements:
+
+- You use a screen reader (NVDA, JAWS, VoiceOver)
+- You have experience or are learning web development
+- You can spend around 30 minutes testing it, every 2 to 3 weeks until the end of January approximately
+
+At the start of each sprint, I create a tracking issue with features to test (labeled "current-sprint") with:
+- What features are in this sprint
+- What to look for when testing. 
+You download the Release, test it, and comment on what works and what breaks, suggest improvements, share words of encouragement, etc.
+
+### As a Developer
+
+If your heart desires, you can contribute code, fix bugs, or propose features. [Contact me](#contact) for details.
+
+### Sign Up
+
+Fill out this form to join as a tester or developer: [Interest Form Link](https://tinyurl.com/senseui-form)
+
+I will not publish your name, email or information without permission.
+
+### Data Protection
+
+If you decide to participate and become part of the research study, you can read about how your personal data will be handled here: [Data protection](DATA_PROTECTION.md) 
+
+You can choose to remain anonymous, or if you are comfortable sharing your name, I would be happy to aknowledgement and credit your contributions in any published papers that come out of this project.
+
+---
+
+## Installation
+
+1. Go to the Releases page: github.com/reginacas/sense-ui/releases
+
+2. Download the latest release 
+
+3. Extract the zip file to a folder on your computer
+
+4. Open Chrome and go to chrome://extensions
+
+5. Turn on "Developer mode" (toggle in the top right)
+
+6. Click "Load unpacked"
+
+7. Select the folder where you extracted SenseUI
+
+8. SenseUI should now appear in your extensions
+
+To open it, press Ctrl + Shift + S or click the SenseUI icon in your extension menu.
+
+---
+
+## Documentation
+
+### How to Use SenseUI
+
+SenseUI is a chat interface. You ask it questions about your webpage and it responds with feedback.
+
+#### Keyboard shortcuts:
+- Ctrl + Shift + S: Open SenseUI
+- Tab: Move between elements
+- Add commands in the chatbox by typing "/"
+
+#### Quick action prompts: 
+- Write / in the text input
+- Choose from the options in the dropdown
+
+Type custom questions in the chat field anytime.
+
+### Code of Conduct
+
+All participants agree to follow our Code of Conduct: [Link to Code of Conduct](CODE_OF_CONDUCT.md)
+
+---
+
+## Project Background
+
+SenseUI started from research on barriers blind and low-vision developers face when working on UI design. Many rely on sighted colleagues, expensive services or vague general-purpose AI tools to verify their work. Due to this, many decide to distance themselves from UI and focus on Back-end roles, limiting their job opportunities. 
+
+This project aims to co-design with blind and low-vision volunteers an open-source tool that enables independent work, supports career growth, and creates more inclusive development environments.
+
+To learn more about the research and the previous study we did to come up with the concept, see the project wiki: [SenseUI Wiki](https://github.com/reginacas/sense-ui/wiki)
+
+---
+
+## License
+
+SenseUI is licensed under the IBM Public License. 
+
+---
+
+## Contact
+
+Questions? Ideas? Want to chat?
+
+Email: <regina.castroespinosa@student.uni-siegen.de>
+
+Join the mailing list for development updates: 
+
+[SenseUI mailing list](https://www.freelists.org/list/sense-ui)
+
