@@ -87,21 +87,18 @@ SenseUI is an open-source Chrome extension that gives blind and low-vision web d
 
 #### Sprint 1: Foundation & Accessibility (until end of October)
 
-- Keyboard navigation
-- ARIA labels
-- focus indicators
+The goal for this sprint is to establish the core infrastructure: accessible interface with keyboard navigation, the keyboard shortcut to open the extension, quick prompts and semantic headings to each of the conversation turns for easy navigation. No AI integration at this point yet. 
 
 ### What's next
 
 #### Sprint 2: Core Functionality and AI integration (November 1 - 23)
 
-- Real-time, easy to navigate AI visual feedback
-- Structured responses.
+- More details soon
 
 #### Sprint 3: Customization (November 24 - December 7)
 
 - Settings page
-- Favorite messages for selective download
+- More details soon
 
 #### Sprint 4: Collaboration (December 8 - 20)
 
