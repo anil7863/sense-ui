@@ -208,7 +208,7 @@ To learn more about the research and the previous study we did to come up with t
 
 ## License
 
-SenseUI is licensed under the IBM Public License. 
+SenseUI is licensed under the MIT License. 
 
 ---
 
