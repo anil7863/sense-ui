@@ -149,6 +149,8 @@ If you decide to participate and become part of the research study, you can read
 
 You can choose to remain anonymous, or if you are comfortable sharing your name, I would be happy to aknowledgement and credit your contributions in any published papers that come out of this project.
 
+To read more details, visit the [Contributing page](CONTRIBUTING.md)
+
 ---
 
 ## Installation
