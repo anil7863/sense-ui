@@ -11,16 +11,25 @@
 ### As a Tester
 
 Testers evaluate each sprint's deliverables and provide crucial feedback on accessibility and usability.
+At the start of each testing phase, a tracking issue will be created (labeled "current-sprint") with:
+- What features are in this sprint
+- What to look for when testing. 
 
-**Responsibilities:**
-- Test the tool for about 30 minutes every 2-3 weeks
+After I create this issue, you will get tagged and then you can:
+- Test the tool for as much as you can (I would say at least 30 minutes)
+- Comment on what works, what breaks, suggest improvements, etc.
 - Assess screen reader compatibility and keyboard navigation
-- Report bugs and feedback through GitHub Issues
-- Join retrospective calls every 2 sprints (optional)
+- Report bugs and feedback through the issue's comments
+- Add criticality to the bugs:
+  - Critical: blocks major functionality or accessibility; must be fixed before next release
+  - High: Significant issue affecting a key features
+  - Medium: Noticeable issue but not a blocker; can be scheduled for later
+  - Low: Minor issue, fix when convenient
+  - Enhancement – Not a bug, but a suggested improvement
 
 **Flexibility:**
-- Skip any sprint if your schedule doesn't allow it
-- Withdraw at any time—you'll keep access to the mailing list and public repository
+- Skip any sprint if your schedule doesn't allow it, just let me know 
+- Withdraw at any time, you'll keep access to the mailing list and public repository
 
 ### As a Developer
 
@@ -31,15 +40,17 @@ Developers go beyond testing to directly implement fixes and features.
 - Create feature branches and submit pull requests
 - Address identified issues through code contributions
 - Participate in sprint planning discussions
+- For more details send me a message
 
 ## Development Process
 
 SenseUI follows an iterative sprint-based development approach:
 
-1. Planning: Define features and prioritize accessibility issues
-2. Development: Build features according to the backlog
-3. Testing: Participants evaluate functionality and accessibility
-4. Retrospective: Reflect on the process and gather feedback
+1. Planning: I'll propose features and accessibility issues on the mailing list, and the 
+community can help prioritize or suggest changes.
+2. Development: Me and other volunteer developers build features according to the backlog
+3. Testing: Testers evaluate functionality and accessibility
+4. Retrospective: Reflect on the process and gather feedback (every 2 sprints)
 5. Release: Publish a new version
 
 Each sprint lasts 2 to 3 weeks, running until end of January/early February 2026.
