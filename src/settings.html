@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sense UI — Settings</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Skip link for keyboard/screen-reader users -->
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+ <nav>
+        <a href="index.html">Chat</a>
+        <a href="settings.html" aria-current="page">Settings</a>
+        <a href="about.html">About</a>
+    </nav>
+
+  <main id="main">
+    <section class="intro">
+      <h1>Settings</h1>
+      <p>These settings are not yet functional.</p>
+    </section>
+
+        <section>
+          <form id="settings-form" novalidate>
+            <fieldset id="detail-fieldset" role="radiogroup" aria-labelledby="detail-legend" aria-describedby="detail-desc">
+              <legend id="detail-legend">Feedback detail level</legend>
+              <p id="detail-desc" class="hint">Choose how verbose SenseUI's feedback should be.</p>
+
+              <label for="detail-comprehensive">
+                <input id="detail-comprehensive" type="radio" name="detail" value="comprehensive" aria-checked="false">
+                Comprehensive
+              </label>
+
+              <label for="detail-normal">
+                <input id="detail-normal" type="radio" name="detail" value="normal" checked aria-checked="true">
+                Normal (default)
+              </label>
+
+              <label for="detail-concise">
+                <input id="detail-concise" type="radio" name="detail" value="concise" aria-checked="false">
+                Concise
+              </label>
+            </fieldset>
+
+            <fieldset id="download-fieldset" role="radiogroup" aria-labelledby="download-legend" aria-describedby="download-desc">
+              <legend id="download-legend">Chat history download</legend>
+              <p id="download-desc" class="hint">Select which conversations will be included when you export your history.</p>
+
+              <label for="download-all">
+                <input id="download-all" type="radio" name="download" value="all" checked aria-checked="true">
+                Download all
+              </label>
+
+              <label for="download-favorites">
+                <input id="download-favorites" type="radio" name="download" value="favorites" aria-checked="false">
+                Only favorites
+              </label>
+            </fieldset>
+
+            <fieldset id="context-fieldset" aria-labelledby="context-legend" aria-describedby="context-desc">
+              <legend id="context-legend">Add context</legend>
+              <p id="context-desc" class="sr-only">Add any instructions or attach files to help improve feedback. Attachments are optional.</p>
+
+              <label for="context-text">Instructions</label>
+              <textarea id="context-text" name="context" rows="4" placeholder="Add instructions" aria-describedby="context-text-desc"></textarea>
+             <br>
+              <small id="context-text-desc">These instructions will be sent with every prompt to provide additional context.</small>
+                <br>
+              <label for="context-files">Attach files</label>
+              <input id="context-files" type="file" name="files" multiple aria-describedby="files-desc" />
+              <small id="files-desc" class="hint">You can attach files (images, PDFs). Max 10 MB per file.</small>
+            </fieldset>
+
+            <div class="button-container">
+              <button type="submit" id="save-settings" class="btn-primary">Save</button>
+            </div>
+
+            <!-- Status area for screen readers (updated via script on submit) -->
+            <div id="settings-status" role="status" aria-live="polite" class="visually-hidden" aria-atomic="true"></div>
+          </form>
+    </section>
+  </main>
+</body>
+</html>

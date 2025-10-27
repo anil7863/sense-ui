@@ -9,41 +9,49 @@
 </head>
 
 <body>
+    <!-- Skip link for keyboard/screen-reader users -->
+    <a href="#main" class="skip-link">Skip to main content</a>
     <nav>
-        <a href="index.html" aria-label="Home">Chat</a>
-        <a href="about.html" aria-label="About">Settings</a>
-        <a href="contact.html" aria-label="Contact">Documentation</a>
-        <a href="contact.html" aria-label="Contact">Report an issue</a>
+        <a href="index.html" aria-current="page">Chat</a>
+        <a href="settings.html">Settings</a>
+        <a href="about.html">About</a>
     </nav>
-    <main>
+    <main id="main">
         <section class="intro">
-            <h1>Sense your code</h1>
-            <p class="white">SenseUI provides real-time AI feedback to help visually impaired developers refine their designs.</p>
-            <h2>How to use:</h2>    
+            <h1>Sense your interface</h1>
+            <p>SenseUI provides real-time AI feedback to blind and low vision developers.</p>
+            <h2>How to use:</h2>
             <ol>
                 <li>
                     Open the webpage you want feedback on.
                 </li>
                 <li>
-                    To open SenseUI, press <strong>Ctrl+Shift+S</strong> (or <strong>Command+Shift+S</strong> on Mac).
+                    To open SenseUI, press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd> on windows
+                    or <kbd>Command</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd> on Mac.
                 </li>
-                <li>Ask a question on the chat or use the commands (/).</li>
-                 <li>To add context or customize the feedback, go to <a href="settings.html">Settings</a></li>
-                 <li>To read more, go to <a href="documentation.html">Documentation</a></li>
+                <li>Ask a question on the chat or type / to use the commands.</li>
+                <!-- These lines are commented out for now since the pages don't exist
+                <li>To add context or customize the feedback, go to <a href="settings.html">Settings</a></li>
+                <li>To read more, go to <a href="documentation.html">About</a></li>-->
             </ol>
-            <p class="white">SenseUI is still in beta and AI feedback might be inaccurate. Please report any issues.</p>
+            <p>SenseUI is still in beta and AI feedback might be inaccurate. Please report any issues.</p>
         </section>
         <section class="chat-container" aria-label="Chat interface">
-            <div id="chatMessages" class="chat-messages" role="log" aria-live="polite" aria-relevant="additions"></div>
-            <form class="chat-input-area" id="chatForm" autocomplete="off">
-                <label for="chatInput">Type your message</label>
-                <input id="chatInput" class="chat-input" type="text" aria-label="Type your message or a forward slash" />
+            <div id="chatMessages" class="chat-messages" role="log"></div>
+            <div class="chat-input-area" id="chat-form">
+                <label for="chat-input">Type your message or a forward slash for commands</label>
+                <input id="chat-input" class="chat-input" type="text" list="command-list" autocomplete="off"
+                    aria-describedby="command-hint" />
+                <span id="command-hint" class="sr-only">Type forward slash to see available commands</span>
+                <datalist id="command-list">
+                    <option value="/describe">
+                    <option value="/issues">
+                    <option value="/clear">
+                </datalist>
                 <div class="button-container">
-                    <button type="submit" class="chat-send" aria-label="Send message">Send</button>
-                <button type="button" id="clearChat" class="chat-clear" aria-label="Clear chat">🗑️</button>
-                <button type="button" id="downloadChat" class="chat-download" aria-label="Download chat">⬇️</button>
+                    <button type="submit" class="chat-send btn-primary">Send</button>
                 </div>
-            </form>
+            </div>
         </section>
     </main>
     <script src="script.js"></script>

@@ -1,158 +1,155 @@
-
+const sendButton = document.querySelector('.chat-send');
 const chatMessages = document.getElementById('chatMessages');
-const chatForm = document.getElementById('chatForm');
-const chatInput = document.getElementById('chatInput');
-
-// Hide intro section when user starts messaging
+const chatInput = document.getElementById('chat-input');
+const commandDatalist = document.getElementById('command-list');
 const introSection = document.querySelector('.intro');
-let introHidden = false;
-function hideIntro() {
-    if (introSection && !introHidden) {
-        introSection.style.display = 'none';
-        introHidden = true;
-    }
+
+//announce commands menu
+function announce(msg) {
+    const live = document.createElement('div');
+    live.setAttribute('role', 'status');
+    live.setAttribute('aria-live', 'polite');
+    live.setAttribute('aria-atomic', 'true');
+    live.className = 'sr-only';
+    live.textContent = msg;
+    document.body.appendChild(live);
+    setTimeout(() => live.remove(), 1500);
 }
 
-// Dropdown for slash commands
-const slashOptions = [
-    "generate visual description",
-    "identify design issues",
-    "give recommendations"
-];
+// Announce when popup opens
+window.addEventListener('DOMContentLoaded', () => {
+    announce('SenseUI opened.');
+});
 
-// Create dropdown element
-const dropdown = document.createElement('ul');
-dropdown.className = 'slash-dropdown';
-dropdown.style.display = 'none';
-dropdown.style.position = 'absolute';
-dropdown.style.zIndex = '1000';
-dropdown.style.background = '#222';
-dropdown.style.color = '#fff';
-dropdown.style.listStyle = 'none';
-dropdown.style.margin = '0';
-dropdown.style.padding = '0';
-dropdown.style.border = '1px solid #444';
-dropdown.style.borderRadius = '4px';
-dropdown.style.minWidth = '220px';
-dropdown.style.fontSize = '1rem';
-document.body.appendChild(dropdown);
-
-function showDropdown() {
-    dropdown.innerHTML = '';
-    slashOptions.forEach((option, idx) => {
-        const li = document.createElement('li');
-        li.textContent = option;
-        li.tabIndex = 0;
-        li.style.padding = '8px 12px';
-        li.style.cursor = 'pointer';
-        li.addEventListener('mousedown', (e) => {
-            e.preventDefault();
-            selectOption(option);
-        });
-        li.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                selectOption(option);
-            }
-        });
-        li.addEventListener('mouseover', () => {
-            li.style.background = '#444';
-        });
-        li.addEventListener('mouseout', () => {
-            li.style.background = 'none';
-        });
-        dropdown.appendChild(li);
-    });
-    const rect = chatInput.getBoundingClientRect();
-    // Position above the input instead of below
-    dropdown.style.left = rect.left + window.scrollX + 'px';
-    dropdown.style.top = (rect.top + window.scrollY - dropdown.offsetHeight - 100) + 'px';
-    dropdown.style.display = 'block';
-}
-
-function hideDropdown() {
-    dropdown.style.display = 'none';
-}
-
-
-function selectOption(option) {
-    hideDropdown();
-    chatInput.value = '';
-    hideIntro();
-    addMessage(option, 'user');
-    setTimeout(() => {
-        addMessage('Sense: ' + option, 'bot');
-    }, 600);
-    chatInput.focus();
-}
-
-
-function addMessage(text, sender) {
-    const msg = document.createElement('div');
-    msg.className = `chat-message ${sender}`;
-    msg.textContent = text;
-    chatMessages.appendChild(msg);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-}
-
-
-
-chatForm.addEventListener('submit', function(e) {
-    e.preventDefault();
-    if (dropdown.style.display === 'block') {
-        // If dropdown is open, do nothing (force user to select option)
-        return;
-    }
-    const userMsg = chatInput.value.trim();
-    if (userMsg) {
-        hideIntro();
-        addMessage(userMsg, 'user');
-        // Simulate bot reply
+// Announce when popup closes (Escape key)
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        announce('SenseUI closing.');
+        // Give time for announcement before popup closes
         setTimeout(() => {
-            addMessage('Sense: ' + userMsg, 'bot');
-        }, 600);
-        chatInput.value = '';
-        chatInput.focus();
+            window.close();
+        }, 100);
     }
 });
 
-chatInput.addEventListener('input', function(e) {
-    if (chatInput.value === '/') {
-        showDropdown();
-    } else {
-        hideDropdown();
-    }
-});
+if (chatInput && commandDatalist) {
+    // Get all options
+    const allOptions = Array.from(commandDatalist.querySelectorAll('option')).map(o => o.value);
 
-// Hide dropdown on click outside
-document.addEventListener('mousedown', function(e) {
-    if (!dropdown.contains(e.target) && e.target !== chatInput) {
-        hideDropdown();
-    }
-});
+    let lastAnnouncedCount = null;
 
-// Keyboard navigation for dropdown
-chatInput.addEventListener('keydown', function(e) {
-    if (dropdown.style.display === 'block') {
-        const items = Array.from(dropdown.children);
-        const active = document.activeElement;
-        let idx = items.indexOf(active);
-        if (e.key === 'ArrowDown') {
-            e.preventDefault();
-            if (idx < 0 || idx === items.length - 1) {
-                items[0].focus();
-            } else {
-                items[idx + 1].focus();
-            }
-        } else if (e.key === 'ArrowUp') {
-            e.preventDefault();
-            if (idx <= 0) {
-                items[items.length - 1].focus();
-            } else {
-                items[idx - 1].focus();
-            }
-        } else if (e.key === 'Escape') {
-            hideDropdown();
-            chatInput.focus();
+    function countFilteredOptions(query) {
+        if (!query) return allOptions.length;
+        return allOptions.filter(opt =>
+            opt.toLowerCase().includes(query.toLowerCase())
+        ).length;
+    }
+
+    // Announce when slash is typed
+    let previousValue = '';
+    chatInput.addEventListener('input', () => {
+        const val = chatInput.value;
+
+        // Just typed "/"
+        if (val === '/' && previousValue === '') {
+            announce(`Commands menu available. ${allOptions.length} options.`);
+            lastAnnouncedCount = allOptions.length;
         }
+        // Typing after "/"
+        else if (val.startsWith('/') && val.length > 1) {
+            const count = countFilteredOptions(val);
+            // Only announce if count changed
+            if (count !== lastAnnouncedCount) {
+                if (count === 0) {
+                    announce('No matching commands');
+                } else if (count === 1) {
+                    announce('1 command available');
+                } else {
+                    announce(`${count} commands available`);
+                }
+                lastAnnouncedCount = count;
+            }
+        }
+        // Cleared the "/"
+        else if (!val.startsWith('/') && previousValue.startsWith('/')) {
+            lastAnnouncedCount = null;
+        }
+
+        previousValue = val;
+    });
+
+    // Announce when option is selected
+    chatInput.addEventListener('change', () => {
+        if (chatInput.value.startsWith('/')) {
+            announce(`Selected: ${chatInput.value}`);
+        }
+    });
+
+    // Clear announcement when Escape is pressed
+    chatInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && chatInput.value.startsWith('/')) {
+            announce('Commands closed');
+            lastAnnouncedCount = null;
+        }
+    });
+}
+
+function sendMessage() {
+    const userInput = chatInput.value.trim();
+    if (userInput) {
+        // Check for /clear command
+        if (userInput === '/clear') {
+            chatMessages.innerHTML = '';
+            chatInput.value = '';
+            announce('Chat cleared.');
+            // Show intro section again
+            if (introSection) {
+                introSection.style.display = 'block';
+            }
+            return;
+        }
+
+        // Hide intro section on first message
+        if (introSection) {
+            introSection.style.display = 'none';
+        }
+        
+        // Display user message
+        const userMessage = document.createElement('div');
+        userMessage.className = 'user-message';
+        userMessage.innerHTML = `
+            <h2>You said:</h2>
+            <p>${userInput}</p>
+        `;
+        chatMessages.appendChild(userMessage);
+
+        // Display system response (placeholder)
+        const placeholderText = 'This is a placeholder response.';
+        const systemResponse = document.createElement('div');
+        systemResponse.className = 'system-response';
+        systemResponse.innerHTML = `
+            <h2>SenseUI said:</h2>
+            <p>${placeholderText}</p>
+            <button class="copy-button">Copy to clipboard</button>
+            <button class="favorite-button">Mark as favorite</button>
+        `;
+        chatMessages.appendChild(systemResponse);
+
+        // Announce only the new response
+        announce(`SenseUI said: ${placeholderText}`);
+
+        // Clear input
+        chatInput.value = '';
+    }
+}
+
+// send button click
+sendButton.addEventListener('click', sendMessage);
+
+// send on Enter key
+chatInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        sendMessage();
     }
 });
