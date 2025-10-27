@@ -65,12 +65,21 @@ Each sprint lasts 2 to 3 weeks, running until end of January/early February 2026
 
 ### Setup
 
-1. Clone the repository
-2. Install dependencies (see README.md)
-3. Load the extension in Chrome for testing
-4. Join the mailing list for updates
+1. Download the latest build from (Releases)[https://github.com/reginacas/sense-ui/releases]
 
-## Reporting Issues
+4. Open Chrome and go to the [Extensions page](chrome://extensions) or write: chrome://extensions in the address bar (this link can only be opened with Chrome)
+
+5. Turn on "Developer mode" (toggle in the top right)
+
+6. Click "Load unpacked"
+
+7. Select the folder you downloaded, called "sprint-1-senseUI"
+
+8. SenseUI should now appear in your extensions
+
+9. To open it, press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd> (or <kbd>Command</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd> on Mac)
+
+## Reporting issues
 
 When reporting bugs or accessibility issues, please include:
 
