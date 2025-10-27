@@ -155,23 +155,7 @@ To read more details, visit the [Contributing page](CONTRIBUTING.md)
 
 ## Installation
 
-1. Go to the Releases page: github.com/reginacas/sense-ui/releases
-
-2. Download the latest release 
-
-3. Extract the zip file to a folder on your computer
-
-4. Open Chrome and go to chrome://extensions
-
-5. Turn on "Developer mode" (toggle in the top right)
-
-6. Click "Load unpacked"
-
-7. Select the folder where you extracted SenseUI
-
-8. SenseUI should now appear in your extensions
-
-To open it, press Ctrl + Shift + S or click the SenseUI icon in your extension menu.
+To learn how to install SenseUI, go to the [Setup Guide](SETUP.md)
 
 ---
 

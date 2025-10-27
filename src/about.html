@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Sense UI</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!-- Skip link for keyboard/screen-reader users -->
+    <a href="#main" class="skip-link">Skip to main content</a>
+    <nav>
+        <a href="index.html" aria-current="page">Chat</a>
+        <a href="settings.html">Settings</a>
+        <a href="about.html">About</a>
+    </nav>
+    <main id="main">
+        <section class="intro">
+            <h1>About SenseUI</h1>
+            <h2>User Manual</h2>
+                <h3>Opening SenseUI</h3>
+                <h4>Keyboard Shortcut</h4>
+                <p>Press <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>S</kbd> (or <kbd>Cmd</kbd> + <kbd>Shift</kbd> + <kbd>S</kbd> on Mac) to open the SenseUI panel.</p>
+                <h4>Pinning the extension</h4>
+                <ol>
+                    <li>Open Chrome's extension menu (located in the toolbar palette next to the address bar)</li>
+                    <li>You can also access Chrome's extensions by going to <a href="chrome://extensions/" target="_blank" rel="noopener noreferrer">chrome extensions page<span class="sr-only">(opens in new tab)</span></a></li>
+                    <li>Find SenseUI in the list of your extensions</li>
+                    <li>Select "details"</li>
+                    <li>Toggle the "pin to toolbar" option</li>
+                </ol>
+                <hr>
+                <h3>Commands</h3>
+                <p>SenseUI provides quick commands for common tasks. These can be accessed by typing <kbd>/</kbd> in the input field.</p>
+                <h4>Available Commands</h4>
+                <ul>
+                    <li>/describe: Generates a visual description of the page</li>
+                    <li>/issues: Identifies design issues ranging from critical accessibility problems to mild visual inconsistencies</li>
+                    <li>/clear: Clears the current chat session</li>
+                </ul>
+                <hr>
+
+                <h3>Custom Prompts</h3>
+                <p>Ask anything about your webpage by typing a custom prompts directly into the input field at the bottom of the SenseUI panel. Simply focus the field, type your question or request, and press <kbd>Enter</kbd> to submit.</p>
+                <hr>
+
+                <h3>Interacting with Messages</h3>
+
+                <h4>Navigating the Chat</h4>
+                <ul>
+                    <li>Headings within responses: User and System responses are structured with semantic headings that you can navigate using your screen reader's heading navigation shortcuts</li>
+                </ul>
+
+                <h4>Message Actions (Non-functional)</h4>
+                <p>Each AI response includes action buttons. Functionality of these actions will be implemented in a later Sprint</p>
+                <ul>
+                    <li>Copy to Clipboard</li>
+                    <li>Mark as Favorite. This flags important messages to selectively download when you export your chat history.</li>
+                </ul>
+                <hr>
+
+                <h3>Settings (Non-functional at this Sprint)</h3>
+                <p>Access the Settings page by navigating to the settings button in the navigation menu.</p>
+                <h4>Feedback Detail Level</h4>
+                <p>Choose how much detail SenseUI provides in its responses:</p>
+
+                <h5>Comprehensive</h5>
+                <p>Detailed responses with explanations of design principles, code examples, and learning opportunities. Best for building visual design knowledge and understanding the "why" behind recommendations.</p>
+
+                <h5>Balanced (Default)</h5>
+                <p>Clear, specific recommendations with brief reasoning. Includes numerical values and actionable steps without extensive code examples. Ideal for most workflows.</p>
+
+                <h5>Concise</h5>
+                <p>Direct, actionable recommendations only. Minimal explanations, maximum efficiency. Best for quick verification or when you already understand the concepts.</p>
+
+                <h4>Additional Context</h4>
+                <p>Provide extra information to help SenseUI give more relevant feedback:</p>
+                <ul>
+                    <li>Custom Instructions: Add specific requirements, preferences, or constraints for your project (e.g., "Always prioritize accessibility", "Use Material Design principles", "Maintain mobile-first approach")</li>
+                    <li>Project Guidelines: Upload brand guidelines, design systems documentation, or project requirements documents (PRDs) to ensure recommendations align with your project's standards</li>
+                </ul>
+
+                <h4>Chat History Settings</h4>
+                <p>Control what gets included when you download your chat history:</p>
+                <ul>
+                    <li>Download Entire Chat: Saves all messages from the current session</li>
+                    <li>Download Favorited Messages Only: Saves only messages you've marked as favorites</li>
+                </ul>
+                <hr>
+                <h3>Downloading Chat History (non-functional at this Sprint)</h3>
+                <p>The chat history feature allows you to save conversations for documentation, team collaboration, or future reference.</p>
+                <p>To download:</p>
+                <ol>
+                    <li>On the chat, navigate to the "Download Chat History" button</li>
+                    <li>Press <kbd>Enter</kbd></li>
+                    <li>Your chat will be saved as a plain text (<code>.txt</code>) file to your default downloads location</li>
+                </ol>
+                <hr>
+
+                <h2>Need Help?</h2>
+                <p>If you encounter any issues, please report them on our GitHub repository's <a href="https://github.com/reginacas/sense-ui/issues"> Issues page</a>.</p>
+                </ol>
+            </section>
+
+
+            </section>
+</main>
+</body>
+</html>
