@@ -1,5 +1,5 @@
 const sendButton = document.querySelector('.chat-send');
-const chatMessages = document.getElementById('chatMessages');
+const chatMessages = document.getElementById('chat-messages');
 const chatInput = document.getElementById('chat-input');
 const commandDatalist = document.getElementById('command-list');
 const introSection = document.querySelector('.intro');
