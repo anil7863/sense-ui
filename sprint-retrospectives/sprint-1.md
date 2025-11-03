@@ -48,4 +48,7 @@ Expected Timeline: 1-2 weeks
 
 ---
 
-## Related Do
+## Related Documents
+- [GitHub Sprint 1 Issue](https://github.com/reginacas/sense-ui/issues/8)
+- [Sub-issues scheduled for Sprint 2](https://github.com/reginacas/sense-ui/milestone/1)
+- [All tracked issues](https://github.com/reginacas/sense-ui/issues)
