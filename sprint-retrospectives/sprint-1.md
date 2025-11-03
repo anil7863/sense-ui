@@ -26,7 +26,7 @@ Established accessible core infrastructure extension so users can navigate and i
 - Use of `<h2>` tags enabled intuitive heading navigation.
 - About page was helpful to testers.
 
-## What went not-so-well?
+## What went not-so-well?a
 All issues can be read here: [All tracked issues](https://github.com/reginacas/sense-ui/issues)
 
 
