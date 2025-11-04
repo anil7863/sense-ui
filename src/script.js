@@ -19,6 +19,11 @@ function announce(msg) {
 // Announce when popup opens
 window.addEventListener('DOMContentLoaded', () => {
     announce('SenseUI opened.');
+    // Focus the chat input when the page loads
+    const chatInput = document.getElementById('chat-input');
+    if (chatInput) {
+        chatInput.focus();
+    }
 });
 
 // Announce when popup closes (Escape key)
