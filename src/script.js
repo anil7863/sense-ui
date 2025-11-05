@@ -31,17 +31,6 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// Announce when popup closes (Escape key)
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-        announce('SenseUI closing.');
-        // Give time for announcement before popup closes
-        setTimeout(() => {
-            window.close();
-        }, 100);
-    }
-});
-
 if (chatInput && commandDatalist) {
     // Get all options
     const allOptions = Array.from(commandDatalist.querySelectorAll('option')).map(o => o.value);
