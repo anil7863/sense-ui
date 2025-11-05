@@ -104,13 +104,21 @@ function sendMessage() {
     if (userInput) {
         // Check for /clear command
         if (userInput === '/clear') {
+            // 1) Clear existing chat messages first
             chatMessages.innerHTML = '';
+            // 2) Reset input field
             chatInput.value = '';
-            announce('Chat cleared.');
-            // Show intro section again
-            if (introSection) {
-                introSection.style.display = 'block';
-            }
+            // 3) Append a visible system message so SRs announce an addition to the log
+            const systemEvent = document.createElement('div');
+            systemEvent.className = 'system-response';
+            systemEvent.innerHTML = `
+                <h2>System</h2>
+                <p>Chat cleared.</p>
+            `;
+            chatMessages.appendChild(systemEvent);
+            // 4) Ensure the message is in view
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            // 5) Stop here; don't add the user message or placeholder
             return;
         }
 
