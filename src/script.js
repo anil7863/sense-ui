@@ -31,6 +31,21 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+// Prevent Escape from closing the extension when focused on an input field
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        const activeElement = document.activeElement;
+        // Check if focus is on an input, textarea, or any editable element
+        if (activeElement && 
+            (activeElement.tagName === 'INPUT' || 
+             activeElement.tagName === 'TEXTAREA' || 
+             activeElement.isContentEditable)) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+    }
+}, true); // Use capture phase to catch before browser handles it
+
 if (chatInput && commandDatalist) {
     // Get all options
     const allOptions = Array.from(commandDatalist.querySelectorAll('option')).map(o => o.value);
