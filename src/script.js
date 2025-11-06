@@ -23,25 +23,35 @@ window.addEventListener('DOMContentLoaded', () => {
     const chatInput = document.getElementById('chat-input');
     if (chatInput) {
         chatInput.focus();
+        // Ensure command suggestions are not attached by default
+        // We will attach the datalist only when the user types '/'
+        if (chatInput.hasAttribute('list')) {
+            chatInput.removeAttribute('list');
+        }
     }
 });
 
-// Announce when popup closes (Escape key)
+// Prevent Escape from closing the extension when focused on an input field
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
-        announce('SenseUI closing.');
-        // Give time for announcement before popup closes
-        setTimeout(() => {
-            window.close();
-        }, 100);
+        const activeElement = document.activeElement;
+        // Check if focus is on an input, textarea, or any editable element
+        if (activeElement && 
+            (activeElement.tagName === 'INPUT' || 
+             activeElement.tagName === 'TEXTAREA' || 
+             activeElement.isContentEditable)) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
     }
-});
+}, true); // Use capture phase to catch before browser handles it
 
 if (chatInput && commandDatalist) {
     // Get all options
     const allOptions = Array.from(commandDatalist.querySelectorAll('option')).map(o => o.value);
 
     let lastAnnouncedCount = null;
+    // Track last value to control announcements
 
     function countFilteredOptions(query) {
         if (!query) return allOptions.length;
@@ -52,16 +62,31 @@ if (chatInput && commandDatalist) {
 
     // Announce when slash is typed
     let previousValue = '';
+
+    // Expose a small helper to reset command suggestion state after send/clear
+    chatInput._resetCommandState = () => {
+        if (chatInput.hasAttribute('list')) {
+            chatInput.removeAttribute('list');
+        }
+        lastAnnouncedCount = null;
+        previousValue = '';
+    };
     chatInput.addEventListener('input', () => {
         const val = chatInput.value;
 
         // Just typed "/"
         if (val === '/' && previousValue === '') {
+            // Attach datalist so native suggestions are available
+            chatInput.setAttribute('list', 'command-list');
             announce(`Commands menu available. ${allOptions.length} options.`);
             lastAnnouncedCount = allOptions.length;
         }
         // Typing after "/"
         else if (val.startsWith('/') && val.length > 1) {
+            // Ensure datalist is attached while filtering
+            if (!chatInput.hasAttribute('list')) {
+                chatInput.setAttribute('list', 'command-list');
+            }
             const count = countFilteredOptions(val);
             // Only announce if count changed
             if (count !== lastAnnouncedCount) {
@@ -77,6 +102,10 @@ if (chatInput && commandDatalist) {
         }
         // Cleared the "/"
         else if (!val.startsWith('/') && previousValue.startsWith('/')) {
+            // Detach datalist so arrow keys navigate within the field normally
+            if (chatInput.hasAttribute('list')) {
+                chatInput.removeAttribute('list');
+            }
             lastAnnouncedCount = null;
         }
 
@@ -94,6 +123,10 @@ if (chatInput && commandDatalist) {
     chatInput.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && chatInput.value.startsWith('/')) {
             announce('Commands closed');
+            // Detach datalist to close native suggestions and restore arrow-key caret movement
+            if (chatInput.hasAttribute('list')) {
+                chatInput.removeAttribute('list');
+            }
             lastAnnouncedCount = null;
         }
     });
@@ -108,6 +141,10 @@ function sendMessage() {
             chatMessages.innerHTML = '';
             // 2) Reset input field
             chatInput.value = '';
+            // Ensure command suggestions are fully reset
+            if (typeof chatInput._resetCommandState === 'function') {
+                chatInput._resetCommandState();
+            }
             // 3) Append a visible system message so SRs announce an addition to the log
             const systemEvent = document.createElement('div');
             systemEvent.className = 'system-response';
@@ -153,6 +190,10 @@ function sendMessage() {
 
         // Clear input
         chatInput.value = '';
+        // Ensure command suggestions are fully reset so arrows move caret normally
+        if (typeof chatInput._resetCommandState === 'function') {
+            chatInput._resetCommandState();
+        }
     }
 }
 
