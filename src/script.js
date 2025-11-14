@@ -16,9 +16,33 @@ function announce(msg) {
     setTimeout(() => live.remove(), 1500);
 }
 
+// Load chat messages from storage
+function loadChatMessages() {
+    chrome.storage.local.get(['chatMessages'], (result) => {
+        if (result.chatMessages && result.chatMessages.length > 0) {
+            // Hide intro section if there are messages
+            if (introSection) {
+                introSection.style.display = 'none';
+            }
+            // Restore messages
+            chatMessages.innerHTML = result.chatMessages.join('');
+            // Scroll to bottom
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+    });
+}
+
+// Save chat messages to storage
+function saveChatMessages() {
+    const messages = Array.from(chatMessages.children).map(child => child.outerHTML);
+    chrome.storage.local.set({ chatMessages: messages });
+}
+
 // Announce when popup opens
 window.addEventListener('DOMContentLoaded', () => {
     announce('SenseUI opened.');
+    // Load previous chat messages
+    loadChatMessages();
     // Focus the chat input when the page loads
     const chatInput = document.getElementById('chat-input');
     if (chatInput) {
@@ -139,13 +163,15 @@ function sendMessage() {
         if (userInput === '/clear') {
             // 1) Clear existing chat messages first
             chatMessages.innerHTML = '';
-            // 2) Reset input field
+            // 2) Clear messages from storage
+            chrome.storage.local.set({ chatMessages: [] });
+            // 3) Reset input field
             chatInput.value = '';
             // Ensure command suggestions are fully reset
             if (typeof chatInput._resetCommandState === 'function') {
                 chatInput._resetCommandState();
             }
-            // 3) Append a visible system message so SRs announce an addition to the log
+            // 4) Append a visible system message so SRs announce an addition to the log
             const systemEvent = document.createElement('div');
             systemEvent.className = 'system-response';
             systemEvent.innerHTML = `
@@ -153,9 +179,11 @@ function sendMessage() {
                 <p>Chat cleared.</p>
             `;
             chatMessages.appendChild(systemEvent);
-            // 4) Ensure the message is in view
+            // 5) Save the system message
+            saveChatMessages();
+            // 6) Ensure the message is in view
             chatMessages.scrollTop = chatMessages.scrollHeight;
-            // 5) Stop here; don't add the user message or placeholder
+            // 7) Stop here; don't add the user message or placeholder
             return;
         }
 
@@ -184,6 +212,9 @@ function sendMessage() {
             <button class="favorite-button">Mark as favorite</button>
         `;
         chatMessages.appendChild(systemResponse);
+
+        // Save messages to storage
+        saveChatMessages();
 
         // Announce only the new response
         announce(`SenseUI said: ${placeholderText}`);
