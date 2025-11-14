@@ -1,8 +1,17 @@
-const sendButton = document.querySelector('.chat-send');
-const chatMessages = document.getElementById('chat-messages');
-const chatInput = document.getElementById('chat-input');
-const commandDatalist = document.getElementById('command-list');
-const introSection = document.querySelector('.intro');
+/**
+ * Main UI Script for SenseUI Popup
+ * Handles user interactions and coordinates with modules
+ */
+
+import { processUserInput, createLoadingResponse, checkReadiness } from './modules/orchestrator.js';
+import { attachResponseActions } from './modules/responseFormatter.js';
+
+// Declare variables at module scope
+let sendButton;
+let chatMessages;
+let chatInput;
+let commandDatalist;
+let introSection;
 
 //announce commands menu
 function announce(msg) {
@@ -16,35 +25,19 @@ function announce(msg) {
     setTimeout(() => live.remove(), 1500);
 }
 
-// Load chat messages from storage
-function loadChatMessages() {
-    chrome.storage.local.get(['chatMessages'], (result) => {
-        if (result.chatMessages && result.chatMessages.length > 0) {
-            // Hide intro section if there are messages
-            if (introSection) {
-                introSection.style.display = 'none';
-            }
-            // Restore messages
-            chatMessages.innerHTML = result.chatMessages.join('');
-            // Scroll to bottom
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-    });
-}
-
-// Save chat messages to storage
-function saveChatMessages() {
-    const messages = Array.from(chatMessages.children).map(child => child.outerHTML);
-    chrome.storage.local.set({ chatMessages: messages });
-}
-
 // Announce when popup opens
 window.addEventListener('DOMContentLoaded', () => {
+    // Initialize DOM elements
+    sendButton = document.querySelector('.chat-send');
+    chatMessages = document.getElementById('chat-messages');
+    chatInput = document.getElementById('chat-input');
+    commandDatalist = document.getElementById('command-list');
+    introSection = document.querySelector('.intro');
+    
+    // Announce for screen readers
     announce('SenseUI opened.');
-    // Load previous chat messages
-    loadChatMessages();
+    
     // Focus the chat input when the page loads
-    const chatInput = document.getElementById('chat-input');
     if (chatInput) {
         chatInput.focus();
         // Ensure command suggestions are not attached by default
@@ -52,25 +45,19 @@ window.addEventListener('DOMContentLoaded', () => {
         if (chatInput.hasAttribute('list')) {
             chatInput.removeAttribute('list');
         }
+        
+        // Set up command suggestions
+        setupCommandSuggestions();
+        
+        // Set up event listeners
+        setupEventListeners();
     }
 });
 
-// Prevent Escape from closing the extension when focused on an input field
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-        const activeElement = document.activeElement;
-        // Check if focus is on an input, textarea, or any editable element
-        if (activeElement && 
-            (activeElement.tagName === 'INPUT' || 
-             activeElement.tagName === 'TEXTAREA' || 
-             activeElement.isContentEditable)) {
-            e.preventDefault();
-            e.stopPropagation();
-        }
-    }
-}, true); // Use capture phase to catch before browser handles it
-
-if (chatInput && commandDatalist) {
+// Set up command suggestion functionality
+function setupCommandSuggestions() {
+    if (!chatInput || !commandDatalist) return;
+    
     // Get all options
     const allOptions = Array.from(commandDatalist.querySelectorAll('option')).map(o => o.value);
 
@@ -95,6 +82,7 @@ if (chatInput && commandDatalist) {
         lastAnnouncedCount = null;
         previousValue = '';
     };
+    
     chatInput.addEventListener('input', () => {
         const val = chatInput.value;
 
@@ -156,85 +144,141 @@ if (chatInput && commandDatalist) {
     });
 }
 
-function sendMessage() {
-    const userInput = chatInput.value.trim();
-    if (userInput) {
-        // Check for /clear command
-        if (userInput === '/clear') {
-            // 1) Clear existing chat messages first
-            chatMessages.innerHTML = '';
-            // 2) Clear messages from storage
-            chrome.storage.local.set({ chatMessages: [] });
-            // 3) Reset input field
-            chatInput.value = '';
-            // Ensure command suggestions are fully reset
-            if (typeof chatInput._resetCommandState === 'function') {
-                chatInput._resetCommandState();
+// Set up event listeners for send functionality
+function setupEventListeners() {
+    // send button click
+    if (sendButton) {
+        sendButton.addEventListener('click', sendMessage);
+    }
+
+    // send on Enter key
+    if (chatInput) {
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                sendMessage();
             }
-            // 4) Append a visible system message so SRs announce an addition to the log
-            const systemEvent = document.createElement('div');
-            systemEvent.className = 'system-response';
-            systemEvent.innerHTML = `
-                <h2>System</h2>
-                <p>Chat cleared.</p>
-            `;
-            chatMessages.appendChild(systemEvent);
-            // 5) Save the system message
-            saveChatMessages();
-            // 6) Ensure the message is in view
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-            // 7) Stop here; don't add the user message or placeholder
-            return;
-        }
-
-        // Hide intro section on first message
-        if (introSection) {
-            introSection.style.display = 'none';
-        }
-        
-        // Display user message
-        const userMessage = document.createElement('div');
-        userMessage.className = 'user-message';
-        userMessage.innerHTML = `
-            <h2>You said:</h2>
-            <p>${userInput}</p>
-        `;
-        chatMessages.appendChild(userMessage);
-
-        // Display system response (placeholder)
-        const placeholderText = 'This is a placeholder response.';
-        const systemResponse = document.createElement('div');
-        systemResponse.className = 'system-response';
-        systemResponse.innerHTML = `
-            <h2>SenseUI said:</h2>
-            <p>${placeholderText}</p>
-            <button class="copy-button">Copy to clipboard</button>
-            <button class="favorite-button">Mark as favorite</button>
-        `;
-        chatMessages.appendChild(systemResponse);
-
-        // Save messages to storage
-        saveChatMessages();
-
-        // Announce only the new response
-        announce(`SenseUI said: ${placeholderText}`);
-
-        // Clear input
-        chatInput.value = '';
-        // Ensure command suggestions are fully reset so arrows move caret normally
-        if (typeof chatInput._resetCommandState === 'function') {
-            chatInput._resetCommandState();
-        }
+        });
     }
 }
 
-// send button click
-sendButton.addEventListener('click', sendMessage);
-
-// send on Enter key
-chatInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-        e.preventDefault();
-        sendMessage();
+// Prevent Escape from closing the extension when focused on an input field
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        const activeElement = document.activeElement;
+        // Check if focus is on an input, textarea, or any editable element
+        if (activeElement && 
+            (activeElement.tagName === 'INPUT' || 
+             activeElement.tagName === 'TEXTAREA' || 
+             activeElement.isContentEditable)) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
     }
-});
+}, true); // Use capture phase to catch before browser handles it
+
+// Process and send message with AI integration
+async function sendMessage() {
+    const userInput = chatInput.value.trim();
+    if (!userInput) return;
+    
+    // Check for /clear command
+    if (userInput === '/clear') {
+        // Clear existing chat messages first
+        chatMessages.innerHTML = '';
+        // Reset input field
+        chatInput.value = '';
+        // Ensure command suggestions are fully reset
+        if (typeof chatInput._resetCommandState === 'function') {
+            chatInput._resetCommandState();
+        }
+        // Append a visible system message
+        const systemEvent = document.createElement('div');
+        systemEvent.className = 'system-response';
+        systemEvent.innerHTML = `
+            <h2>System</h2>
+            <p>Chat cleared.</p>
+        `;
+        chatMessages.appendChild(systemEvent);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+        return;
+    }
+
+    // Hide intro section on first message
+    if (introSection) {
+        introSection.style.display = 'none';
+    }
+    
+    // Display user message
+    const userMessage = document.createElement('div');
+    userMessage.className = 'user-message';
+    userMessage.innerHTML = `
+        <h2>You said:</h2>
+        <p>${userInput}</p>
+    `;
+    chatMessages.appendChild(userMessage);
+    
+    // Show loading indicator
+    const loadingResponse = createLoadingResponse('Analyzing page and generating response...');
+    const loadingDiv = document.createElement('div');
+    loadingDiv.innerHTML = loadingResponse.html;
+    chatMessages.appendChild(loadingDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+    
+    // Clear input immediately for better UX
+    chatInput.value = '';
+    if (typeof chatInput._resetCommandState === 'function') {
+        chatInput._resetCommandState();
+    }
+    
+    // Announce loading
+    announce(loadingResponse.summary);
+    
+    try {
+        // Check readiness
+        const readiness = await checkReadiness();
+        if (!readiness.ready) {
+            throw new Error(readiness.message);
+        }
+        
+        // Process the user input with AI
+        const response = await processUserInput(userInput);
+        
+        // Remove loading indicator
+        loadingDiv.remove();
+        
+        // Display AI response
+        const responseDiv = document.createElement('div');
+        responseDiv.innerHTML = response.html;
+        chatMessages.appendChild(responseDiv);
+        
+        // Attach event listeners to response actions
+        attachResponseActions(responseDiv);
+        
+        // Announce response (summary for screen readers)
+        announce(response.summary);
+        
+    } catch (error) {
+        console.error('Error in sendMessage:', error);
+        
+        // Remove loading indicator
+        loadingDiv.remove();
+        
+        // Show error message
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'system-response error-response';
+        errorDiv.innerHTML = `
+            <h2>Error</h2>
+            <p>${error.message}</p>
+            ${error.message.includes('API key') ? 
+                '<p>Please visit <a href="settings.html">Settings</a> to configure your API key.</p>' : 
+                '<p>Please try again or check the console for more details.</p>'}
+        `;
+        chatMessages.appendChild(errorDiv);
+        
+        announce(`Error: ${error.message}`);
+    }
+    
+    // Scroll to bottom
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
