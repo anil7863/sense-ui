@@ -52,6 +52,15 @@ main {
 }
 
 /* navigation */
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 2000;
+    background: var(--background-color);
+}
+
 nav {
     background: var(--secondary-color);
     color: #fff;
