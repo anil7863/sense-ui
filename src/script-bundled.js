@@ -31,55 +31,87 @@ const CONFIG = {
         CHAT_HISTORY: 'senseui_chat_history'
     },
     PROMPTS: {
-        SYSTEM: `You are SenseUI, an AI assistant designed to help blind and visually impaired developers understand and improve web page designs. 
-You analyze HTML structure, CSS styling, and visual screenshots to provide detailed accessibility and design feedback.
+        SYSTEM: `You are an AI web design assistant dedicated to help blind and visually impaired web developers work independently and confidently on UI and web design tasks. 
+        Provide structured, clear, and actionable feedback that avoids vague or subjective language. Always present information in bullet-point or hierarchical format to ensure compatibility with screen readers. 
+        CORE PRINCIPLES:    
+        - Follow modern, minimalist, and easy-to-navigate design principles
+        - Be objective, honest , specific and constructive
+        - Do not offer code unless asked to by the user
+        - Do not assume or invent details outside the viewport. If information is uncertain or not visible, state the limitation clearly.`,
 
-PLACEHOLDER: Replace this with your custom system instructions.
+        DESCRIBE: `Provide a comprehensive visual design description of what's currently visible in the viewport. Use terminology familiar to programmers. Be detailed and specific.
 
-Guidelines:
-- Be clear, concise, and constructive
-- Focus on accessibility issues and visual design problems
-- Provide actionable recommendations
-- Use proper formatting (headings, lists, code blocks where appropriate)
-- Prioritize issues by severity`,
+IMPORTANT RULES:
+1. You are analyzing a SCREENSHOT of the current viewport - this may show any part of the page (top, middle, bottom, or footer). DO NOT assume this is the "hero section" unless you can clearly see it's the top of the page with the main header/navigation.
 
-        DESCRIBE: `Analyze the provided webpage and give a comprehensive description of its visual design and structure.
+2. ONLY report measurements you can verify from the provided CSS or HTML:
+   - If font sizes/spacing values are in the CSS, cite them
+   - If NOT in the CSS, describe relatively ("large heading", "small body text", "tight spacing") - do NOT make up px/rem values
+   - For colors, extract from CSS or estimate from screenshot (but note if estimated)
+3. Present the description in bullet points, progressing from general layout to specific details. 
+4. Avoid subjective terms like “beautiful” or “ugly.” 
 
-PLACEHOLDER: Replace this with your custom /describe command instructions.
+Always start the response with: "## Visual Design Description of [Website Name]"
+Include:
+### Overall Impression 
+[What's the immediate visual impression? Describe the aesthetic (minimalist/professional/modern/traditional/playful/corporate/etc.) and the overall feeling it creates.]
 
-Focus on:
-1. Overall layout and visual hierarchy
-2. Color scheme and contrast
-3. Typography (fonts, sizes, spacing)
-4. Component placement and alignment
-5. Responsive design elements
-6. Notable design patterns or frameworks used
+### Viewport Content
+Describe what's visually present in the current viewport from top to bottom:
+- Identify the PAGE POSITION: Is this the top/header area, middle content, footer, or a specific section?
+- Identify each major section/component visible (use accurate terms: "content section", "article grid", "footer", "navigation area" - NOT "hero" unless it's clearly the top banner)
+- Describe visual elements: images, icons, graphics, illustrations
+- Explain the visual hierarchy and what draws attention
 
-Provide the description in a structured format with clear headings and bullet points.`,
+### Layout & Structure
+- Layout technique used (CSS Grid, Flexbox, traditional block layout) - cite CSS properties if available
+- Content arrangement (columns, rows, asymmetry)
+- Alignment patterns
 
-        ISSUES: `Identify and list all accessibility and design issues on the provided webpage.
+### Color Palette
+- Primary colors: [extract hex codes from CSS if available, or estimate from screenshot with note "estimated from screenshot"]
+- Accent/secondary colors: [hex codes]
+- Background colors
+- Text colors
+- Mood created by the palette
 
-PLACEHOLDER: Replace this with your custom /issues command instructions.
+### Typography
+- Font families: [extract from CSS if available, e.g., "Inter, sans-serif" - if not in CSS, describe as "sans-serif" or "serif"]
+- Heading styles: [if sizes are in CSS, cite them (e.g., "32px, font-weight: 700") - otherwise describe relatively: "large bold headings"]
+- Body text: [cite CSS values if available, otherwise describe: "medium-sized, good line-height"]
+- Overall readability and typographic hierarchy
 
-Categorize issues by:
-1. **Critical Accessibility Issues** (WCAG violations, screen reader problems)
-2. **Design Consistency Issues** (spacing, alignment, visual hierarchy)
-3. **Usability Issues** (contrast, readability, navigation)
-4. **Code Quality Issues** (semantic HTML, CSS best practices)
+### Spacing & Density
+- Spacing philosophy (tight/compact or spacious/airy)
+- Padding/margin patterns: [cite CSS values if available (e.g., "24px padding") - otherwise describe: "generous spacing" or "minimal margins"]
+- White space usage (generous or minimal)
+- Overall information density
 
-For each issue:
-- Describe the problem clearly
-- Explain why it's problematic (especially for blind/VI users)
-- Suggest specific fixes with code examples where helpful
-- Rate severity: Critical, High, Medium, or Low
+### UI Components
+- Button styles: [cite CSS if available, otherwise describe: "rounded corners, medium size"]
+- Form elements (if present)
+- Cards/panels (if present)
+- Any distinctive design patterns
 
-Present findings in a structured list format.`,
+End with: "Want me to analyze a specific element in more detail?"`,
 
-        GENERAL: `The user is asking a general question about the webpage. Provide a helpful, accurate response based on the HTML, CSS, and screenshot data provided.
+        ISSUES: `Identify design and accessibility issues on the current webpage and provide actionable solutions.
 
-PLACEHOLDER: This is used for freeform questions. Customize as needed.
+IMPORTANT: Only report issues you can actually verify from the HTML, CSS, and screenshot. If the page appears well-designed with no significant issues, say so! Do NOT invent problems that don't exist.
 
-Be conversational but informative. Use the webpage context to give specific, relevant answers.`
+ANALYZE FOR:
+- Visual hierarchy problems (unclear heading structure, poor emphasis)
+- Layout issues (misalignments, inconsistent spacing, overflow problems)
+- Readability concerns (font sizes, line heights, text density, line lengths, text alignments)
+- Inconsistencies (spacing, font sizes, color scheme deviations)
+- Accessibility violations (contrast ratios - verify from CSS colors)
+
+REQUIREMENTS:
+- Only report issues you can verify from the provided HTML/CSS/ or screenshot
+- Cite specific CSS selectors and current values
+- Provide exact recommended values (not generic suggestions)
+- Do not use vague or subjective terms like “better,” “vibrant,” or “modern.” Always provide measurable, code-level recommendations that a developer can directly implement.`
+
     },
     LIMITS: {
         MAX_HTML_LENGTH: 100000,
@@ -109,7 +141,7 @@ function getPromptForCommand(command) {
         case '/issues':
             return CONFIG.PROMPTS.ISSUES;
         default:
-            return CONFIG.PROMPTS.GENERAL;
+            return ''; // No additional prompt - just use SYSTEM
     }
 }
 
@@ -269,30 +301,10 @@ async function captureScreenshot() {
         const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true });
         if (!activeTab) throw new Error('No active tab found');
 
-        const [{ result: dimensions }] = await chrome.scripting.executeScript({
-            target: { tabId: activeTab.id },
-            func: () => ({
-                originalScrollY: window.scrollY,
-                originalScrollX: window.scrollX
-            })
-        });
-
-        await chrome.scripting.executeScript({
-            target: { tabId: activeTab.id },
-            func: () => window.scrollTo(0, 0)
-        });
-
-        await new Promise(resolve => setTimeout(resolve, 100));
-
+        // Capture whatever is currently visible in the viewport
         const dataUrl = await chrome.tabs.captureVisibleTab(null, {
             format: CONFIG.LIMITS.SCREENSHOT_FORMAT,
             quality: Math.round(CONFIG.LIMITS.SCREENSHOT_QUALITY * 100)
-        });
-
-        await chrome.scripting.executeScript({
-            target: { tabId: activeTab.id },
-            func: (scrollY, scrollX) => window.scrollTo(scrollX, scrollY),
-            args: [dimensions.originalScrollY, dimensions.originalScrollX]
         });
 
         return dataUrl;
@@ -589,8 +601,10 @@ async function processUserInput(userInput, forceRefresh = false) {
     
     // Parse command
     const { command, text } = parseCommand(userInput);
-    const commandPrompt = command ? getPromptForCommand(command) : CONFIG.PROMPTS.GENERAL;
-    const systemPrompt = `${CONFIG.PROMPTS.SYSTEM}\\n\\n${commandPrompt}`;
+    const commandPrompt = command ? getPromptForCommand(command) : '';
+    const systemPrompt = commandPrompt 
+        ? `${CONFIG.PROMPTS.SYSTEM}\\n\\n${commandPrompt}`
+        : CONFIG.PROMPTS.SYSTEM;
 
     // Check if we need to capture or use cached context
     let context = {};
@@ -872,9 +886,15 @@ async function sendMessage() {
     userMessage.innerHTML = `<h2>You said:</h2><p>${userInput}</p>`;
     chatMessages.appendChild(userMessage);
     
+    // Check if this is a /describe command to show time estimate
+    const isDescribeCommand = userInput.trim().startsWith('/describe');
+    
     const loadingDiv = document.createElement('div');
     loadingDiv.className = 'system-response loading-response';
-    loadingDiv.innerHTML = `<h2>SenseUI</h2><div class="loading-content"><p>Analyzing page...</p></div>`;
+    const loadingMessage = isDescribeCommand 
+        ? '<p>Analyzing page... This may take 10-15 seconds.</p>'
+        : '<p>Analyzing page...</p>';
+    loadingDiv.innerHTML = `<h2>SenseUI</h2><div class="loading-content">${loadingMessage}</div>`;
     chatMessages.appendChild(loadingDiv);
     chatMessages.scrollTop = chatMessages.scrollHeight;
     
@@ -883,7 +903,10 @@ async function sendMessage() {
         chatInput._resetCommandState();
     }
     
-    announce('Analyzing page...');
+    const announceMessage = isDescribeCommand 
+        ? 'Analyzing page... This may take 10 to 15 seconds.'
+        : 'Analyzing page...';
+    announce(announceMessage);
     
     try {
         const response = await processUserInput(userInput);

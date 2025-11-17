@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "SenseUI",
-  "version": "0.1.0",
-  "description": "AI-powered visual design feedback for blind and visually impaired developers",
+  "version": "0.2.0",
+  "description": "(Sprint 2) AI-powered visual design feedback for blind and visually impaired developers",
   "permissions": [
     "activeTab",
     "storage",
