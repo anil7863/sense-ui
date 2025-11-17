@@ -11,14 +11,14 @@ const CONFIG = {
     API: {
         OPENAI: {
             ENDPOINT: 'https://api.openai.com/v1/chat/completions',
-            MODEL: 'gpt-4o',
+            MODEL: 'gpt-4o-mini',
             MAX_TOKENS: 2000,
             TEMPERATURE: 0.7
         },
         GEMINI: {
-            ENDPOINT: 'https://generativelanguage.googleapis.com/v1/models',
-            // Using gemini-2.5-pro - higher quality, may have better availability
-            MODEL: 'gemini-2.5-pro',
+            ENDPOINT: 'https://generativelanguage.googleapis.com/v1beta/models',
+            // Using gemini-1.5-flash - faster, more cost-effective
+            MODEL: 'gemini-1.5-flash',
             MAX_TOKENS: 2000,
             TEMPERATURE: 0.7
         }
