@@ -27,7 +27,8 @@ const CONFIG = {
         OPENAI_API_KEY: 'senseui_openai_key',
         GEMINI_API_KEY: 'senseui_gemini_key',
         SELECTED_PROVIDER: 'senseui_provider',
-        USER_SETTINGS: 'senseui_settings'
+        USER_SETTINGS: 'senseui_settings',
+        CHAT_HISTORY: 'senseui_chat_history'
     },
     PROMPTS: {
         SYSTEM: `You are SenseUI, an AI assistant designed to help blind and visually impaired developers understand and improve web page designs. 
@@ -552,17 +553,7 @@ async function sendToGemini(apiKey, systemPrompt, userMessage, screenshot) {
 // ============================================================================
 // MAIN ORCHESTRATOR
 // ============================================================================
-async function processUserInput(userInput) {
-    // Check if API key is configured
-    const result = await chrome.storage.local.get(CONFIG.STORAGE_KEYS.SELECTED_PROVIDER);
-    const provider = result[CONFIG.STORAGE_KEYS.SELECTED_PROVIDER] || 'openai';
-    
-    // Parse command
-    const { command, text } = parseCommand(userInput);
-    const commandPrompt = command ? getPromptForCommand(command) : CONFIG.PROMPTS.GENERAL;
-    const systemPrompt = `${CONFIG.PROMPTS.SYSTEM}\\n\\n${commandPrompt}`;
-
-    // Gather context
+async function capturePageContext() {
     const context = {};
     
     try {
@@ -580,11 +571,45 @@ async function processUserInput(userInput) {
             context.html = pageContent.html;
             context.css = pageContent.css;
             context.metadata = pageContent.metadata;
+            context.url = pageContent.metadata?.url;
             console.log('✅ Page content extracted:', pageContent.metadata?.title || 'Unknown page');
             announce('Page content extracted');
         }
     } catch (error) {
         console.error('Content extraction error:', error);
+    }
+    
+    return context;
+}
+
+async function processUserInput(userInput, forceRefresh = false) {
+    // Check if API key is configured
+    const result = await chrome.storage.local.get(CONFIG.STORAGE_KEYS.SELECTED_PROVIDER);
+    const provider = result[CONFIG.STORAGE_KEYS.SELECTED_PROVIDER] || 'openai';
+    
+    // Parse command
+    const { command, text } = parseCommand(userInput);
+    const commandPrompt = command ? getPromptForCommand(command) : CONFIG.PROMPTS.GENERAL;
+    const systemPrompt = `${CONFIG.PROMPTS.SYSTEM}\\n\\n${commandPrompt}`;
+
+    // Check if we need to capture or use cached context
+    let context = {};
+    
+    // Get current page URL to detect navigation
+    const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    const pageUrl = activeTab?.url;
+    
+    // Use cached context if available and page hasn't changed
+    if (!forceRefresh && cachedContext && currentPageUrl === pageUrl) {
+        context = cachedContext;
+        console.log('✅ Using cached page context');
+        announce('Using cached page data');
+    } else {
+        // Capture fresh context
+        console.log('📸 Capturing fresh page context...');
+        context = await capturePageContext();
+        cachedContext = context;
+        currentPageUrl = pageUrl;
     }
 
     // Send to LLM
@@ -617,6 +642,52 @@ let chatInput;
 let commandDatalist;
 let introSection;
 
+// Cache for page context (captured once per session)
+let cachedContext = null;
+let currentPageUrl = null;
+
+// Save chat history to storage
+async function saveChatHistory() {
+    if (!chatMessages) return;
+    const html = chatMessages.innerHTML;
+    try {
+        await chrome.storage.local.set({ [CONFIG.STORAGE_KEYS.CHAT_HISTORY]: html });
+    } catch (error) {
+        console.error('Failed to save chat history:', error);
+    }
+}
+
+// Load chat history from storage
+async function loadChatHistory() {
+    if (!chatMessages) return;
+    try {
+        const result = await chrome.storage.local.get(CONFIG.STORAGE_KEYS.CHAT_HISTORY);
+        const savedHtml = result[CONFIG.STORAGE_KEYS.CHAT_HISTORY];
+        if (savedHtml) {
+            chatMessages.innerHTML = savedHtml;
+            // Reattach event listeners to restored messages
+            attachResponseActions(chatMessages);
+            // Hide intro if there are messages
+            if (introSection && savedHtml.trim()) {
+                introSection.style.display = 'none';
+            }
+            console.log('✅ Chat history restored');
+        }
+    } catch (error) {
+        console.error('Failed to load chat history:', error);
+    }
+}
+
+// Clear chat history from storage
+async function clearChatHistory() {
+    try {
+        await chrome.storage.local.remove(CONFIG.STORAGE_KEYS.CHAT_HISTORY);
+        console.log('✅ Chat history cleared from storage');
+    } catch (error) {
+        console.error('Failed to clear chat history:', error);
+    }
+}
+
 function announce(msg) {
     const live = document.createElement('div');
     live.setAttribute('role', 'status');
@@ -628,12 +699,15 @@ function announce(msg) {
     setTimeout(() => live.remove(), 1500);
 }
 
-window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('DOMContentLoaded', async () => {
     sendButton = document.querySelector('.chat-send');
     chatMessages = document.getElementById('chat-messages');
     chatInput = document.getElementById('chat-input');
     commandDatalist = document.getElementById('command-list');
     introSection = document.querySelector('.intro');
+    
+    // Load saved chat history
+    await loadChatHistory();
     
     announce('SenseUI opened.');
     
@@ -733,6 +807,8 @@ async function sendMessage() {
         if (typeof chatInput._resetCommandState === 'function') {
             chatInput._resetCommandState();
         }
+        // Clear from storage
+        await clearChatHistory();
         // Announce for screen readers
         announce('Chat cleared.');
         const systemEvent = document.createElement('div');
@@ -740,6 +816,52 @@ async function sendMessage() {
         systemEvent.innerHTML = `<h2>System</h2><p>Chat cleared.</p>`;
         chatMessages.appendChild(systemEvent);
         chatMessages.scrollTop = chatMessages.scrollHeight;
+        // Save the system message
+        await saveChatHistory();
+        return;
+    }
+    
+    if (userInput === '/refresh') {
+        chatInput.value = '';
+        if (typeof chatInput._resetCommandState === 'function') {
+            chatInput._resetCommandState();
+        }
+        
+        // Clear cache and show loading message
+        cachedContext = null;
+        currentPageUrl = null;
+        
+        const refreshDiv = document.createElement('div');
+        refreshDiv.className = 'system-response loading-response';
+        refreshDiv.innerHTML = `<h2>System</h2><div class="loading-content"><p>Refreshing page data...</p></div>`;
+        chatMessages.appendChild(refreshDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+        
+        announce('Refreshing page data...');
+        
+        try {
+            // Capture fresh context
+            await capturePageContext();
+            refreshDiv.remove();
+            
+            const systemEvent = document.createElement('div');
+            systemEvent.className = 'system-response';
+            systemEvent.innerHTML = `<h2>System</h2><p>Page data refreshed successfully.</p>`;
+            chatMessages.appendChild(systemEvent);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            announce('Page data refreshed.');
+            // Save to history
+            await saveChatHistory();
+        } catch (error) {
+            refreshDiv.remove();
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'system-response error-response';
+            errorDiv.innerHTML = `<h2>Error</h2><p>Failed to refresh page data: ${error.message}</p>`;
+            chatMessages.appendChild(errorDiv);
+            announce('Refresh failed.');
+            // Save error to history
+            await saveChatHistory();
+        }
         return;
     }
 
@@ -773,6 +895,9 @@ async function sendMessage() {
         attachResponseActions(responseDiv);
         announce(response.summary);
         
+        // Save chat history after successful response
+        await saveChatHistory();
+        
     } catch (error) {
         console.error('Error:', error);
         loadingDiv.remove();
@@ -788,6 +913,9 @@ async function sendMessage() {
         `;
         chatMessages.appendChild(errorDiv);
         announce(`Error: ${error.message}`);
+        
+        // Save chat history even with errors
+        await saveChatHistory();
     }
     
     chatMessages.scrollTop = chatMessages.scrollHeight;
