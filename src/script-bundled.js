@@ -733,6 +733,8 @@ async function sendMessage() {
         if (typeof chatInput._resetCommandState === 'function') {
             chatInput._resetCommandState();
         }
+        // Announce for screen readers
+        announce('Chat cleared.');
         const systemEvent = document.createElement('div');
         systemEvent.className = 'system-response';
         systemEvent.innerHTML = `<h2>System</h2><p>Chat cleared.</p>`;
