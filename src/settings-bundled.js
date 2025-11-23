@@ -168,9 +168,12 @@ async function getApiKeyStatus() {
 // UI CODE
 // ============================================================================
 const form = document.getElementById('settings-form');
-const providerSelect = document.getElementById('provider-select');
+const providerOpenAI = document.getElementById('provider-openai');
+const providerGemini = document.getElementById('provider-gemini');
 const openaiKeyInput = document.getElementById('openai-key');
 const geminiKeyInput = document.getElementById('gemini-key');
+const openaiKeyLabel = openaiKeyInput?.previousElementSibling;
+const geminiKeyLabel = geminiKeyInput?.previousElementSibling;
 const clearOpenAIBtn = document.getElementById('clear-openai-key');
 const clearGeminiBtn = document.getElementById('clear-gemini-key');
 const statusDiv = document.getElementById('settings-status');
@@ -182,6 +185,39 @@ const detailConcise = document.getElementById('detail-concise');
 const downloadAll = document.getElementById('download-all');
 const downloadFavorites = document.getElementById('download-favorites');
 const contextText = document.getElementById('context-text');
+
+// Function to toggle API key fields based on selected provider
+function toggleApiKeyFields() {
+    const selectedProvider = providerOpenAI.checked ? 'openai' : 'gemini';
+    
+    if (selectedProvider === 'openai') {
+        // Show OpenAI fields
+        if (openaiKeyLabel) openaiKeyLabel.style.display = '';
+        if (openaiKeyInput) openaiKeyInput.style.display = '';
+        if (openaiStatus) openaiStatus.style.display = '';
+        if (clearOpenAIBtn && clearOpenAIBtn.style.display === 'inline-block') {
+            clearOpenAIBtn.style.display = 'inline-block';
+        }
+        // Hide Gemini fields
+        if (geminiKeyLabel) geminiKeyLabel.style.display = 'none';
+        if (geminiKeyInput) geminiKeyInput.style.display = 'none';
+        if (geminiStatus) geminiStatus.style.display = 'none';
+        if (clearGeminiBtn) clearGeminiBtn.style.display = 'none';
+    } else {
+        // Show Gemini fields
+        if (geminiKeyLabel) geminiKeyLabel.style.display = '';
+        if (geminiKeyInput) geminiKeyInput.style.display = '';
+        if (geminiStatus) geminiStatus.style.display = '';
+        if (clearGeminiBtn && clearGeminiBtn.style.display === 'inline-block') {
+            clearGeminiBtn.style.display = 'inline-block';
+        }
+        // Hide OpenAI fields
+        if (openaiKeyLabel) openaiKeyLabel.style.display = 'none';
+        if (openaiKeyInput) openaiKeyInput.style.display = 'none';
+        if (openaiStatus) openaiStatus.style.display = 'none';
+        if (clearOpenAIBtn) clearOpenAIBtn.style.display = 'none';
+    }
+}
 
 function showStatus(message, isError = false) {
     if (statusDiv) {
@@ -218,8 +254,6 @@ async function updateApiKeyStatus() {
         clearGeminiBtn.style.display = 'none';
         geminiKeyInput.placeholder = 'Your Gemini API key';
     }
-    
-    providerSelect.value = status.selectedProvider;
 }
 
 async function loadCurrentSettings() {
@@ -244,7 +278,17 @@ async function loadCurrentSettings() {
             contextText.value = settings.contextInstructions;
         }
         
+        // Set the selected provider radio button
+        if (settings.selectedProvider === 'gemini') {
+            providerGemini.checked = true;
+            providerOpenAI.checked = false;
+        } else {
+            providerOpenAI.checked = true;
+            providerGemini.checked = false;
+        }
+        
         await updateApiKeyStatus();
+        toggleApiKeyFields(); // Show/hide fields based on selected provider
     } catch (error) {
         console.error('Error loading settings:', error);
         showStatus('Failed to load settings', true);
@@ -325,5 +369,9 @@ async function handleClearGemini() {
 form.addEventListener('submit', handleSubmit);
 clearOpenAIBtn.addEventListener('click', handleClearOpenAI);
 clearGeminiBtn.addEventListener('click', handleClearGemini);
+
+// Add event listeners to provider radio buttons
+providerOpenAI.addEventListener('change', toggleApiKeyFields);
+providerGemini.addEventListener('change', toggleApiKeyFields);
 
 loadCurrentSettings();

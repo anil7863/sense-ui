@@ -64,13 +64,14 @@ header {
 nav {
     background: var(--secondary-color);
     color: #fff;
-    padding: 1rem;
+    padding: 0.5rem 0;
     text-align: center;
     width: 100%;
 }
 
 nav a {
-    margin: 0 1rem;
+    margin: 1rem 1rem;
+    width: auto;
     color: var(--background-color)
 }
 
