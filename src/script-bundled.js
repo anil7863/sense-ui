@@ -13,14 +13,14 @@ const CONFIG = {
             ENDPOINT: 'https://api.openai.com/v1/chat/completions',
             MODEL: 'gpt-4o-mini',
             MAX_TOKENS: 2000,
-            TEMPERATURE: 0.7
+            TEMPERATURE: 0.5
         },
         GEMINI: {
             ENDPOINT: 'https://generativelanguage.googleapis.com/v1beta/models',
             // Using gemini-1.5-flash - faster, more cost-effective
             MODEL: 'gemini-1.5-flash',
             MAX_TOKENS: 2000,
-            TEMPERATURE: 0.7
+            TEMPERATURE: 0.5
         }
     },
     STORAGE_KEYS: {
@@ -536,7 +536,8 @@ async function sendToOpenAI(apiKey, systemPrompt, userMessage, screenshot) {
             messages: messages,
             temperature: CONFIG.API.OPENAI.TEMPERATURE,
             max_tokens: CONFIG.API.OPENAI.MAX_TOKENS
-        })
+        }),
+        signal: currentAbortController?.signal
     });
 
     if (!response.ok) {
@@ -575,7 +576,8 @@ async function sendToGemini(apiKey, systemPrompt, userMessage, screenshot) {
     const response = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(requestBody)
+        body: JSON.stringify(requestBody),
+        signal: currentAbortController?.signal
     });
 
     if (!response.ok) {
@@ -700,6 +702,10 @@ let introSection;
 // Cache for page context (captured once per session)
 let cachedContext = null;
 let currentPageUrl = null;
+
+// Abort controller for cancelling requests
+let currentAbortController = null;
+let isGenerating = false;
 
 // Save chat history to storage
 async function saveChatHistory() {
@@ -853,6 +859,22 @@ document.addEventListener('keydown', (e) => {
 }, true);
 
 async function sendMessage() {
+    // If currently generating, stop it
+    if (isGenerating && currentAbortController) {
+        currentAbortController.abort();
+        currentAbortController = null;
+        isGenerating = false;
+        
+        // Reset button
+        if (sendButton) {
+            sendButton.textContent = 'Send';
+            sendButton.setAttribute('aria-label', 'Send message');
+        }
+        
+        announce('Generation stopped');
+        return;
+    }
+    
     const userInput = chatInput.value.trim();
     if (!userInput) return;
     
@@ -949,6 +971,14 @@ async function sendMessage() {
         : 'Analyzing page...';
     announce(announceMessage);
     
+    // Create abort controller and update button
+    currentAbortController = new AbortController();
+    isGenerating = true;
+    if (sendButton) {
+        sendButton.textContent = 'Stop';
+        sendButton.setAttribute('aria-label', 'Stop generation');
+    }
+    
     try {
         const response = await processUserInput(userInput);
         loadingDiv.remove();
@@ -966,20 +996,37 @@ async function sendMessage() {
         console.error('Error:', error);
         loadingDiv.remove();
         
-        const errorDiv = document.createElement('div');
-        errorDiv.className = 'system-response error-response';
-        errorDiv.innerHTML = `
-            <h2>Error</h2>
-            <p>${error.message}</p>
-            ${error.message.includes('API key') ? 
-                '<p>Please visit <a href="settings.html">Settings</a> to configure your API key.</p>' : 
-                '<p>Please try again or check the console for more details.</p>'}
-        `;
-        chatMessages.appendChild(errorDiv);
-        announce(`Error: ${error.message}`);
+        // Check if it was aborted
+        if (error.name === 'AbortError') {
+            const abortDiv = document.createElement('div');
+            abortDiv.className = 'system-response';
+            abortDiv.innerHTML = `<h2>System</h2><p>Generation stopped by user.</p>`;
+            chatMessages.appendChild(abortDiv);
+            announce('Generation stopped');
+        } else {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'system-response error-response';
+            errorDiv.innerHTML = `
+                <h2>Error</h2>
+                <p>${error.message}</p>
+                ${error.message.includes('API key') ? 
+                    '<p>Please visit <a href="settings.html">Settings</a> to configure your API key.</p>' : 
+                    '<p>Please try again or check the console for more details.</p>'}
+            `;
+            chatMessages.appendChild(errorDiv);
+            announce(`Error: ${error.message}`);
+        }
         
         // Save chat history even with errors
         await saveChatHistory();
+    } finally {
+        // Reset button and state
+        currentAbortController = null;
+        isGenerating = false;
+        if (sendButton) {
+            sendButton.textContent = 'Send';
+            sendButton.setAttribute('aria-label', 'Send message');
+        }
     }
     
     chatMessages.scrollTop = chatMessages.scrollHeight;
