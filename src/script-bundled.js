@@ -843,6 +843,50 @@ function setupEventListeners() {
             }
         });
     }
+    
+    // Download chat history button
+    const downloadButton = document.getElementById('download-chat');
+    if (downloadButton) {
+        downloadButton.addEventListener('click', downloadChatHistory);
+    }
+}
+
+function downloadChatHistory() {
+    if (!chatMessages || !chatMessages.innerHTML.trim()) {
+        announce('No chat history to download');
+        return;
+    }
+    
+    // Get plain text version of chat
+    const chatText = chatMessages.innerText || chatMessages.textContent;
+    
+    // Get current page info
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        const pageUrl = tabs[0]?.url || 'Unknown page';
+        const pageTitle = tabs[0]?.title || 'Unknown title';
+        
+        // Add metadata
+        const timestamp = new Date().toISOString();
+        const header = `SenseUI Chat History
+Date: ${timestamp}
+Page: ${pageTitle}
+URL: ${pageUrl}
+${'='.repeat(70)}
+
+`;
+        const fullText = header + chatText;
+        
+        // Create download
+        const blob = new Blob([fullText], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `senseui-chat-${Date.now()}.txt`;
+        a.click();
+        URL.revokeObjectURL(url);
+        
+        announce('Chat history downloaded');
+    });
 }
 
 document.addEventListener('keydown', (e) => {

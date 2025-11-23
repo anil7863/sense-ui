@@ -64,14 +64,13 @@ header {
 nav {
     background: var(--secondary-color);
     color: #fff;
-    padding: 0.5rem 0;
+    padding: 1rem;
     text-align: center;
     width: 100%;
 }
 
 nav a {
-    margin: 1rem 1rem;
-    width: auto;
+    margin: 0 1rem;
     color: var(--background-color)
 }
 
@@ -150,7 +149,6 @@ li {
     display: flex;
     flex-direction: column;
     width: 100%;
-    height: 100%;
     z-index: 1000;
 }
 
@@ -182,7 +180,7 @@ li {
     padding: 0.5rem;
     border: 0.0625rem solid #ccc;
     border-radius: 0.25rem;
-    font-size: 1em;
+    font-size: 1rem;
 }
 
 .btn-primary {
@@ -192,7 +190,17 @@ li {
     color: black;
     border: none;
     border-radius: 0.25rem;
-    font-size: 1em;
+    font-size: 1rem;
+    cursor: pointer;
+}
+.btn-secondary {
+    margin-left: 0.25rem;
+    padding: 0.5rem;
+    background: var(--secondary-color);
+    color: black;
+    border: none;
+    border-radius: 0.25rem;
+    font-size: 1rem;
     cursor: pointer;
 }
 
@@ -204,7 +212,7 @@ li {
     color: black;
     border: none;
     border-radius: 0.25rem;
-    font-size: 1em;
+    font-size: 1rem;
     cursor: pointer;
 }
 
