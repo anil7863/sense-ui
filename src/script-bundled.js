@@ -13,14 +13,14 @@ const CONFIG = {
             ENDPOINT: 'https://api.openai.com/v1/chat/completions',
             MODEL: 'gpt-4o-mini',
             MAX_TOKENS: 2000,
-            TEMPERATURE: 0.7
+            TEMPERATURE: 0.5
         },
         GEMINI: {
             ENDPOINT: 'https://generativelanguage.googleapis.com/v1beta/models',
             // Using gemini-1.5-flash - faster, more cost-effective
             MODEL: 'gemini-1.5-flash',
             MAX_TOKENS: 2000,
-            TEMPERATURE: 0.7
+            TEMPERATURE: 0.5
         }
     },
     STORAGE_KEYS: {
@@ -33,9 +33,16 @@ const CONFIG = {
     PROMPTS: {
         SYSTEM: `You are an AI web design assistant dedicated to help blind and visually impaired web developers work independently and confidently on UI and web design tasks. 
         Provide structured, clear, and actionable feedback that avoids vague or subjective language. Always present information in bullet-point or hierarchical format to ensure compatibility with screen readers. 
+        
+        CRITICAL FORMATTING RULES:
+        - NEVER use HTML tags in your response text (e.g., don't write "<h1>" or "<div>")
+        - When referring to HTML elements, use plain text like: h1 element, div with class "container", button element
+        - Use markdown for formatting: ## for headings, - for lists
+        - Do NOT use bold (**text**) or italic formatting - screen readers don't convey visual emphasis
+        
         CORE PRINCIPLES:    
         - Follow modern, minimalist, and easy-to-navigate design principles
-        - Be objective, honest , specific and constructive
+        - Be objective, honest, specific and constructive
         - Do not offer code unless asked to by the user
         - Do not assume or invent details outside the viewport. If information is uncertain or not visible, state the limitation clearly.`,
 
@@ -51,43 +58,43 @@ IMPORTANT RULES:
 3. Present the description in bullet points, progressing from general layout to specific details. 
 4. Avoid subjective terms like “beautiful” or “ugly.” 
 
-Always start the response with: "## Visual Design Description of [Website Name]"
-Include:
-### Overall Impression 
+Always start the response with a H2 title: "Visual Design Description of [Website Name]"
+Include these sub-titles:
+Overall Impression:
 [What's the immediate visual impression? Describe the aesthetic (minimalist/professional/modern/traditional/playful/corporate/etc.) and the overall feeling it creates.]
 
-### Viewport Content
+Viewport Content
 Describe what's visually present in the current viewport from top to bottom:
 - Identify the PAGE POSITION: Is this the top/header area, middle content, footer, or a specific section?
 - Identify each major section/component visible (use accurate terms: "content section", "article grid", "footer", "navigation area" - NOT "hero" unless it's clearly the top banner)
 - Describe visual elements: images, icons, graphics, illustrations
 - Explain the visual hierarchy and what draws attention
 
-### Layout & Structure
+Layout & Structure
 - Layout technique used (CSS Grid, Flexbox, traditional block layout) - cite CSS properties if available
 - Content arrangement (columns, rows, asymmetry)
 - Alignment patterns
 
-### Color Palette
+Color Palette
 - Primary colors: [extract hex codes from CSS if available, or estimate from screenshot with note "estimated from screenshot"]
 - Accent/secondary colors: [hex codes]
 - Background colors
 - Text colors
 - Mood created by the palette
 
-### Typography
+Typography
 - Font families: [extract from CSS if available, e.g., "Inter, sans-serif" - if not in CSS, describe as "sans-serif" or "serif"]
 - Heading styles: [if sizes are in CSS, cite them (e.g., "32px, font-weight: 700") - otherwise describe relatively: "large bold headings"]
 - Body text: [cite CSS values if available, otherwise describe: "medium-sized, good line-height"]
 - Overall readability and typographic hierarchy
 
-### Spacing & Density
+Spacing & Density
 - Spacing philosophy (tight/compact or spacious/airy)
 - Padding/margin patterns: [cite CSS values if available (e.g., "24px padding") - otherwise describe: "generous spacing" or "minimal margins"]
 - White space usage (generous or minimal)
 - Overall information density
 
-### UI Components
+UI Components
 - Button styles: [cite CSS if available, otherwise describe: "rounded corners, medium size"]
 - Form elements (if present)
 - Cards/panels (if present)
@@ -98,6 +105,12 @@ End with: "Want me to analyze a specific element in more detail?"`,
         ISSUES: `Identify design and accessibility issues on the current webpage and provide actionable solutions.
 
 IMPORTANT: Only report issues you can actually verify from the HTML, CSS, and screenshot. If the page appears well-designed with no significant issues, say so! Do NOT invent problems that don't exist.
+
+CRITICAL FORMATTING RULES:
+- NEVER write HTML tags in your response (e.g., don't write "<h1>" or "<div>" or "<button>")
+- Instead, refer to elements as: "the h1 element", "the main heading", "div with class hero", "the submit button"
+- When citing CSS selectors, write them as: .class-name or #id-name (without angle brackets)
+- Use markdown for your response structure: ## for section headings, - for bullet lists
 
 ANALYZE FOR:
 - Visual hierarchy problems (unclear heading structure, poor emphasis)
@@ -204,29 +217,57 @@ async function retrieveApiKey(keyName) {
 // ============================================================================
 function markdownToHTML(markdown) {
     if (!markdown) return '';
+    
+    console.log('🔍 ORIGINAL MARKDOWN:', markdown.substring(0, 200));
     let html = markdown;
     
-    html = html.replace(/```(\w+)?\n([\s\S]*?)```/g, (match, lang, code) => {
-        const language = lang ? ` class="language-${lang}"` : '';
-        return `<pre><code${language}>${code.trim()}</code></pre>`;
-    });
-    html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
-    html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
-    html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');
-    html = html.replace(/^# (.*$)/gim, '<h2>$1</h2>');
-    html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-    html = html.replace(/__(.+?)__/g, '<strong>$1</strong>');
+    // Process headings FIRST (before anything else that might interfere)
+    // Using \s* to allow optional spaces after # and .* to match the rest of the line
+    html = html.replace(/^###\s*(.*)$/gim, '<h3>$1</h3>');
+    html = html.replace(/^##\s*(.*)$/gim, '<h2>$1</h2>');
+    html = html.replace(/^#\s*(.*)$/gim, '<h2>$1</h2>');
+    
+    console.log('🔍 AFTER HEADING CONVERSION:', html.substring(0, 200));
+    
+    // Process lists
+    html = html.replace(/^(?!<h[1-6]>)\s*[-*]\s+(.+)$/gim, '<li>$1</li>');
+    html = html.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
+    
+    // Remove bold/strong markdown (no semantic value for screen readers - just visual)
+    html = html.replace(/\*\*(.+?)\*\*/g, '$1');
+    html = html.replace(/__(.+?)__/g, '$1');
+    
+    console.log('🔍 AFTER BOLD REMOVAL:', html.substring(0, 200));
+    
+    // Process italic/emphasis
     html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
     html = html.replace(/_(.+?)_/g, '<em>$1</em>');
-    html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
-    html = html.replace(/^\s*[-*]\s+(.+)$/gim, '<li>$1</li>');
-    html = html.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
-    html = html.replace(/\n\n/g, '</p><p>');
-    html = html.replace(/\n/g, '<br>');
     
-    if (!html.startsWith('<h') && !html.startsWith('<ul') && !html.startsWith('<ol') && !html.startsWith('<pre')) {
-        html = `<p>${html}</p>`;
+    // Process links
+    html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+    
+    // Split into lines and wrap paragraphs intelligently
+    const lines = html.split('\n');
+    const processedLines = [];
+    
+    for (let i = 0; i < lines.length; i++) {
+        const line = lines[i].trim();
+        
+        // Skip empty lines
+        if (!line) continue;
+        
+        // Don't wrap headings or lists in paragraphs
+        if (line.startsWith('<h') || line.startsWith('<li>') || line.startsWith('<ul>') || line.startsWith('</ul>')) {
+            processedLines.push(line);
+        } else {
+            // Wrap plain text in paragraph tags
+            processedLines.push(`<p>${line}</p>`);
+        }
     }
+    
+    html = processedLines.join('\n');
+    
+    console.log('🔍 FINAL HTML:', html.substring(0, 200));
     return html;
 }
 
@@ -495,7 +536,8 @@ async function sendToOpenAI(apiKey, systemPrompt, userMessage, screenshot) {
             messages: messages,
             temperature: CONFIG.API.OPENAI.TEMPERATURE,
             max_tokens: CONFIG.API.OPENAI.MAX_TOKENS
-        })
+        }),
+        signal: currentAbortController?.signal
     });
 
     if (!response.ok) {
@@ -534,7 +576,8 @@ async function sendToGemini(apiKey, systemPrompt, userMessage, screenshot) {
     const response = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(requestBody)
+        body: JSON.stringify(requestBody),
+        signal: currentAbortController?.signal
     });
 
     if (!response.ok) {
@@ -659,6 +702,10 @@ let introSection;
 // Cache for page context (captured once per session)
 let cachedContext = null;
 let currentPageUrl = null;
+
+// Abort controller for cancelling requests
+let currentAbortController = null;
+let isGenerating = false;
 
 // Save chat history to storage
 async function saveChatHistory() {
@@ -812,6 +859,22 @@ document.addEventListener('keydown', (e) => {
 }, true);
 
 async function sendMessage() {
+    // If currently generating, stop it
+    if (isGenerating && currentAbortController) {
+        currentAbortController.abort();
+        currentAbortController = null;
+        isGenerating = false;
+        
+        // Reset button
+        if (sendButton) {
+            sendButton.textContent = 'Send';
+            sendButton.setAttribute('aria-label', 'Send message');
+        }
+        
+        announce('Generation stopped');
+        return;
+    }
+    
     const userInput = chatInput.value.trim();
     if (!userInput) return;
     
@@ -908,6 +971,14 @@ async function sendMessage() {
         : 'Analyzing page...';
     announce(announceMessage);
     
+    // Create abort controller and update button
+    currentAbortController = new AbortController();
+    isGenerating = true;
+    if (sendButton) {
+        sendButton.textContent = 'Stop';
+        sendButton.setAttribute('aria-label', 'Stop generation');
+    }
+    
     try {
         const response = await processUserInput(userInput);
         loadingDiv.remove();
@@ -916,7 +987,7 @@ async function sendMessage() {
         responseDiv.innerHTML = response.html;
         chatMessages.appendChild(responseDiv);
         attachResponseActions(responseDiv);
-        announce(response.summary);
+        announce('Response received');
         
         // Save chat history after successful response
         await saveChatHistory();
@@ -925,20 +996,37 @@ async function sendMessage() {
         console.error('Error:', error);
         loadingDiv.remove();
         
-        const errorDiv = document.createElement('div');
-        errorDiv.className = 'system-response error-response';
-        errorDiv.innerHTML = `
-            <h2>Error</h2>
-            <p>${error.message}</p>
-            ${error.message.includes('API key') ? 
-                '<p>Please visit <a href="settings.html">Settings</a> to configure your API key.</p>' : 
-                '<p>Please try again or check the console for more details.</p>'}
-        `;
-        chatMessages.appendChild(errorDiv);
-        announce(`Error: ${error.message}`);
+        // Check if it was aborted
+        if (error.name === 'AbortError') {
+            const abortDiv = document.createElement('div');
+            abortDiv.className = 'system-response';
+            abortDiv.innerHTML = `<h2>System</h2><p>Generation stopped by user.</p>`;
+            chatMessages.appendChild(abortDiv);
+            announce('Generation stopped');
+        } else {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'system-response error-response';
+            errorDiv.innerHTML = `
+                <h2>Error</h2>
+                <p>${error.message}</p>
+                ${error.message.includes('API key') ? 
+                    '<p>Please visit <a href="settings.html">Settings</a> to configure your API key.</p>' : 
+                    '<p>Please try again or check the console for more details.</p>'}
+            `;
+            chatMessages.appendChild(errorDiv);
+            announce(`Error: ${error.message}`);
+        }
         
         // Save chat history even with errors
         await saveChatHistory();
+    } finally {
+        // Reset button and state
+        currentAbortController = null;
+        isGenerating = false;
+        if (sendButton) {
+            sendButton.textContent = 'Send';
+            sendButton.setAttribute('aria-label', 'Send message');
+        }
     }
     
     chatMessages.scrollTop = chatMessages.scrollHeight;

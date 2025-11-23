@@ -29,33 +29,52 @@
         <section>
             <form id="settings-form" novalidate>
                 <!-- API Configuration Section -->
+                 <h2>API Configuration</h2>
                 <fieldset id="api-fieldset" aria-labelledby="api-legend" aria-describedby="api-desc">
-                    <legend id="api-legend">API Configuration</legend>
+                    <legend id="api-legend" class="sr-only">API Configuration</legend>
                     <p id="api-desc" class="hint">Configure your AI provider. At least one API key is required for SenseUI to work.</p>
-
-                    <label for="provider-select">AI Provider</label>
-                    <select id="provider-select" name="provider" aria-describedby="provider-desc">
-                        <option value="openai">OpenAI (GPT-4)</option>
-                        <option value="gemini">Google Gemini</option>
-                    </select>
-                    <small id="provider-desc" class="hint">Choose which AI service to use for analysis.</small>
-
-                    <label for="openai-key">OpenAI API Key</label>
+                    <!-- AI provider selection -->
+                        <label for="provider-select">AI Provider</label>
+                        <br>
+                        <label for="provider-openai">
+                            <input
+                                id="provider-openai"
+                                type="radio"
+                                name="provider"
+                                value="openai"
+                                checked
+                                aria-checked="true"
+                                aria-describedby="provider-desc"
+                            />
+                            OpenAI (GPT-4)
+                        </label>
+                        <br>
+                        <label for="provider-gemini">
+                            <input
+                                id="provider-gemini"
+                                type="radio"
+                                name="provider"
+                                value="gemini"
+                                aria-checked="false"
+                                aria-describedby="provider-desc"
+                            />
+                            Google Gemini
+                        </label>
+                    <br>
+                    <!--OpenAI key input-->
+                    <label for="openai-key">Enter your key</label>
                     <input 
                         type="password" 
                         id="openai-key" 
                         name="openaiApiKey" 
-                        placeholder="sk-..." 
+                        placeholder="Your OpenAI API key" 
                         aria-describedby="openai-key-desc"
                         autocomplete="off"
                     />
-                    <small id="openai-key-desc" class="hint">
-                        Get your API key from <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer">OpenAI Platform</a>. 
-                        <span id="openai-status" aria-live="polite"></span>
-                    </small>
+                    <span id="openai-status" aria-live="polite"></span>
                     <button type="button" id="clear-openai-key" class="btn-secondary" style="display: none;">Clear OpenAI Key</button>
-
-                    <label for="gemini-key">Gemini API Key</label>
+                    <!--Gemini key input-->
+                    <label for="gemini-key" style="display: none;">Enter your key</label>
                     <input 
                         type="password" 
                         id="gemini-key" 
@@ -63,70 +82,80 @@
                         placeholder="Your Gemini API key" 
                         aria-describedby="gemini-key-desc"
                         autocomplete="off"
+                        style="display: none;"
                     />
-                    <small id="gemini-key-desc" class="hint">
-                        Get your API key from <a href="https://makersuite.google.com/app/apikey" target="_blank" rel="noopener noreferrer">Google AI Studio</a>. 
-                        <span id="gemini-status" aria-live="polite"></span>
-                    </small>
+                    <span id="gemini-status" aria-live="polite" style="display: none;"></span>
                     <button type="button" id="clear-gemini-key" class="btn-secondary" style="display: none;">Clear Gemini Key</button>
+                <br>
                 </fieldset>
+                <!-- End API Configuration Section -->
+                <!-- Feedback Detail Level Section -->
+                <h2>Feedback Detail Level (non-functional)</h2>
                 <fieldset id="detail-fieldset" role="radiogroup" aria-labelledby="detail-legend"
                     aria-describedby="detail-desc">
-                    <legend id="detail-legend">Feedback detail level</legend>
+                    <legend id="detail-legend" class="sr-only">Feedback detail level</legend>
                     <p id="detail-desc" class="hint">Choose how verbose SenseUI's feedback should be.</p>
-
+                    <br>
                     <label for="detail-comprehensive">
                         <input id="detail-comprehensive" type="radio" name="detail" value="comprehensive"
                             aria-checked="false">
                         Comprehensive
                     </label>
-
+                    <br>
                     <label for="detail-normal">
                         <input id="detail-normal" type="radio" name="detail" value="normal" checked aria-checked="true">
                         Normal (default)
                     </label>
-
+                    <br>
                     <label for="detail-concise">
                         <input id="detail-concise" type="radio" name="detail" value="concise" aria-checked="false">
                         Concise
                     </label>
                 </fieldset>
-
+                <br>
+                <!-- End Feedback Detail Level Section -->
+                <!-- Chat History Download Section -->
+                <h2>Chat History Download (non-functional)</h2>
                 <fieldset id="download-fieldset" role="radiogroup" aria-labelledby="download-legend"
                     aria-describedby="download-desc">
-                    <legend id="download-legend">Chat history download</legend>
+                    <legend id="download-legend" class="sr-only">Chat history download</legend>
                     <p id="download-desc" class="hint">Select which conversations will be included when you export your
                         history.</p>
-
+                        <br>
                     <label for="download-all">
                         <input id="download-all" type="radio" name="download" value="all" checked aria-checked="true">
                         Download all
                     </label>
-
+                    <br>
                     <label for="download-favorites">
                         <input id="download-favorites" type="radio" name="download" value="favorites"
                             aria-checked="false">
                         Only favorites
                     </label>
                 </fieldset>
-
+                <br>
+                <!-- End Chat History Download Section -->
+                <!-- Add Context Section -->
+                <h2>Add Context (non-functional)</h2>
                 <fieldset id="context-fieldset" aria-labelledby="context-legend" aria-describedby="context-desc">
-                    <legend id="context-legend">Add context</legend>
-                    <p id="context-desc" class="sr-only">Add any instructions or attach files to help improve feedback.
-                        Attachments are optional.</p>
-
+                    <legend id="context-legend" class="sr-only">Add instructions</legend>
+                    <p id="context-desc" class="sr-only">Add any instructions or attach files to help improve feedback.</p>
                     <label for="context-text">Instructions</label>
-                    <textarea id="context-text" name="context" rows="4" placeholder="Add instructions"
+                    <br>
+                    <textarea id="context-text" name="context" rows="4" cols="40" placeholder="Add instructions"
                         aria-describedby="context-text-desc"></textarea>
                     <br>
                     <small id="context-text-desc">These instructions will be sent with every prompt to provide
                         additional context.</small>
                     <br>
                     <label for="context-files">Attach files</label>
+                    <br>
                     <input id="context-files" type="file" name="files" multiple aria-describedby="files-desc" />
+                    <br>
                     <small id="files-desc" class="hint">You can attach files (images, PDFs). Max 10 MB per file.</small>
                 </fieldset>
-
+                <!-- End Add Context Section -->
+                 <br>
                 <div class="button-container">
                     <button type="submit" id="save-settings" class="btn-primary">Save</button>
                 </div>
