@@ -34,10 +34,7 @@
                     or <kbd>Command</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd> on Mac.
                 </li>
                 <li>Ask a question on the chat or type / to use the commands.</li>
-                <!-- These lines are commented out for now since the pages don't exist
-                <li>To add context or customize the feedback, go to <a href="settings.html">Settings</a></li>
-                <li>To read more, go to <a href="documentation.html">About</a></li>-->
-            </ol>
+                </ol>
             <p>SenseUI is still in beta and AI feedback might be inaccurate. Please report any issues.</p>
         </section>
         <section class="chat-container" aria-label="Chat interface">
@@ -50,6 +47,7 @@
                 <datalist id="command-list">
                     <option value="/describe">
                     <option value="/issues">
+                    <option value="/refresh">
                     <option value="/clear">
                 </datalist>
                 <div class="button-container">
@@ -58,7 +56,7 @@
             </div>
         </section>
     </main>
-    <script src="script.js"></script>
+    <script src="script-bundled.js"></script>
 </body>
 
 </html>

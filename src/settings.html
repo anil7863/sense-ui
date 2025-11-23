@@ -23,11 +23,53 @@
     <main id="main">
         <section class="intro">
             <h1>Settings</h1>
-            <p>These settings are not yet functional.</p>
+            <p>Configure your API keys and customize SenseUI's behavior.</p>
         </section>
 
         <section>
             <form id="settings-form" novalidate>
+                <!-- API Configuration Section -->
+                <fieldset id="api-fieldset" aria-labelledby="api-legend" aria-describedby="api-desc">
+                    <legend id="api-legend">API Configuration</legend>
+                    <p id="api-desc" class="hint">Configure your AI provider. At least one API key is required for SenseUI to work.</p>
+
+                    <label for="provider-select">AI Provider</label>
+                    <select id="provider-select" name="provider" aria-describedby="provider-desc">
+                        <option value="openai">OpenAI (GPT-4)</option>
+                        <option value="gemini">Google Gemini</option>
+                    </select>
+                    <small id="provider-desc" class="hint">Choose which AI service to use for analysis.</small>
+
+                    <label for="openai-key">OpenAI API Key</label>
+                    <input 
+                        type="password" 
+                        id="openai-key" 
+                        name="openaiApiKey" 
+                        placeholder="sk-..." 
+                        aria-describedby="openai-key-desc"
+                        autocomplete="off"
+                    />
+                    <small id="openai-key-desc" class="hint">
+                        Get your API key from <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer">OpenAI Platform</a>. 
+                        <span id="openai-status" aria-live="polite"></span>
+                    </small>
+                    <button type="button" id="clear-openai-key" class="btn-secondary" style="display: none;">Clear OpenAI Key</button>
+
+                    <label for="gemini-key">Gemini API Key</label>
+                    <input 
+                        type="password" 
+                        id="gemini-key" 
+                        name="geminiApiKey" 
+                        placeholder="Your Gemini API key" 
+                        aria-describedby="gemini-key-desc"
+                        autocomplete="off"
+                    />
+                    <small id="gemini-key-desc" class="hint">
+                        Get your API key from <a href="https://makersuite.google.com/app/apikey" target="_blank" rel="noopener noreferrer">Google AI Studio</a>. 
+                        <span id="gemini-status" aria-live="polite"></span>
+                    </small>
+                    <button type="button" id="clear-gemini-key" class="btn-secondary" style="display: none;">Clear Gemini Key</button>
+                </fieldset>
                 <fieldset id="detail-fieldset" role="radiogroup" aria-labelledby="detail-legend"
                     aria-describedby="detail-desc">
                     <legend id="detail-legend">Feedback detail level</legend>
@@ -95,6 +137,7 @@
             </form>
         </section>
     </main>
+    <script src="settings-bundled.js"></script>
 </body>
 
 </html>
