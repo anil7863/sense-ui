@@ -2,7 +2,7 @@
 
 SenseUI is an open-source Chrome extension that gives blind and low-vision web developers real-time, actionable feedback on their web designs. Get visual descriptions of your pages and receive design recommendations without relying on sighted friends or colleagues. I'm making this project as part of my master's thesis in Human-Computer Interaction, but this repository will **not be deleted or closed** after the completion of my degree. It will remain open-source and everyone is free to fork it, change it, adapt and use freely.
 
-**Looking for:** Blind and low-vision developers to test and provide feedback. Participation is flexible and optional. You can participate in as many Sprints as you can. For more details go to [How to Contribute](#how-to-contribute) or sign up throught the [Participation form](https://tinyurl.com/senseui-form)
+**Looking for:** Blind and low-vision developers to test and provide feedback. Participation is flexible and optional. You can participate in as many Sprints as you can. For more details go to [How to Contribute](#how-to-contribute) or sign up through the [Participation form](https://tinyurl.com/senseui-form)
 
 **Current State:** Sprint 1 (Foundation)
 
