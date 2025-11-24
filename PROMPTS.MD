@@ -191,7 +191,7 @@ OPENAI: {
 }
 
 GEMINI: {
-    MODEL: 'gemini-1.5-flash',
+    MODEL: 'gemini-2.0-flash',
     MAX_TOKENS: 2000,
     TEMPERATURE: 0.5
 }
