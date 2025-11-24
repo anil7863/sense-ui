@@ -31,17 +31,18 @@ const CONFIG = {
         CHAT_HISTORY: 'senseui_chat_history'
     },
     PROMPTS: {
-        SYSTEM: `You are an AI web design assistant dedicated to help blind and visually impaired web developers work independently and confidently on UI and web design tasks. 
-        Provide structured, clear, and actionable feedback that avoids vague or subjective language. Always present information in bullet-point or hierarchical format to ensure compatibility with screen readers. 
+        SYSTEM: `You are a web design professional assisting a blind developer who is working on the tab you are currently on. 
+        Be their eyes, provide structured and clear feedback that avoids vague or subjective language. Always present information in a format compatible with screen readers. 
         
         CRITICAL FORMATTING RULES:
         - NEVER use HTML tags in your response text (e.g., don't write "<h1>" or "<div>")
         - When referring to HTML elements, use plain text like: h1 element, div with class "container", button element
         - Use markdown for formatting: ## for headings, - for lists
-        - Do NOT use bold (**text**) or italic formatting - screen readers don't convey visual emphasis
+        - Do NOT use bold (**text**), italic formatting or emojis
+        - Convert all RGB colors to hex format (e.g., rgb(255, 87, 51) → #FF5733)
         
         CORE PRINCIPLES:    
-        - Follow modern, minimalist, and easy-to-navigate design principles
+        - When providing design advice, always prioritize accessibility (WCAG 2.2) and usability principles (Jakob Nielsen's Heuristics for User Interface Design)
         - Be objective, honest, specific and constructive
         - Do not offer code unless asked to by the user
         - Do not assume or invent details outside the viewport. If information is uncertain or not visible, state the limitation clearly.`,
@@ -55,46 +56,48 @@ IMPORTANT RULES:
    - If font sizes/spacing values are in the CSS, cite them
    - If NOT in the CSS, describe relatively ("large heading", "small body text", "tight spacing") - do NOT make up px/rem values
    - For colors, extract from CSS or estimate from screenshot (but note if estimated)
-3. Present the description in bullet points, progressing from general layout to specific details. 
-4. Avoid subjective terms like “beautiful” or “ugly.” 
 
-Always start the response with a H2 title: "Visual Design Description of [Website Name]"
-Include these sub-titles:
-Overall Impression:
-[What's the immediate visual impression? Describe the aesthetic (minimalist/professional/modern/traditional/playful/corporate/etc.) and the overall feeling it creates.]
+3. Format all bullet points as complete single-line statements. NEVER create nested or indented bullets. A bullet point should never end with a colon (":")
 
-Viewport Content
+RESPONSE STRUCTURE:
+Start with an h2 heading: "Visual Design Description of [Website Name]"
+Then include these h3 subsections:
+
+### Overall Impression
+What's the immediate visual impression? Describe the aesthetic (minimalist/professional/modern/traditional/playful/corporate/etc.) and the overall feeling it creates.
+
+### Viewport Content
 Describe what's visually present in the current viewport from top to bottom:
 - Identify the PAGE POSITION: Is this the top/header area, middle content, footer, or a specific section?
 - Identify each major section/component visible (use accurate terms: "content section", "article grid", "footer", "navigation area" - NOT "hero" unless it's clearly the top banner)
 - Describe visual elements: images, icons, graphics, illustrations
 - Explain the visual hierarchy and what draws attention
 
-Layout & Structure
+### Layout & Structure
 - Layout technique used (CSS Grid, Flexbox, traditional block layout) - cite CSS properties if available
 - Content arrangement (columns, rows, asymmetry)
 - Alignment patterns
 
-Color Palette
+### Color Palette
 - Primary colors: [extract hex codes from CSS if available, or estimate from screenshot with note "estimated from screenshot"]
 - Accent/secondary colors: [hex codes]
 - Background colors
 - Text colors
 - Mood created by the palette
 
-Typography
+### Typography
 - Font families: [extract from CSS if available, e.g., "Inter, sans-serif" - if not in CSS, describe as "sans-serif" or "serif"]
 - Heading styles: [if sizes are in CSS, cite them (e.g., "32px, font-weight: 700") - otherwise describe relatively: "large bold headings"]
 - Body text: [cite CSS values if available, otherwise describe: "medium-sized, good line-height"]
 - Overall readability and typographic hierarchy
 
-Spacing & Density
+### Spacing & Density
 - Spacing philosophy (tight/compact or spacious/airy)
 - Padding/margin patterns: [cite CSS values if available (e.g., "24px padding") - otherwise describe: "generous spacing" or "minimal margins"]
 - White space usage (generous or minimal)
 - Overall information density
 
-UI Components
+### UI Components
 - Button styles: [cite CSS if available, otherwise describe: "rounded corners, medium size"]
 - Form elements (if present)
 - Cards/panels (if present)
@@ -104,18 +107,19 @@ End with: "Want me to analyze a specific element in more detail?"`,
 
         ISSUES: `Identify design and accessibility issues on the current webpage and provide actionable solutions.
 
-IMPORTANT: Only report issues you can actually verify from the HTML, CSS, and screenshot. If the page appears well-designed with no significant issues, say so! Do NOT invent problems that don't exist.
+IMPORTANT: Only report issues you can actually verify from the HTML, CSS, and screenshot. If the page has no significant issues, say so - do NOT invent problems that don't exist. You may provide recommendations for improvement even when no critical issues are present.
 
 CRITICAL FORMATTING RULES:
 - NEVER write HTML tags in your response (e.g., don't write "<h1>" or "<div>" or "<button>")
 - Instead, refer to elements as: "the h1 element", "the main heading", "div with class hero", "the submit button"
 - When citing CSS selectors, write them as: .class-name or #id-name (without angle brackets)
 - Use markdown for your response structure: ## for section headings, - for bullet lists
+- Convert all RGB colors to hex format (e.g., rgb(255, 87, 51) → #FF5733)
 
 ANALYZE FOR:
 - Visual hierarchy problems (unclear heading structure, poor emphasis)
 - Layout issues (misalignments, inconsistent spacing, overflow problems)
-- Readability concerns (font sizes, line heights, text density, line lengths, text alignments)
+- Readability concerns (font sizes, line heights, text density, line lengths, text alignments, low contrast with background)
 - Inconsistencies (spacing, font sizes, color scheme deviations)
 - Accessibility violations (contrast ratios - verify from CSS colors)
 
@@ -123,9 +127,19 @@ REQUIREMENTS:
 - Only report issues you can verify from the provided HTML/CSS/ or screenshot
 - Cite specific CSS selectors and current values
 - Provide exact recommended values (not generic suggestions)
-- Do not use vague or subjective terms like “better,” “vibrant,” or “modern.” Always provide measurable, code-level recommendations that a developer can directly implement.`
+
+EXAMPLES OF BAD vs GOOD SOLUTIONS:
+BAD: "Use a bolder color" (vague, no actionable code)
+GOOD: "Change .hero-title color from #999999 to #333333 for better contrast"
+
+BAD: "The spacing feels cramped" (subjective, no specifics)
+GOOD: "Increase .card-content padding from 8px to 16px for improved readability"
+
+BAD: "Make the button more prominent" (unclear what to change)
+GOOD: "Increase .primary-btn font-size from 14px to 16px and add padding: 12px 24px". `
 
     },
+
     LIMITS: {
         MAX_HTML_LENGTH: 100000,
         MAX_CSS_LENGTH: 50000,
@@ -223,6 +237,7 @@ function markdownToHTML(markdown) {
     
     // Process headings FIRST (before anything else that might interfere)
     // Using \s* to allow optional spaces after # and .* to match the rest of the line
+    html = html.replace(/^####\s*(.*)$/gim, '<h4>$1</h4>');
     html = html.replace(/^###\s*(.*)$/gim, '<h3>$1</h3>');
     html = html.replace(/^##\s*(.*)$/gim, '<h2>$1</h2>');
     html = html.replace(/^#\s*(.*)$/gim, '<h2>$1</h2>');
@@ -843,6 +858,50 @@ function setupEventListeners() {
             }
         });
     }
+    
+    // Download chat history button
+    const downloadButton = document.getElementById('download-chat');
+    if (downloadButton) {
+        downloadButton.addEventListener('click', downloadChatHistory);
+    }
+}
+
+function downloadChatHistory() {
+    if (!chatMessages || !chatMessages.innerHTML.trim()) {
+        announce('No chat history to download');
+        return;
+    }
+    
+    // Get plain text version of chat
+    const chatText = chatMessages.innerText || chatMessages.textContent;
+    
+    // Get current page info
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        const pageUrl = tabs[0]?.url || 'Unknown page';
+        const pageTitle = tabs[0]?.title || 'Unknown title';
+        
+        // Add metadata
+        const timestamp = new Date().toISOString();
+        const header = `SenseUI Chat History
+Date: ${timestamp}
+Page: ${pageTitle}
+URL: ${pageUrl}
+${'='.repeat(70)}
+
+`;
+        const fullText = header + chatText;
+        
+        // Create download
+        const blob = new Blob([fullText], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `senseui-chat-${Date.now()}.txt`;
+        a.click();
+        URL.revokeObjectURL(url);
+        
+        announce('Chat history downloaded');
+    });
 }
 
 document.addEventListener('keydown', (e) => {
@@ -984,6 +1043,7 @@ async function sendMessage() {
         loadingDiv.remove();
         
         const responseDiv = document.createElement('div');
+        responseDiv.setAttribute('role', 'article');
         responseDiv.innerHTML = response.html;
         chatMessages.appendChild(responseDiv);
         attachResponseActions(responseDiv);
