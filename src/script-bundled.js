@@ -17,7 +17,7 @@ const CONFIG = {
         },
         GEMINI: {
             ENDPOINT: 'https://generativelanguage.googleapis.com/v1beta/models',
-            // Using gemini-2.0-flash - faster, more cost-effective
+            // Using gemini-1.5-flash - faster, more cost-effective
             MODEL: 'gemini-2.0-flash',
             MAX_TOKENS: 2000,
             TEMPERATURE: 0.5
