@@ -1043,6 +1043,7 @@ async function sendMessage() {
         loadingDiv.remove();
         
         const responseDiv = document.createElement('div');
+        responseDiv.setAttribute('role', 'article');
         responseDiv.innerHTML = response.html;
         chatMessages.appendChild(responseDiv);
         attachResponseActions(responseDiv);
