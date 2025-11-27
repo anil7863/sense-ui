@@ -4,7 +4,7 @@ Date: Nov 03, 2025
 
 Duration: 2 weeks (Oct 20 - Nov 03 2025)  
 
-Testers: @paulGeoghegan, @rayo-alcantar , @rpccl , @alekunkel, @aqdeer-wadera, @samughal819
+Testers: @paulGeoghegan, @rayo-alcantar , @rpccl , @alekunkel, @aqdeer-wadera, @samughal819, @choiyoung7, @fahimnet2014
 
 ---
 
@@ -13,8 +13,8 @@ Testers: @paulGeoghegan, @rayo-alcantar , @rpccl , @alekunkel, @aqdeer-wadera, @
 Established accessible core infrastructure extension so users can navigate and interact with the tool using screen readers.
 
 - Issues found: 14
-- Active testers: 6
-- Screen reader coverage: 5 NVDA testers and 1 JAWS
+- Active testers: 8
+- Screen reader coverage: 6 NVDA testers and 2 JAWS
 
 ---
 
