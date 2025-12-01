@@ -1,10 +1,15 @@
 # SenseUI
 
-SenseUI is an open-source Chrome extension that gives blind and low-vision web developers real-time, actionable feedback on their web designs. Get visual descriptions of your pages and receive design recommendations without relying on sighted friends or colleagues. I'm making this project as part of my master's thesis in Human-Computer Interaction, but this repository will **not be deleted or closed** after the completion of my degree. It will remain open-source and everyone is free to fork it, change it, adapt and use freely.
+SenseUI is an open-source Chromium extension that gives blind and low-vision web developers real-time, actionable feedback on their web designs. Get visual descriptions of your pages and receive design recommendations without relying on sighted friends or colleagues. I'm making this project as part of my master's thesis in Human-Computer Interaction, but this repository will not be deleted or closed after the completion of my degree. It will remain open-source and everyone is free to fork it, change it, adapt and use freely.
 
-**Looking for:** Blind and low-vision developers to test and provide feedback. Participation is flexible and optional. You can participate in as many Sprints as you can. For more details go to [How to Contribute](#how-to-contribute) or sign up through the [Participation form](https://tinyurl.com/senseui-form)
+We are actively looking forbBlind and low-vision developers to test and provide feedback. Participation is flexible and optional. You can participate in as many Sprints as you can. For more details go to [How to Contribute](#how-to-contribute)
 
-**Current State:** Sprint 1 (Foundation)
+Current State: Sprint 1 (Foundation)
+
+Join the mailing list for development updates: 
+
+[SenseUI mailing list](https://www.freelists.org/list/sense-ui)
+
 
 ---
 
@@ -81,40 +86,36 @@ SenseUI is an open-source Chrome extension that gives blind and low-vision web d
 
 ## Roadmap
 
-**Disclaimer:** The following are my initial guesses and not strict timelines
+Disclaimer: The following are my initial guesses and not strict timelines
 
-### Current phase
-
-#### Sprint 1: Foundation & Accessibility (until end of October)
+### Sprint 1: Foundation & Accessibility (until end of October)
 
 The goal for this sprint is to establish the core infrastructure: accessible interface with keyboard navigation, the keyboard shortcut to open the extension, quick prompts and semantic headings to each of the conversation turns for easy navigation. No AI integration at this point yet. 
 
-### What's next
+### Sprint 2: Core Functionality and AI integration (Current)
 
-#### Sprint 2: Core Functionality and AI integration (November 1 - 23)
+- AI Keys input from the settings page
+- AI-generated responses based on HTML/CSS and screenshots of the active tab
 
-- More details soon
-
-#### Sprint 3: Customization (November 24 - December 7)
+### Sprint 3: Customization (December 7 - 22)
 
 - Settings page
 - More details soon
 
-#### Sprint 4: Collaboration (December 8 - 20)
-
-Chat download, team sharing, documentation
-
-#### Holiday Break 
+### Holiday Break 
 From Dec 22 to January 4 
 
-#### Sprint 5: Polish and feedback loop (January 5 - 19)
+### Sprint 4: Collaboration (January 4 - 16)
+Chat download, team sharing, documentation
+
+### Sprint 5: Polish and feedback loop (January 19 - 31)
 Nice-to-have's and newer features (if time allows), edge cases
 
 ### More details
 
 For detailed progress, visit the [SenseUI GitHub issues page](https://github.com/reginacas/sense-ui/issues)
 
-Look for the issue tagged: "current-sprint"
+Look for the issue pinned
 
 ---
 
@@ -135,13 +136,9 @@ You download the Release, test it, and comment on what works and what breaks, su
 
 ### As a Developer
 
-If your heart desires, you can contribute code, fix bugs, or propose features. [Contact me](#contact) for details.
-
-### Sign Up
-
-Fill out this form to join as a tester or developer: [Interest Form Link](https://tinyurl.com/senseui-form)
-
-I will not publish your name, email or information without permission.
+If your heart desires, you can contribute code, fix bugs, or propose features.
+Simply fork the repository, make your changes and start a pull request.
+[Contact me](#contact) for any questions you have.
 
 ### Data Protection
 
