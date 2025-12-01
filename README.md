@@ -4,7 +4,7 @@ SenseUI is an open-source Chromium extension that gives blind and low-vision web
 
 We are actively looking forbBlind and low-vision developers to test and provide feedback. Participation is flexible and optional. You can participate in as many Sprints as you can. For more details go to [How to Contribute](#how-to-contribute)
 
-Current State: Sprint 1 (Foundation)
+Current State: Sprint 2
 
 Join the mailing list for development updates: 
 
