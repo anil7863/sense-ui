@@ -2,45 +2,14 @@
 
 ## Project Values
 
-- **Community-driven**: Development decisions emerge from continuous collaboration with BVI developers
-- **Accessibility-first**: All features must meet WCAG AAA standards
-- **Transparency**: Development happens in the open, with clear documentation
+- Community-driven: Development decisions emerge from continuous collaboration with BVI developers
+- Accessibility-first: All features must meet WCAG AAA standards
+- Transparency: Development happens in the open, with clear documentation
 
-## Ways to Contribute
-
-### As a Tester
-
-Testers evaluate each sprint's deliverables and provide crucial feedback on accessibility and usability.
-At the start of each testing phase, a tracking issue will be created (labeled "current-sprint") with:
-- What features are in this sprint
-- What to look for when testing. 
-
-After I create this issue, you will get tagged and then you can:
-- Test the tool for as much as you can (I would say at least 30 minutes)
-- Comment on what works, what breaks, suggest improvements, etc.
-- Assess screen reader compatibility and keyboard navigation
-- Report bugs and feedback through the issue's comments
-- Add criticality to the bugs:
-  - Critical: blocks major functionality or accessibility; must be fixed before next release
-  - High: Significant issue affecting a key features
-  - Medium: Noticeable issue but not a blocker; can be scheduled for later
-  - Low: Minor issue, fix when convenient
-  - Enhancement – Not a bug, but a suggested improvement
-
-**Flexibility:**
-- Skip any sprint if your schedule doesn't allow it, just let me know 
-- Withdraw at any time, you'll keep access to the mailing list and public repository
-
-### As a Developer
-
-Developers go beyond testing to directly implement fixes and features.
-
-**Responsibilities:**
-- All tester responsibilities (above)
+As a contributor, you may:
 - Create feature branches and submit pull requests
 - Address identified issues through code contributions
 - Participate in sprint planning discussions
-- For more details send me a message
 
 ## Development Process
 
@@ -55,15 +24,7 @@ community can help prioritize or suggest changes.
 
 Each sprint lasts 2 to 3 weeks, running until end of January/early February 2026.
 
-## How to Get Started
-
-### Prerequisites
-
-- Experience with web development and GitHub
-- Use a screen reader (NVDA, JAWS, or VoiceOver) for coding
-- Professional or educational experience in web development
-
-### Setup
+## To try the extension:
 
 1. Download the latest build from (Releases)[https://github.com/reginacas/sense-ui/releases]
 
@@ -73,45 +34,24 @@ Each sprint lasts 2 to 3 weeks, running until end of January/early February 2026
 
 6. Click "Load unpacked"
 
-7. Select the folder you downloaded, called "sprint-1-senseUI"
+7. Select the folder you downloaded, called "sprint-#-senseUI". This folder should include all the folders with the code, including the manifest file.
 
 8. SenseUI should now appear in your extensions
 
 9. To open it, press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd> (or <kbd>Command</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd> on Mac)
 
-## Reporting issues
-
-When reporting bugs or accessibility issues, please include:
-
-- Screen reader and version (e.g., NVDA 2024.1)
-- Browser and version (e.g., Chrome 120)
-- Steps to reproduce the issue
-- Expected behavior vs. actual behavior
-
-Use GitHub Issues with the appropriate labels:
-- `bug` - Something isn't working
-- `accessibility` - Screen reader or keyboard navigation issues
-- `enhancement` - Feature requests or improvements
-- `documentation` - Documentation needs
-
 ## Pull Request Guidelines
 
 1. Create a feature branch from `main`
-2. Follow accessibility standards: All code must be WCAG AAA compliant
+2. Follow accessibility standards: All code must be WCAG 2.2 AA compliant
 3. Write semantic HTML with proper ARIA labels
 5. Document your changes in the PR description
 6. Reference related issues (e.g., "Fixes #42")
 
-### Code Standards
-
-- Use semantic HTML elements
-- Include proper ARIA labels and roles
-- Ensure full keyboard navigation support
-
 ## Communication Channels
 
 - GitHub Issues: Bug reports, feature requests, and technical discussions
-- Mailing list: Sprint updates, retrospective scheduling, and announcements
+- Github discussions: add a question, comment or concern.
 - Retrospective calls: Bi-sprint reflection sessions (optional)
 
 ### Sprint Retrospectives
