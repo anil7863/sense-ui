@@ -1,15 +1,12 @@
 # SenseUI
 
-SenseUI is an open-source Chromium extension that gives blind and low-vision web developers real-time, actionable feedback on their web designs. Get visual descriptions of your pages and receive design recommendations without relying on sighted friends or colleagues. I'm making this project as part of my master's thesis in Human-Computer Interaction, but this repository will not be deleted or closed after the completion of my degree. It will remain open-source and everyone is free to fork it, change it, adapt and use freely.
+SenseUI is an open-source Chromium extension that gives blind and low-vision web developers real-time, actionable feedback on their web designs. Get visual descriptions of your pages and receive design recommendations without relying on sighted colleagues or generic AI tools that lack context on your website and deliver vague, unhelpful feedback for blind devs. I'm making this project as part of my master's thesis in Human-Computer Interaction, but this repository will not be deleted or closed after the completion of my degree. It will remain open-source and everyone is free to fork it, change it, adapt and use freely.
 
 We are actively looking forbBlind and low-vision developers to test and provide feedback. Participation is flexible and optional. You can participate in as many Sprints as you can. For more details go to [How to Contribute](#how-to-contribute)
 
 Current State: Sprint 2
 
-Join the mailing list for development updates: 
-
-[SenseUI mailing list](https://www.freelists.org/list/sense-ui)
-
+If you would like to join as a tester, please fill out [this form](https://docs.google.com/forms/d/e/1FAIpQLScDW_FCZznz-Nmws8N_mPTWvaSR4sbmvnxJ8kcTWSgy61M8wA/viewform?usp=sharing&ouid=113702676436730582551)
 
 ---
 
