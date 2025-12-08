@@ -13,14 +13,14 @@ const CONFIG = {
             ENDPOINT: 'https://api.openai.com/v1/chat/completions',
             MODEL: 'gpt-4o-mini',
             MAX_TOKENS: 2000,
-            TEMPERATURE: 0.5
+            TEMPERATURE: 0.3
         },
         GEMINI: {
             ENDPOINT: 'https://generativelanguage.googleapis.com/v1beta/models',
-            // Using gemini-1.5-flash - faster, more cost-effective
+            // Using gemini-2.0-flash - faster, more cost-effective
             MODEL: 'gemini-2.0-flash',
             MAX_TOKENS: 2000,
-            TEMPERATURE: 0.5
+            TEMPERATURE: 0.3
         }
     },
     STORAGE_KEYS: {
@@ -113,7 +113,7 @@ CRITICAL FORMATTING RULES:
 - NEVER write HTML tags in your response (e.g., don't write "<h1>" or "<div>" or "<button>")
 - Instead, refer to elements as: "the h1 element", "the main heading", "div with class hero", "the submit button"
 - When citing CSS selectors, write them as: .class-name or #id-name (without angle brackets)
-- Use markdown for your response structure: ## for section headings, - for bullet lists
+- Use markdown for your response structure: ### for section headings, - for bullet lists
 - Convert all RGB colors to hex format (e.g., rgb(255, 87, 51) → #FF5733)
 
 ANALYZE FOR:
