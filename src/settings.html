@@ -30,9 +30,8 @@
             <form id="settings-form" novalidate>
                 <!-- API Configuration Section -->
                 <h2>API Configuration</h2>
-                <fieldset id="api-fieldset" aria-labelledby="api-legend" aria-describedby="api-desc">
-                    <legend id="api-legend" class="sr-only">API Configuration</legend>
-                    <p id="api-desc" class="hint">An API key is required for SenseUI to work.</p>
+                <fieldset id="api-fieldset" aria-labelledby="api-legend">
+                    <legend id="api-legend">Enter your API key to use SenseUI</legend>
                     <h3>How to get an API key</h3>
                     <p>You can visit these links (opens in a new tab). If you already have one, continue to the next step.</p>
                     <ul>
@@ -78,11 +77,9 @@
                 </fieldset>
                 <!-- End API Configuration Section -->
                 <!-- Feedback Detail Level Section -->
-                <h2>Feedback Detail Level (non-functional)</h2>
-                <fieldset id="detail-fieldset" role="radiogroup" aria-labelledby="detail-legend"
-                    aria-describedby="detail-desc">
-                    <legend id="detail-legend" class="sr-only">Feedback detail level</legend>
-                    <p id="detail-desc" class="hint">Choose how verbose SenseUI's feedback should be.</p>
+                <h2>Feedback Detail Level</h2>
+                <fieldset id="detail-fieldset" role="radiogroup" aria-labelledby="detail-legend">
+                    <legend id="detail-legend">Choose how verbose SenseUI's feedback should be.</legend>
                     <br>
                     <label for="detail-comprehensive">
                         <input id="detail-comprehensive" type="radio" name="detail" value="comprehensive"
@@ -103,12 +100,10 @@
                 <br>
                 <!-- End Feedback Detail Level Section -->
                 <!-- Chat History Download Section -->
-                <h2>Chat History Download (non-functional)</h2>
-                <fieldset id="download-fieldset" role="radiogroup" aria-labelledby="download-legend"
-                    aria-describedby="download-desc">
-                    <legend id="download-legend" class="sr-only">Chat history download</legend>
-                    <p id="download-desc" class="hint">Select which conversations will be included when you export your
-                        history.</p>
+                <h2>Chat History Download</h2>
+                <fieldset id="download-fieldset" role="radiogroup" aria-labelledby="download-legend">
+                    <legend id="download-legend">Select which conversations will be included when you export your
+                        history</legend>
                     <br>
                     <label for="download-all">
                         <input id="download-all" type="radio" name="download" value="all" checked aria-checked="true">
@@ -124,11 +119,9 @@
                 <br>
                 <!-- End Chat History Download Section -->
                 <!-- Add Context Section -->
-                <h2>Add Context (non-functional)</h2>
-                <fieldset id="context-fieldset" aria-labelledby="context-legend" aria-describedby="context-desc">
-                    <legend id="context-legend" class="sr-only">Add instructions</legend>
-                    <p id="context-desc" class="sr-only">Add any instructions or attach files to help improve feedback.
-                    </p>
+                <h2>Add Context</h2>
+                <fieldset id="context-fieldset" aria-labelledby="context-legend">
+                    <legend id="context-legend">Add any instructions or attach files to help improve feedback</legend>
                     <label for="context-text">Instructions</label>
                     <br>
                     <textarea id="context-text" name="context" rows="4" cols="40" placeholder="Add instructions"
