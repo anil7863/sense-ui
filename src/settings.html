@@ -23,70 +23,58 @@
     <main id="main">
         <section class="intro">
             <h1>Settings</h1>
-            <p>Configure your API keys and customize SenseUI's behavior.</p>
+            <p>Configure your API keys and customize SenseUI's behavior and responses.</p>
         </section>
 
         <section>
             <form id="settings-form" novalidate>
                 <!-- API Configuration Section -->
-                 <h2>API Configuration</h2>
+                <h2>API Configuration</h2>
                 <fieldset id="api-fieldset" aria-labelledby="api-legend" aria-describedby="api-desc">
                     <legend id="api-legend" class="sr-only">API Configuration</legend>
-                    <p id="api-desc" class="hint">Configure your AI provider. At least one API key is required for SenseUI to work.</p>
+                    <p id="api-desc" class="hint">An API key is required for SenseUI to work.</p>
+                    <h3>How to get an API key</h3>
+                    <p>You can visit these links (opens in a new tab). If you already have one, continue to the next step.</p>
+                    <ul>
+                        <li><a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener">
+                                Get your OpenAI API key
+                            </a></li>
+                        <li><a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener">Get your Google Gemini API key</a></li>
+                    </ul>
+                    <br>
                     <!-- AI provider selection -->
-                        <label for="provider-select">AI Provider</label>
-                        <br>
-                        <label for="provider-openai">
-                            <input
-                                id="provider-openai"
-                                type="radio"
-                                name="provider"
-                                value="openai"
-                                checked
-                                aria-checked="true"
-                                aria-describedby="provider-desc"
-                            />
-                            OpenAI (GPT-4)
-                        </label>
-                        <br>
-                        <label for="provider-gemini">
-                            <input
-                                id="provider-gemini"
-                                type="radio"
-                                name="provider"
-                                value="gemini"
-                                aria-checked="false"
-                                aria-describedby="provider-desc"
-                            />
-                            Google Gemini
-                        </label>
+                    <h3>Select an AI provider</h3>
+                    <label for="provider-select">AI Provider</label>
+                    <br>
+                    <label for="provider-openai">
+                        <input id="provider-openai" type="radio" name="provider" value="openai" checked
+                            aria-checked="true" />
+                        OpenAI (GPT-4)
+                    </label>
+                    <br>
+                    <label for="provider-gemini">
+                        <input id="provider-gemini" type="radio" name="provider" value="gemini" aria-checked="false" />
+                        Google Gemini
+                    </label>
                     <br>
                     <!--OpenAI key input-->
-                    <label for="openai-key">Enter your key</label>
-                    <input 
-                        type="password" 
-                        id="openai-key" 
-                        name="openaiApiKey" 
-                        placeholder="Your OpenAI API key" 
-                        aria-describedby="openai-key-desc"
-                        autocomplete="off"
-                    />
-                    <span id="openai-status" aria-live="polite"></span>
-                    <button type="button" id="clear-openai-key" class="btn-secondary" style="display: none;">Clear OpenAI Key</button>
+                    <label for="openai-key">Enter your OpenAI key</label>
+                    <input type="password" id="openai-key" name="openaiApiKey" placeholder="Your OpenAI API key"
+                        aria-describedby="openai-key-desc" autocomplete="off" />
+                    <div id="openai-status" role="status" aria-live="polite" style="margin-top: 0.5em;"></div>
+                    <br>
+                    <button type="button" id="clear-openai-key" class="btn-secondary"
+                        style="display: none; margin-top: 0.5em;">Clear OpenAI Key</button>
                     <!--Gemini key input-->
-                    <label for="gemini-key" style="display: none;">Enter your key</label>
-                    <input 
-                        type="password" 
-                        id="gemini-key" 
-                        name="geminiApiKey" 
-                        placeholder="Your Gemini API key" 
-                        aria-describedby="gemini-key-desc"
-                        autocomplete="off"
-                        style="display: none;"
-                    />
-                    <span id="gemini-status" aria-live="polite" style="display: none;"></span>
-                    <button type="button" id="clear-gemini-key" class="btn-secondary" style="display: none;">Clear Gemini Key</button>
-                <br>
+                    <label for="gemini-key" style="display: none;">Enter your Gemini key</label>
+                    <input type="password" id="gemini-key" name="geminiApiKey" placeholder="Your Gemini API key"
+                        aria-describedby="gemini-key-desc" autocomplete="off" style="display: none;" />
+                    <div id="gemini-status" role="status" aria-live="polite" style="display: none; margin-top: 0.5em;">
+                    </div>
+                    <br>
+                    <button type="button" id="clear-gemini-key" class="btn-secondary"
+                        style="display: none; margin-top: 0.5em;">Clear Gemini Key</button>
+                    <br>
                 </fieldset>
                 <!-- End API Configuration Section -->
                 <!-- Feedback Detail Level Section -->
@@ -121,7 +109,7 @@
                     <legend id="download-legend" class="sr-only">Chat history download</legend>
                     <p id="download-desc" class="hint">Select which conversations will be included when you export your
                         history.</p>
-                        <br>
+                    <br>
                     <label for="download-all">
                         <input id="download-all" type="radio" name="download" value="all" checked aria-checked="true">
                         Download all
@@ -139,7 +127,8 @@
                 <h2>Add Context (non-functional)</h2>
                 <fieldset id="context-fieldset" aria-labelledby="context-legend" aria-describedby="context-desc">
                     <legend id="context-legend" class="sr-only">Add instructions</legend>
-                    <p id="context-desc" class="sr-only">Add any instructions or attach files to help improve feedback.</p>
+                    <p id="context-desc" class="sr-only">Add any instructions or attach files to help improve feedback.
+                    </p>
                     <label for="context-text">Instructions</label>
                     <br>
                     <textarea id="context-text" name="context" rows="4" cols="40" placeholder="Add instructions"
@@ -155,7 +144,7 @@
                     <small id="files-desc" class="hint">You can attach files (images, PDFs). Max 10 MB per file.</small>
                 </fieldset>
                 <!-- End Add Context Section -->
-                 <br>
+                <br>
                 <div class="button-container">
                     <button type="submit" id="save-settings" class="btn-primary">Save</button>
                 </div>
