@@ -240,7 +240,7 @@ async function updateApiKeyStatus() {
         openaiStatus.textContent = 'No key configured';
         openaiStatus.className = 'hint';
         clearOpenAIBtn.style.display = 'none';
-        openaiKeyInput.placeholder = 'sk-...';
+        openaiKeyInput.placeholder = 'Your OpenAI Key...';
     }
     
     if (status.hasGemini) {
