@@ -17,9 +17,10 @@ const CONFIG = {
         },
         GEMINI: {
             ENDPOINT: 'https://generativelanguage.googleapis.com/v1beta/models',
-            // Using gemini-2.0-flash - faster, more cost-effective
-            MODEL: 'gemini-2.0-flash',
-            MAX_TOKENS: 2000,
+            // Using gemini-flash-latest - automatically points to the latest stable Flash model
+            // This alias is updated by Google when new versions are released (with 2 weeks notice)
+            MODEL: 'gemini-flash-latest',
+            MAX_TOKENS: 4000,
             TEMPERATURE: 0.3
         }
     },
@@ -32,7 +33,7 @@ const CONFIG = {
     },
     PROMPTS: {
         SYSTEM: `You are a web design professional assisting a blind developer who is working on the tab you are currently on. 
-        Be their eyes, provide structured and clear feedback that avoids vague or subjective language. Always present information in a format compatible with screen readers. 
+        Be their eyes, provide structured and clear responses to their questions. Always present information in a format compatible with screen readers. 
         
         CRITICAL FORMATTING RULES:
         - NEVER use HTML tags in your response text (e.g., don't write "<h1>" or "<div>")
@@ -561,6 +562,9 @@ async function sendToOpenAI(apiKey, systemPrompt, userMessage, screenshot) {
     }
 
     const data = await response.json();
+    // OpenAI returns the actual model used in data.model
+    const actualModel = data.model || CONFIG.API.OPENAI.MODEL;
+    console.log(`✅ Response generated using OpenAI model: ${actualModel}`);
     return data.choices[0].message.content;
 }
 
@@ -617,7 +621,39 @@ async function sendToGemini(apiKey, systemPrompt, userMessage, screenshot) {
         console.error('Invalid Gemini response:', data);
         throw new Error('Invalid response from Gemini API');
     }
-    return data.candidates[0].content.parts.map(part => part.text).join('');
+    
+    // Check if response was cut off due to safety filters or finish reason
+    const candidate = data.candidates[0];
+    if (candidate.finishReason && candidate.finishReason !== 'STOP') {
+        console.warn('⚠️ Gemini response ended early. Finish reason:', candidate.finishReason);
+        if (candidate.finishReason === 'MAX_TOKENS') {
+            console.warn('⚠️ Response hit token limit. Consider increasing MAX_TOKENS.');
+        } else if (candidate.finishReason === 'SAFETY') {
+            console.warn('⚠️ Response blocked by safety filters:', candidate.safetyRatings);
+        }
+    }
+    
+    // Log which model was used - data.usageMetadata may contain actual model info
+    const actualModel = data.modelVersion || CONFIG.API.GEMINI.MODEL;
+    if (CONFIG.API.GEMINI.MODEL === 'gemini-flash-latest') {
+        console.log(`✅ Response generated using Gemini model: ${CONFIG.API.GEMINI.MODEL} (currently resolves to: ${actualModel})`);
+    } else {
+        console.log(`✅ Response generated using Gemini model: ${actualModel}`);
+    }
+    
+    // Log token usage if available
+    if (data.usageMetadata) {
+        console.log(`📊 Tokens used - Input: ${data.usageMetadata.promptTokenCount}, Output: ${data.usageMetadata.candidatesTokenCount}, Total: ${data.usageMetadata.totalTokenCount}`);
+    }
+    
+    // Safely extract text from content parts
+    const contentParts = candidate.content.parts;
+    if (!contentParts || !Array.isArray(contentParts) || contentParts.length === 0) {
+        console.error('No text parts in Gemini response:', data);
+        throw new Error('Gemini response has no content parts');
+    }
+    
+    return contentParts.map(part => part.text || '').join('');
 }
 
 // ============================================================================
