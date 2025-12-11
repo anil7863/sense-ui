@@ -32,21 +32,21 @@ const CONFIG = {
         CHAT_HISTORY: 'senseui_chat_history'
     },
     PROMPTS: {
-        SYSTEM: `You are a web design professional assisting a blind developer who is working on the tab you are currently on. 
-        Be their eyes, provide structured and clear responses to their questions. Always present information in a format compatible with screen readers. 
-        
-        CRITICAL FORMATTING RULES:
-        - NEVER use HTML tags in your response text (e.g., don't write "<h1>" or "<div>")
-        - When referring to HTML elements, use plain text like: h1 element, div with class "container", button element
-        - Use markdown for formatting: ## for headings, - for lists
-        - Do NOT use bold (**text**), italic formatting or emojis
-        - Convert all RGB colors to hex format (e.g., rgb(255, 87, 51) → #FF5733)
-        
-        CORE PRINCIPLES:    
-        - When providing design advice, always prioritize accessibility (WCAG 2.2) and usability principles (Jakob Nielsen's Heuristics for User Interface Design)
-        - Be objective, honest, specific and constructive
-        - Do not offer code unless asked to by the user
-        - Do not assume or invent details outside the viewport. If information is uncertain or not visible, state the limitation clearly.`,
+        SYSTEM: `You are a web design assistant helping a blind developer analyze the current webpage. Answer their questions clearly and concisely based on the screenshot, HTML, and CSS provided.
+
+FORMATTING RULES:
+- NEVER use HTML tags in your response (e.g., don't write "<h1>" or "<div>")
+- When referring to HTML elements, use plain text: "h1 element", "div with class container", "submit button"
+- Use markdown for formatting: ### for headings, #### for subheadings, - for lists
+- Do NOT use bold (**text**), italic formatting or emojis
+- Convert all RGB colors to hex format (e.g., rgb(255, 87, 51) → #FF5733)
+
+KEY PRINCIPLES:
+- Answer the question asked - be direct and concise for simple questions
+- Prioritize accessibility (WCAG 2.2) and usability when giving design advice
+- Only report what you can verify from the provided HTML, CSS, or screenshot
+- Do not offer code unless specifically requested
+- If information is uncertain or not visible, state the limitation clearly`,
 
         DESCRIBE: `Provide a comprehensive visual design description of what's currently visible in the viewport. Use terminology familiar to programmers. Be detailed and specific.
 
@@ -207,18 +207,18 @@ async function retrieveApiKey(keyName) {
         const result = await chrome.storage.local.get(keyName);
         const encrypted = result[keyName];
         if (!encrypted) return null;
-        
+
         const combined = new Uint8Array(atob(encrypted).split('').map(c => c.charCodeAt(0)));
         const salt = combined.slice(0, 16);
         const iv = combined.slice(16, 28);
         const encryptedData = combined.slice(28);
-        
+
         const password = await getEncryptionPassword();
         const key = await deriveKey(password, salt);
         const decryptedData = await crypto.subtle.decrypt(
             { name: 'AES-GCM', iv: iv }, key, encryptedData
         );
-        
+
         const decoder = new TextDecoder();
         return decoder.decode(decryptedData);
     } catch (error) {
@@ -232,46 +232,46 @@ async function retrieveApiKey(keyName) {
 // ============================================================================
 function markdownToHTML(markdown) {
     if (!markdown) return '';
-    
+
     console.log('🔍 ORIGINAL MARKDOWN:', markdown.substring(0, 200));
     let html = markdown;
-    
+
     // Process headings FIRST (before anything else that might interfere)
     // Using \s* to allow optional spaces after # and .* to match the rest of the line
     html = html.replace(/^####\s*(.*)$/gim, '<h4>$1</h4>');
     html = html.replace(/^###\s*(.*)$/gim, '<h3>$1</h3>');
     html = html.replace(/^##\s*(.*)$/gim, '<h2>$1</h2>');
     html = html.replace(/^#\s*(.*)$/gim, '<h2>$1</h2>');
-    
+
     console.log('🔍 AFTER HEADING CONVERSION:', html.substring(0, 200));
-    
+
     // Process lists
     html = html.replace(/^(?!<h[1-6]>)\s*[-*]\s+(.+)$/gim, '<li>$1</li>');
     html = html.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
-    
+
     // Remove bold/strong markdown (no semantic value for screen readers - just visual)
     html = html.replace(/\*\*(.+?)\*\*/g, '$1');
     html = html.replace(/__(.+?)__/g, '$1');
-    
+
     console.log('🔍 AFTER BOLD REMOVAL:', html.substring(0, 200));
-    
+
     // Process italic/emphasis
     html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
     html = html.replace(/_(.+?)_/g, '<em>$1</em>');
-    
+
     // Process links
     html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
-    
+
     // Split into lines and wrap paragraphs intelligently
     const lines = html.split('\n');
     const processedLines = [];
-    
+
     for (let i = 0; i < lines.length; i++) {
         const line = lines[i].trim();
-        
+
         // Skip empty lines
         if (!line) continue;
-        
+
         // Don't wrap headings or lists in paragraphs
         if (line.startsWith('<h') || line.startsWith('<li>') || line.startsWith('<ul>') || line.startsWith('</ul>')) {
             processedLines.push(line);
@@ -280,9 +280,9 @@ function markdownToHTML(markdown) {
             processedLines.push(`<p>${line}</p>`);
         }
     }
-    
+
     html = processedLines.join('\n');
-    
+
     console.log('🔍 FINAL HTML:', html.substring(0, 200));
     return html;
 }
@@ -298,26 +298,26 @@ function formatResponse(responseText, options = {}) {
 
     const contentHTML = markdownToHTML(responseText);
     let html = '<div class="system-response" role="article">';
-    
+
     if (includeHeading) {
         html += `<h2>${headingText}</h2>`;
     }
-    
+
     html += `<div class="response-content" id="${responseId}">${contentHTML}</div>`;
     html += '<div class="response-actions">';
-    
+
     if (addCopyButton) {
         html += `<button class="copy-button" data-target="${responseId}" aria-label="Copy response to clipboard">
             Copy to clipboard
         </button>`;
     }
-    
+
     if (addFavoriteButton) {
         html += `<button class="favorite-button" data-target="${responseId}" aria-label="Mark this response as favorite">
             Mark as favorite
         </button>`;
     }
-    
+
     html += '</div></div>';
     return html;
 }
@@ -427,7 +427,7 @@ async function extractPageContent() {
 
         const [result] = await chrome.scripting.executeScript({
             target: { tabId: activeTab.id },
-            func: function() {
+            func: function () {
                 function extractHTML() {
                     return document.documentElement.outerHTML;
                 }
@@ -444,7 +444,7 @@ async function extractPageContent() {
                             for (const rule of rules) {
                                 cssContent += rule.cssText + '\\n';
                             }
-                        } catch (e) {}
+                        } catch (e) { }
                     }
                     return cssContent;
                 }
@@ -498,7 +498,7 @@ async function sendToLLM(userMessage, context, systemPrompt, provider) {
     const apiKey = await retrieveApiKey(
         provider === 'openai' ? CONFIG.STORAGE_KEYS.OPENAI_API_KEY : CONFIG.STORAGE_KEYS.GEMINI_API_KEY
     );
-    
+
     if (!apiKey) {
         throw new Error('API key not configured. Please add an API key in Settings.');
     }
@@ -570,11 +570,11 @@ async function sendToOpenAI(apiKey, systemPrompt, userMessage, screenshot) {
 
 async function sendToGemini(apiKey, systemPrompt, userMessage, screenshot) {
     const endpoint = `${CONFIG.API.GEMINI.ENDPOINT}/${CONFIG.API.GEMINI.MODEL}:generateContent?key=${apiKey}`;
-    
+
     // Combine system prompt with user message for Gemini
     const fullMessage = `${systemPrompt}\n\n${userMessage}`;
     const parts = [{ text: fullMessage }];
-    
+
     if (screenshot) {
         const matches = screenshot.match(/^data:(.+);base64,(.+)$/);
         if (matches) {
@@ -603,16 +603,16 @@ async function sendToGemini(apiKey, systemPrompt, userMessage, screenshot) {
         const errorData = await response.json().catch(() => ({}));
         const errorMessage = errorData.error?.message || `Gemini API error: ${response.status}`;
         console.error('Gemini API Error:', errorData);
-        
+
         // If model not found, list available models
         if (errorMessage.includes('not found') || errorMessage.includes('not supported')) {
             console.log('Fetching available models for your API key...');
             const models = await listGeminiModels(apiKey);
-            console.log('Try changing the MODEL in script-bundled.js to one of these:', 
+            console.log('Try changing the MODEL in script-bundled.js to one of these:',
                 models.map(m => m.name.replace('models/', '')));
             throw new Error(`${errorMessage}\n\nCheck the console to see available models for your API key.`);
         }
-        
+
         throw new Error(errorMessage);
     }
 
@@ -621,7 +621,7 @@ async function sendToGemini(apiKey, systemPrompt, userMessage, screenshot) {
         console.error('Invalid Gemini response:', data);
         throw new Error('Invalid response from Gemini API');
     }
-    
+
     // Check if response was cut off due to safety filters or finish reason
     const candidate = data.candidates[0];
     if (candidate.finishReason && candidate.finishReason !== 'STOP') {
@@ -632,7 +632,7 @@ async function sendToGemini(apiKey, systemPrompt, userMessage, screenshot) {
             console.warn('⚠️ Response blocked by safety filters:', candidate.safetyRatings);
         }
     }
-    
+
     // Log which model was used - data.usageMetadata may contain actual model info
     const actualModel = data.modelVersion || CONFIG.API.GEMINI.MODEL;
     if (CONFIG.API.GEMINI.MODEL === 'gemini-flash-latest') {
@@ -640,19 +640,19 @@ async function sendToGemini(apiKey, systemPrompt, userMessage, screenshot) {
     } else {
         console.log(`✅ Response generated using Gemini model: ${actualModel}`);
     }
-    
+
     // Log token usage if available
     if (data.usageMetadata) {
         console.log(`📊 Tokens used - Input: ${data.usageMetadata.promptTokenCount}, Output: ${data.usageMetadata.candidatesTokenCount}, Total: ${data.usageMetadata.totalTokenCount}`);
     }
-    
+
     // Safely extract text from content parts
     const contentParts = candidate.content.parts;
     if (!contentParts || !Array.isArray(contentParts) || contentParts.length === 0) {
         console.error('No text parts in Gemini response:', data);
         throw new Error('Gemini response has no content parts');
     }
-    
+
     return contentParts.map(part => part.text || '').join('');
 }
 
@@ -661,7 +661,7 @@ async function sendToGemini(apiKey, systemPrompt, userMessage, screenshot) {
 // ============================================================================
 async function capturePageContext() {
     const context = {};
-    
+
     try {
         context.screenshot = await captureScreenshot();
         console.log('✅ Screenshot captured:', context.screenshot ? 'Yes' : 'No');
@@ -670,7 +670,7 @@ async function capturePageContext() {
         console.error('Screenshot error:', error);
         announce('Screenshot capture failed');
     }
-    
+
     try {
         const pageContent = await extractPageContent();
         if (pageContent) {
@@ -684,7 +684,7 @@ async function capturePageContext() {
     } catch (error) {
         console.error('Content extraction error:', error);
     }
-    
+
     return context;
 }
 
@@ -692,21 +692,21 @@ async function processUserInput(userInput, forceRefresh = false) {
     // Check if API key is configured
     const result = await chrome.storage.local.get(CONFIG.STORAGE_KEYS.SELECTED_PROVIDER);
     const provider = result[CONFIG.STORAGE_KEYS.SELECTED_PROVIDER] || 'openai';
-    
+
     // Parse command
     const { command, text } = parseCommand(userInput);
     const commandPrompt = command ? getPromptForCommand(command) : '';
-    const systemPrompt = commandPrompt 
+    const systemPrompt = commandPrompt
         ? `${CONFIG.PROMPTS.SYSTEM}\\n\\n${commandPrompt}`
         : CONFIG.PROMPTS.SYSTEM;
 
     // Check if we need to capture or use cached context
     let context = {};
-    
+
     // Get current page URL to detect navigation
     const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true });
     const pageUrl = activeTab?.url;
-    
+
     // Use cached context if available and page hasn't changed
     if (!forceRefresh && cachedContext && currentPageUrl === pageUrl) {
         context = cachedContext;
@@ -817,12 +817,12 @@ window.addEventListener('DOMContentLoaded', async () => {
     chatInput = document.getElementById('chat-input');
     commandDatalist = document.getElementById('command-list');
     introSection = document.querySelector('.intro');
-    
+
     // Load saved chat history
     await loadChatHistory();
-    
+
     announce('SenseUI opened.');
-    
+
     if (chatInput) {
         chatInput.focus();
         if (chatInput.hasAttribute('list')) {
@@ -835,7 +835,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
 function setupCommandSuggestions() {
     if (!chatInput || !commandDatalist) return;
-    
+
     const allOptions = Array.from(commandDatalist.querySelectorAll('option')).map(o => o.value);
     let lastAnnouncedCount = null;
     let previousValue = '';
@@ -850,7 +850,7 @@ function setupCommandSuggestions() {
         lastAnnouncedCount = null;
         previousValue = '';
     };
-    
+
     chatInput.addEventListener('input', () => {
         const val = chatInput.value;
         if (val === '/' && previousValue === '') {
@@ -894,7 +894,7 @@ function setupEventListeners() {
             }
         });
     }
-    
+
     // Download chat history button
     const downloadButton = document.getElementById('download-chat');
     if (downloadButton) {
@@ -907,15 +907,15 @@ function downloadChatHistory() {
         announce('No chat history to download');
         return;
     }
-    
+
     // Get plain text version of chat
     const chatText = chatMessages.innerText || chatMessages.textContent;
-    
+
     // Get current page info
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         const pageUrl = tabs[0]?.url || 'Unknown page';
         const pageTitle = tabs[0]?.title || 'Unknown title';
-        
+
         // Add metadata
         const timestamp = new Date().toISOString();
         const header = `SenseUI Chat History
@@ -926,7 +926,7 @@ ${'='.repeat(70)}
 
 `;
         const fullText = header + chatText;
-        
+
         // Create download
         const blob = new Blob([fullText], { type: 'text/plain' });
         const url = URL.createObjectURL(blob);
@@ -935,7 +935,7 @@ ${'='.repeat(70)}
         a.download = `senseui-chat-${Date.now()}.txt`;
         a.click();
         URL.revokeObjectURL(url);
-        
+
         announce('Chat history downloaded');
     });
 }
@@ -943,10 +943,10 @@ ${'='.repeat(70)}
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
         const activeElement = document.activeElement;
-        if (activeElement && 
-            (activeElement.tagName === 'INPUT' || 
-             activeElement.tagName === 'TEXTAREA' || 
-             activeElement.isContentEditable)) {
+        if (activeElement &&
+            (activeElement.tagName === 'INPUT' ||
+                activeElement.tagName === 'TEXTAREA' ||
+                activeElement.isContentEditable)) {
             e.preventDefault();
             e.stopPropagation();
         }
@@ -959,20 +959,20 @@ async function sendMessage() {
         currentAbortController.abort();
         currentAbortController = null;
         isGenerating = false;
-        
+
         // Reset button
         if (sendButton) {
             sendButton.textContent = 'Send';
             sendButton.setAttribute('aria-label', 'Send message');
         }
-        
+
         announce('Generation stopped');
         return;
     }
-    
+
     const userInput = chatInput.value.trim();
     if (!userInput) return;
-    
+
     if (userInput === '/clear') {
         chatMessages.innerHTML = '';
         chatInput.value = '';
@@ -992,30 +992,30 @@ async function sendMessage() {
         await saveChatHistory();
         return;
     }
-    
+
     if (userInput === '/refresh') {
         chatInput.value = '';
         if (typeof chatInput._resetCommandState === 'function') {
             chatInput._resetCommandState();
         }
-        
+
         // Clear cache and show loading message
         cachedContext = null;
         currentPageUrl = null;
-        
+
         const refreshDiv = document.createElement('div');
         refreshDiv.className = 'system-response loading-response';
         refreshDiv.innerHTML = `<h2>System</h2><div class="loading-content"><p>Refreshing page data...</p></div>`;
         chatMessages.appendChild(refreshDiv);
         chatMessages.scrollTop = chatMessages.scrollHeight;
-        
+
         announce('Refreshing page data...');
-        
+
         try {
             // Capture fresh context
             await capturePageContext();
             refreshDiv.remove();
-            
+
             const systemEvent = document.createElement('div');
             systemEvent.className = 'system-response';
             systemEvent.innerHTML = `<h2>System</h2><p>Page data refreshed successfully.</p>`;
@@ -1038,34 +1038,34 @@ async function sendMessage() {
     }
 
     if (introSection) introSection.style.display = 'none';
-    
+
     const userMessage = document.createElement('div');
     userMessage.className = 'user-message';
     userMessage.innerHTML = `<h2>You said:</h2><p>${userInput}</p>`;
     chatMessages.appendChild(userMessage);
-    
+
     // Check if this is a /describe command to show time estimate
     const isDescribeCommand = userInput.trim().startsWith('/describe');
-    
+
     const loadingDiv = document.createElement('div');
     loadingDiv.className = 'system-response loading-response';
-    const loadingMessage = isDescribeCommand 
+    const loadingMessage = isDescribeCommand
         ? '<p>Analyzing page... This may take 10-15 seconds.</p>'
         : '<p>Analyzing page...</p>';
     loadingDiv.innerHTML = `<h2>SenseUI</h2><div class="loading-content">${loadingMessage}</div>`;
     chatMessages.appendChild(loadingDiv);
     chatMessages.scrollTop = chatMessages.scrollHeight;
-    
+
     chatInput.value = '';
     if (typeof chatInput._resetCommandState === 'function') {
         chatInput._resetCommandState();
     }
-    
-    const announceMessage = isDescribeCommand 
+
+    const announceMessage = isDescribeCommand
         ? 'Analyzing page... This may take 10 to 15 seconds.'
         : 'Analyzing page...';
     announce(announceMessage);
-    
+
     // Create abort controller and update button
     currentAbortController = new AbortController();
     isGenerating = true;
@@ -1073,25 +1073,25 @@ async function sendMessage() {
         sendButton.textContent = 'Stop';
         sendButton.setAttribute('aria-label', 'Stop generation');
     }
-    
+
     try {
         const response = await processUserInput(userInput);
         loadingDiv.remove();
-        
+
         const responseDiv = document.createElement('div');
         responseDiv.setAttribute('role', 'article');
         responseDiv.innerHTML = response.html;
         chatMessages.appendChild(responseDiv);
         attachResponseActions(responseDiv);
         announce('Response received');
-        
+
         // Save chat history after successful response
         await saveChatHistory();
-        
+
     } catch (error) {
         console.error('Error:', error);
         loadingDiv.remove();
-        
+
         // Check if it was aborted
         if (error.name === 'AbortError') {
             const abortDiv = document.createElement('div');
@@ -1105,14 +1105,14 @@ async function sendMessage() {
             errorDiv.innerHTML = `
                 <h2>Error</h2>
                 <p>${error.message}</p>
-                ${error.message.includes('API key') ? 
-                    '<p>Please visit <a href="settings.html">Settings</a> to configure your API key.</p>' : 
+                ${error.message.includes('API key') ?
+                    '<p>Please visit <a href="settings.html">Settings</a> to configure your API key.</p>' :
                     '<p>Please try again or check the console for more details.</p>'}
             `;
             chatMessages.appendChild(errorDiv);
             announce(`Error: ${error.message}`);
         }
-        
+
         // Save chat history even with errors
         await saveChatHistory();
     } finally {
@@ -1124,6 +1124,6 @@ async function sendMessage() {
             sendButton.setAttribute('aria-label', 'Send message');
         }
     }
-    
+
     chatMessages.scrollTop = chatMessages.scrollHeight;
 }
