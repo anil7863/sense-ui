@@ -39,7 +39,7 @@ FORMATTING RULES:
 - When referring to HTML elements, use plain text: "h1 element", "div with class container", "submit button"
 - Use markdown for formatting: ### for headings, #### for subheadings, - for lists
 - Do NOT use bold (**text**), italic formatting or emojis
-- Convert all RGB colors to hex format (e.g., rgb(255, 87, 51) → #FF5733)
+- Convert all RGB colors to hex format and mention them by name first and hex code second (e.g., "blue (#0000FF)")
 
 KEY PRINCIPLES:
 - Answer the question asked - be direct and concise for simple questions
@@ -48,7 +48,7 @@ KEY PRINCIPLES:
 - Do not offer code unless specifically requested
 - If information is uncertain or not visible, state the limitation clearly`,
 
-        DESCRIBE: `Provide a comprehensive visual design description of what's currently visible in the viewport. Use terminology familiar to programmers. Be detailed and specific.
+        DESCRIBE: `Provide a spatial visual design description of what's currently visible using the website (base it on the screenshot). Help create a mental map of the layout using directional and positional language. Use terminology familiar to programmers. Be specific but brief.
 
 IMPORTANT RULES:
 1. You are analyzing a SCREENSHOT of the current viewport - this may show any part of the page (top, middle, bottom, or footer). DO NOT assume this is the "hero section" unless you can clearly see it's the top of the page with the main header/navigation.
@@ -60,49 +60,24 @@ IMPORTANT RULES:
 
 3. Format all bullet points as complete single-line statements. NEVER create nested or indented bullets. A bullet point should never end with a colon (":")
 
+4. Fully describe each element and section with all its details before moving to the next section. Never return to a previously described element or section.
+
 RESPONSE STRUCTURE:
-Start with an h2 heading: "Visual Design Description of [Website Name]"
-Then include these h3 subsections:
+Start with an h3 heading: "Visual Design Description of [Website Name]"
+Then include these h4 subsections:
 
-### Overall Impression
-What's the immediate visual impression? Describe the aesthetic (minimalist/professional/modern/traditional/playful/corporate/etc.) and the overall feeling it creates.
+#### Overall Aesthetic and Mood
+What's the immediate visual impression? Describe the aesthetic (minimalist/professional/modern/traditional/playful/corporate/etc.) and the overall mood and feeling it creates.
 
-### Viewport Content
-Describe what's visually present in the current viewport from top to bottom:
-- Identify the PAGE POSITION: Is this the top/header area, middle content, footer, or a specific section?
-- Identify each major section/component visible (use accurate terms: "content section", "article grid", "footer", "navigation area" - NOT "hero" unless it's clearly the top banner)
-- Describe visual elements: images, icons, graphics, illustrations
-- Explain the visual hierarchy and what draws attention
+#### Spatial Layout Description
+Describe the all the elements of the layout from top to bottom, using clear positional language:
 
-### Layout & Structure
-- Layout technique used (CSS Grid, Flexbox, traditional block layout) - cite CSS properties if available
-- Content arrangement (columns, rows, asymmetry)
-- Alignment patterns
-
-### Color Palette
-- Primary colors: [extract hex codes from CSS if available, or estimate from screenshot with note "estimated from screenshot"]
-- Accent/secondary colors: [hex codes]
-- Background colors
-- Text colors
-- Mood created by the palette
-
-### Typography
-- Font families: [extract from CSS if available, e.g., "Inter, sans-serif" - if not in CSS, describe as "sans-serif" or "serif"]
-- Heading styles: [if sizes are in CSS, cite them (e.g., "32px, font-weight: 700") - otherwise describe relatively: "large bold headings"]
-- Body text: [cite CSS values if available, otherwise describe: "medium-sized, good line-height"]
-- Overall readability and typographic hierarchy
-
-### Spacing & Density
-- Spacing philosophy (tight/compact or spacious/airy)
-- Padding/margin patterns: [cite CSS values if available (e.g., "24px padding") - otherwise describe: "generous spacing" or "minimal margins"]
-- White space usage (generous or minimal)
-- Overall information density
-
-### UI Components
-- Button styles: [cite CSS if available, otherwise describe: "rounded corners, medium size"]
-- Form elements (if present)
-- Cards/panels (if present)
-- Any distinctive design patterns
+- Start with what's at the very top (header/navigation area)
+- For each element, specify: position (top-left, top-center, top-right, etc.), color (hex codes), size, content, alignment of text/images, and spacing
+- Use directional language: "directly below", "to the right of", "aligned with", "centered between"
+- Describe spacing between elements: "with large spacing below" or "tightly grouped with"
+- Note alignment: left-aligned, centered, right-aligned
+- Continue down the page until you reach the bottom of the visible screenshot
 
 End with: "Want me to analyze a specific element in more detail?"`,
 
