@@ -73,9 +73,6 @@ RESPONSE STRUCTURE:
 Start with an h3 heading: "Visual Design Description of [Website Name]"
 Then include these h4 subsections:
 
-#### Overall Aesthetic and Mood
-What's the immediate visual impression? Describe the aesthetic (minimalist/professional/modern/traditional/playful/corporate/etc.) and the overall mood and feeling it creates.
-
 #### Spatial Layout Description
 Describe the all the elements of the layout from top to bottom, using clear positional language:
 
@@ -877,6 +874,24 @@ function setupEventListeners() {
         });
     }
 
+    // Describe button
+    const describeButton = document.getElementById('describe-btn');
+    if (describeButton) {
+        describeButton.addEventListener('click', () => {
+            chatInput.value = '/describe';
+            sendMessage();
+        });
+    }
+
+    // Issues button
+    const issuesButton = document.getElementById('issues-btn');
+    if (issuesButton) {
+        issuesButton.addEventListener('click', () => {
+            chatInput.value = '/issues';
+            sendMessage();
+        });
+    }
+
     // Download chat history button
     const downloadButton = document.getElementById('download-chat');
     if (downloadButton) {
@@ -947,6 +962,12 @@ async function sendMessage() {
             sendButton.textContent = 'Send';
             sendButton.setAttribute('aria-label', 'Send message');
         }
+
+        // Re-enable command buttons
+        const describeButton = document.getElementById('describe-btn');
+        const issuesButton = document.getElementById('issues-btn');
+        if (describeButton) describeButton.disabled = false;
+        if (issuesButton) issuesButton.disabled = false;
 
         announce('Generation stopped');
         return;
@@ -1056,6 +1077,12 @@ async function sendMessage() {
         sendButton.setAttribute('aria-label', 'Stop generation');
     }
 
+    // Disable command buttons during generation
+    const describeButton = document.getElementById('describe-btn');
+    const issuesButton = document.getElementById('issues-btn');
+    if (describeButton) describeButton.disabled = true;
+    if (issuesButton) issuesButton.disabled = true;
+
     try {
         const response = await processUserInput(userInput);
         loadingDiv.remove();
@@ -1105,6 +1132,12 @@ async function sendMessage() {
             sendButton.textContent = 'Send';
             sendButton.setAttribute('aria-label', 'Send message');
         }
+
+        // Re-enable command buttons
+        const describeButton = document.getElementById('describe-btn');
+        const issuesButton = document.getElementById('issues-btn');
+        if (describeButton) describeButton.disabled = false;
+        if (issuesButton) issuesButton.disabled = false;
     }
 
     chatMessages.scrollTop = chatMessages.scrollHeight;

@@ -28,8 +28,13 @@
         </section>
         <section class="chat-container" aria-label="Chat interface">
             <div id="chat-messages" class="chat-messages" role="log"></div>
+            <div class="buttons-container">
+                <button type="button" id="describe-btn" class="btn-secondary">Describe webpage</button>
+                <button type="button" id="issues-btn" class="btn-secondary">Find issues</button>
+                <button type="button" id="download-chat" class="btn-secondary" aria-label="Download current chat">Download</button>
+            </div>
             <div class="chat-input-area" id="chat-form">
-                <label for="chat-input">Type your message or a forward slash for commands</label>
+                <label for="chat-input">Ask something about the page or use forward slash for commands</label>
                 <input id="chat-input" class="chat-input" type="text" autocomplete="off"
                     aria-describedby="command-hint" />
                 <span id="command-hint" class="sr-only">Type forward slash to see available commands</span>
@@ -40,7 +45,6 @@
                     <option value="/clear">
                 </datalist>
                 <button type="submit" class="chat-send btn-primary">Send</button>
-                <button type="button" id="download-chat" class="btn-secondary" aria-label="Download chat">⬇</button>
             </div>
         </section>
     </main>
