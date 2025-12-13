@@ -53,7 +53,11 @@ KEY PRINCIPLES:
 - Prioritize accessibility (WCAG 2.2) and usability when giving design advice
 - Only report what you can verify from the provided HTML, CSS, or screenshot
 - Do not offer code unless specifically requested
-- If information is uncertain or not visible, state the limitation clearly`,
+- If information is uncertain or not visible, state the limitation clearly
+
+LANGUAGE HANDLING:
+- If the user writes in a language other than English, respond in their language while maintaining the same technical depth, structure, formatting rules, and quality as specified in this prompt.
+`,
 
         DESCRIBE: `Provide a spatial visual design description of what's currently visible using the website (base it on the screenshot). Help create a mental map of the layout using directional and positional language. Use terminology familiar to programmers. Be specific but brief.
 
@@ -68,6 +72,8 @@ IMPORTANT RULES:
 3. Format all bullet points as complete single-line statements. NEVER create nested or indented bullets. A bullet point should never end with a colon (":")
 
 4. Fully describe each element and section with all its details before moving to the next section. Never return to a previously described element or section.
+
+5. If the user writes in a language other than English, respond in their language while maintaining the same technical depth, structure, formatting rules, and quality as specified in this prompt.
 
 RESPONSE STRUCTURE:
 Start with an h3 heading: "Visual Design Description of [Website Name]"
@@ -84,7 +90,9 @@ End with: "Want me to analyze a specific element in more detail?"`,
 
         ISSUES: `Identify design and accessibility issues on the current webpage and provide actionable solutions.
 
-IMPORTANT: Only report issues you can actually verify from the HTML, CSS, and screenshot. If the page has no significant issues, say so - do NOT invent problems that don't exist. You may provide recommendations for improvement even when no critical issues are present.
+IMPORTANT: 
+- Only report issues you can actually verify from the HTML, CSS, and screenshot. If the page has no significant issues, say so - do NOT invent problems that don't exist. You may provide recommendations for improvement even when no critical issues are present.
+- If the user writes in a language other than English, respond in their language while maintaining the same technical depth, structure, formatting rules, and quality as specified in this prompt.
 
 CRITICAL FORMATTING RULES:
 - NEVER write HTML tags in your response (e.g., don't write "<h1>" or "<div>" or "<button>")
