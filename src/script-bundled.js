@@ -71,10 +71,7 @@ IMPORTANT RULES:
 
 RESPONSE STRUCTURE:
 Start with an h3 heading: "Visual Design Description of [Website Name]"
-Then include these h4 subsections:
-
-#### Spatial Layout Description
-Describe the all the elements of the layout from top to bottom, using clear positional language:
+Then describe the all the elements of the layout from top to bottom, using clear positional language:
 
 - Start with what's at the very top (header/navigation area)
 - For each element, specify: position (top-left, top-center, top-right, etc.), color (hex codes), size, content, alignment of text/images, and spacing
@@ -675,9 +672,10 @@ async function processUserInput(userInput, forceRefresh = false) {
     // Parse command
     const { command, text } = parseCommand(userInput);
     const commandPrompt = command ? getPromptForCommand(command) : '';
-    const systemPrompt = commandPrompt
-        ? `${CONFIG.PROMPTS.SYSTEM}\\n\\n${commandPrompt}`
-        : CONFIG.PROMPTS.SYSTEM;
+    // Only use SYSTEM prompt for custom prompts (no command)
+    const systemPrompt = command 
+        ? commandPrompt  // Use only command prompt for /describe and /issues
+        : CONFIG.PROMPTS.SYSTEM;  // Use SYSTEM prompt for custom prompts
 
     // Check if we need to capture or use cached context
     let context = {};
@@ -1053,7 +1051,7 @@ async function sendMessage() {
     const loadingDiv = document.createElement('div');
     loadingDiv.className = 'system-response loading-response';
     const loadingMessage = isDescribeCommand
-        ? '<p>Analyzing page... This may take 10-15 seconds.</p>'
+        ? '<p>Analyzing page... This may take a few seconds.</p>'
         : '<p>Analyzing page...</p>';
     loadingDiv.innerHTML = `<h2>SenseUI</h2><div class="loading-content">${loadingMessage}</div>`;
     chatMessages.appendChild(loadingDiv);
