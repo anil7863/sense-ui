@@ -76,6 +76,23 @@
                     <br>
                 </fieldset>
                 <!-- End API Configuration Section -->
+                <!-- Screenshot Capture Mode Section -->
+                <h2>Screenshot Capture Mode</h2>
+                <fieldset id="screenshot-fieldset" role="radiogroup" aria-labelledby="screenshot-legend">
+                    <legend id="screenshot-legend">Choose which part of the page to capture for analysis.</legend>
+                    <br>
+                    <label for="screenshot-viewport">
+                        <input id="screenshot-viewport" type="radio" name="screenshot" value="viewport" checked aria-checked="true">
+                        Viewport only (default) — Captures only what's visible on screen (faster feedback, less tokens, more details)
+                    </label>
+                    <br>
+                    <label for="screenshot-fullpage">
+                        <input id="screenshot-fullpage" type="radio" name="screenshot" value="fullpage" aria-checked="false">
+                        Full page — Captures entire page length (slower, more tokens, not ideal for infinite scroll pages or heavy dynamic content)
+                    </label>
+                </fieldset>
+                <br>
+                <!-- End Screenshot Capture Mode Section -->
                 <!-- Feedback Detail Level Section -->
                 <h2>Feedback Detail Level</h2>
                 <fieldset id="detail-fieldset" role="radiogroup" aria-labelledby="detail-legend">

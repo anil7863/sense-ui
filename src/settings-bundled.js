@@ -102,7 +102,8 @@ function getDefaultSettings() {
         detailLevel: 'normal',
         downloadOption: 'all',
         contextInstructions: '',
-        selectedProvider: 'openai'
+        selectedProvider: 'openai',
+        screenshotMode: 'viewport'
     };
 }
 
@@ -278,6 +279,17 @@ async function loadCurrentSettings() {
             contextText.value = settings.contextInstructions;
         }
         
+        // Set the screenshot mode radio button
+        const screenshotViewport = document.getElementById('screenshot-viewport');
+        const screenshotFullpage = document.getElementById('screenshot-fullpage');
+        if (settings.screenshotMode === 'fullpage') {
+            screenshotFullpage.checked = true;
+            screenshotViewport.checked = false;
+        } else {
+            screenshotViewport.checked = true;
+            screenshotFullpage.checked = false;
+        }
+        
         // Set the selected provider radio button
         if (settings.selectedProvider === 'gemini') {
             providerGemini.checked = true;
@@ -307,6 +319,9 @@ async function handleSubmit(event) {
         
         const downloadOption = formData.get('download');
         if (downloadOption) settings.downloadOption = downloadOption;
+        
+        const screenshotMode = formData.get('screenshot');
+        if (screenshotMode) settings.screenshotMode = screenshotMode;
         
         settings.contextInstructions = formData.get('context') || '';
         settings.selectedProvider = formData.get('provider') || 'openai';
