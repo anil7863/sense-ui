@@ -73,7 +73,9 @@ IMPORTANT RULES:
 
 4. Fully describe each element and section with all its details before moving to the next section. Never return to a previously described element or section.
 
-5. If the user writes in a language other than English, respond in their language while maintaining the same technical depth, structure, formatting rules, and quality as specified in this prompt.
+5. Convert all RGB colors to hex format and mention them by name first and hex code second (e.g., "blue (#0000FF)")
+
+6. If the user writes in a language other than English, respond in their language while maintaining the same technical depth, structure, formatting rules, and quality as specified in this prompt.
 
 RESPONSE STRUCTURE:
 Start with an h3 heading: "Visual Design Description of [Website Name]"
@@ -88,6 +90,39 @@ Then describe the all the elements of the layout from top to bottom, using clear
 
 End with: "Want me to analyze a specific element in more detail?"`,
 
+        DESCRIBE_FULLPAGE: `Provide a comprehensive spatial visual design description of the ENTIRE webpage (base it on the full-page screenshot). Help create a complete mental map of the layout using directional and positional language. Use terminology familiar to programmers. Be specific but brief.
+
+IMPORTANT RULES:
+1. You are analyzing a FULL-PAGE SCREENSHOT showing the entire webpage from top to bottom. Describe the complete layout and how sections relate to each other throughout the page.
+
+2. ONLY report measurements you can verify from the provided CSS or HTML:
+   - If font sizes/spacing values are in the CSS, cite them
+   - If NOT in the CSS, describe relatively ("large heading", "small body text", "tight spacing") - do NOT make up px/rem values
+   - For colors, extract from CSS or estimate from screenshot (but note if estimated)
+
+3. Format all bullet points as complete single-line statements. NEVER create nested or indented bullets. A bullet point should never end with a colon (":")
+
+4. Fully describe each element and section with all its details before moving to the next section. Never return to a previously described element or section.
+
+5. Convert all RGB colors to hex format and mention them by name first and hex code second (e.g., "blue (#0000FF)")
+
+6. If the user writes in a language other than English, respond in their language while maintaining the same technical depth, structure, formatting rules, and quality as specified in this prompt.
+
+RESPONSE STRUCTURE:
+Start with an h3 heading: "Complete Visual Design Description of [Website Name]"
+Then describe ALL sections of the page from top to bottom, using clear positional language:
+
+- Start with the header/navigation at the very top
+- Describe each major section (hero, features, content areas, sidebars, etc.) in order from top to bottom
+- For each element, specify: position (top-left, top-center, top-right, etc.), color (hex codes), size, content, alignment of text/images, and spacing
+- Use directional language: "directly below", "to the right of", "aligned with", "centered between"
+- Describe spacing between sections: "with large spacing below" or "tightly grouped with"
+- Note alignment: left-aligned, centered, right-aligned
+- Continue through all sections until you reach the footer at the bottom
+- Mention page flow and visual hierarchy across the entire page
+
+End with: "Want me to analyze a specific section in more detail?"`,
+
         ISSUES: `Identify design and accessibility issues on the current webpage and provide actionable solutions.
 
 IMPORTANT: 
@@ -99,7 +134,7 @@ CRITICAL FORMATTING RULES:
 - Instead, refer to elements as: "the h1 element", "the main heading", "div with class hero", "the submit button"
 - When citing CSS selectors, write them as: .class-name or #id-name (without angle brackets)
 - Use markdown for your response structure: ### for section headings, - for bullet lists
-- Convert all RGB colors to hex format (e.g., rgb(255, 87, 51) → #FF5733)
+- Convert all RGB colors to hex format and mention them by name first and hex code second (e.g., "blue (#0000FF)")
 
 ANALYZE FOR:
 - Visual hierarchy problems (unclear heading structure, poor emphasis)
@@ -146,10 +181,14 @@ function parseCommand(userInput) {
 }
 
 // Get prompt for command
-function getPromptForCommand(command) {
+async function getPromptForCommand(command) {
     switch (command) {
         case '/describe':
-            return CONFIG.PROMPTS.DESCRIBE;
+            // Check screenshot mode to determine which describe prompt to use
+            const result = await chrome.storage.local.get(CONFIG.STORAGE_KEYS.USER_SETTINGS);
+            const settings = result[CONFIG.STORAGE_KEYS.USER_SETTINGS] || {};
+            const screenshotMode = settings.screenshotMode || 'viewport';
+            return screenshotMode === 'fullpage' ? CONFIG.PROMPTS.DESCRIBE_FULLPAGE : CONFIG.PROMPTS.DESCRIBE;
         case '/issues':
             return CONFIG.PROMPTS.ISSUES;
         default:
@@ -337,12 +376,125 @@ function attachResponseActions(container) {
 // ============================================================================
 // SCREENSHOT CAPTURE
 // ============================================================================
-async function captureScreenshot() {
+async function captureFullPageScreenshot() {
     try {
         const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true });
         if (!activeTab) throw new Error('No active tab found');
 
-        // Capture whatever is currently visible in the viewport
+        // Get page dimensions and current scroll position
+        const [dimensions] = await chrome.scripting.executeScript({
+            target: { tabId: activeTab.id },
+            func: () => {
+                return {
+                    pageHeight: document.documentElement.scrollHeight,
+                    pageWidth: document.documentElement.scrollWidth,
+                    viewportHeight: window.innerHeight,
+                    viewportWidth: window.innerWidth,
+                    originalScrollX: window.scrollX,
+                    originalScrollY: window.scrollY
+                };
+            }
+        });
+
+        const { pageHeight, pageWidth, viewportHeight, viewportWidth, originalScrollX, originalScrollY } = dimensions.result;
+
+        // If page fits in viewport, just capture normally
+        if (pageHeight <= viewportHeight) {
+            const dataUrl = await chrome.tabs.captureVisibleTab(null, {
+                format: CONFIG.LIMITS.SCREENSHOT_FORMAT,
+                quality: Math.round(CONFIG.LIMITS.SCREENSHOT_QUALITY * 100)
+            });
+            return dataUrl;
+        }
+
+        // Calculate number of screenshots needed
+        const screenshotsNeeded = Math.ceil(pageHeight / viewportHeight);
+        const screenshots = [];
+
+        // Scroll through page and capture screenshots
+        for (let i = 0; i < screenshotsNeeded; i++) {
+            const scrollY = i * viewportHeight;
+
+            // Scroll to position
+            await chrome.scripting.executeScript({
+                target: { tabId: activeTab.id },
+                func: (y) => window.scrollTo(0, y),
+                args: [scrollY]
+            });
+
+            // Small delay to let page render
+            await new Promise(resolve => setTimeout(resolve, 100));
+
+            // Capture this section
+            const dataUrl = await chrome.tabs.captureVisibleTab(null, {
+                format: CONFIG.LIMITS.SCREENSHOT_FORMAT,
+                quality: Math.round(CONFIG.LIMITS.SCREENSHOT_QUALITY * 100)
+            });
+
+            screenshots.push(dataUrl);
+        }
+
+        // Restore original scroll position
+        await chrome.scripting.executeScript({
+            target: { tabId: activeTab.id },
+            func: (x, y) => window.scrollTo(x, y),
+            args: [originalScrollX, originalScrollY]
+        });
+
+        // Stitch screenshots together on a canvas
+        return await stitchScreenshots(screenshots, viewportWidth, viewportHeight, pageHeight);
+    } catch (error) {
+        console.error('Error capturing full page screenshot:', error);
+        return null;
+    }
+}
+
+async function stitchScreenshots(screenshots, width, height, totalHeight) {
+    return new Promise((resolve) => {
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = totalHeight;
+        const ctx = canvas.getContext('2d');
+
+        let loadedCount = 0;
+        const images = [];
+
+        screenshots.forEach((dataUrl, index) => {
+            const img = new Image();
+            img.onload = () => {
+                images[index] = img;
+                loadedCount++;
+
+                if (loadedCount === screenshots.length) {
+                    // Draw all images onto canvas
+                    images.forEach((image, i) => {
+                        ctx.drawImage(image, 0, i * height);
+                    });
+
+                    // Convert to data URL
+                    resolve(canvas.toDataURL(CONFIG.LIMITS.SCREENSHOT_FORMAT, CONFIG.LIMITS.SCREENSHOT_QUALITY));
+                }
+            };
+            img.src = dataUrl;
+        });
+    });
+}
+
+async function captureScreenshot() {
+    try {
+        // Get user's screenshot mode preference
+        const result = await chrome.storage.local.get(CONFIG.STORAGE_KEYS.USER_SETTINGS);
+        const settings = result[CONFIG.STORAGE_KEYS.USER_SETTINGS] || {};
+        const screenshotMode = settings.screenshotMode || 'viewport';
+
+        if (screenshotMode === 'fullpage') {
+            return await captureFullPageScreenshot();
+        }
+
+        // Default: viewport only
+        const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        if (!activeTab) throw new Error('No active tab found');
+
         const dataUrl = await chrome.tabs.captureVisibleTab(null, {
             format: CONFIG.LIMITS.SCREENSHOT_FORMAT,
             quality: Math.round(CONFIG.LIMITS.SCREENSHOT_QUALITY * 100)
@@ -679,7 +831,7 @@ async function processUserInput(userInput, forceRefresh = false) {
 
     // Parse command
     const { command, text } = parseCommand(userInput);
-    const commandPrompt = command ? getPromptForCommand(command) : '';
+    const commandPrompt = command ? await getPromptForCommand(command) : '';
     // Only use SYSTEM prompt for custom prompts (no command)
     const systemPrompt = command 
         ? commandPrompt  // Use only command prompt for /describe and /issues
