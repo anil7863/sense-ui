@@ -149,6 +149,13 @@ function validateSettings(settings) {
     return { valid: errors.length === 0, errors };
 }
 
+async function resetSettings() {
+    // Keep API keys, reset everything else
+    const defaults = getDefaultSettings();
+    await chrome.storage.local.set({ [STORAGE_KEYS.USER_SETTINGS]: defaults });
+    await chrome.storage.local.set({ [STORAGE_KEYS.SELECTED_PROVIDER]: 'openai' });
+}
+
 async function clearApiKey(provider) {
     const keyName = provider === 'openai' ? STORAGE_KEYS.OPENAI_API_KEY : STORAGE_KEYS.GEMINI_API_KEY;
     await chrome.storage.local.remove(keyName);
@@ -394,6 +401,24 @@ const shortcutsBtn = document.getElementById('open-shortcuts');
 if (shortcutsBtn) {
     shortcutsBtn.addEventListener('click', () => {
         chrome.tabs.create({ url: 'chrome://extensions/shortcuts' });
+    });
+}
+
+// Add event listener for reset settings button
+const resetBtn = document.getElementById('reset-settings');
+if (resetBtn) {
+    resetBtn.addEventListener('click', async () => {
+        if (confirm('Reset all settings to defaults? (API keys will not be affected)')) {
+            try {
+                await resetSettings();
+                showStatus('Settings reset to defaults');
+                // Reload settings to update UI
+                await loadCurrentSettings();
+            } catch (error) {
+                console.error('Error resetting settings:', error);
+                showStatus('Failed to reset settings', true);
+            }
+        }
     });
 }
 
