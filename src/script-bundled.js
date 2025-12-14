@@ -13,7 +13,7 @@ const CONFIG = {
             ENDPOINT: 'https://api.openai.com/v1/chat/completions',
             MODEL: 'gpt-4o-mini',
             MAX_TOKENS: 2000,
-            TEMPERATURE: 0.3
+            TEMPERATURE: 0.4
         },
         GEMINI: {
             ENDPOINT: 'https://generativelanguage.googleapis.com/v1beta/models',
@@ -21,7 +21,7 @@ const CONFIG = {
             // This alias is updated by Google when new versions are released (with 2 weeks notice)
             MODEL: 'gemini-flash-latest',
             MAX_TOKENS: 4000,
-            TEMPERATURE: 0.3
+            TEMPERATURE: 0.4
         }
     },
     STORAGE_KEYS: {
