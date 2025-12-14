@@ -374,4 +374,12 @@ clearGeminiBtn.addEventListener('click', handleClearGemini);
 providerOpenAI.addEventListener('change', toggleApiKeyFields);
 providerGemini.addEventListener('change', toggleApiKeyFields);
 
+// Add event listener for keyboard shortcuts button
+const shortcutsBtn = document.getElementById('open-shortcuts');
+if (shortcutsBtn) {
+    shortcutsBtn.addEventListener('click', () => {
+        chrome.tabs.create({ url: 'chrome://extensions/shortcuts' });
+    });
+}
+
 loadCurrentSettings();
