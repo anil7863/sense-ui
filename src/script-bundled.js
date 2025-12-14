@@ -1211,7 +1211,7 @@ async function sendMessage() {
     const loadingDiv = document.createElement('div');
     loadingDiv.className = 'system-response loading-response';
     const loadingMessage = isDescribeCommand
-        ? '<p>Analyzing page... This may take a few seconds.</p>'
+        ? '<p>Analyzing page....</p>'
         : '<p>Analyzing page...</p>';
     loadingDiv.innerHTML = `<h2>SenseUI</h2><div class="loading-content">${loadingMessage}</div>`;
     chatMessages.appendChild(loadingDiv);
@@ -1223,7 +1223,7 @@ async function sendMessage() {
     }
 
     const announceMessage = isDescribeCommand
-        ? 'Analyzing page... This may take 10 to 15 seconds.'
+        ? 'Analyzing page....'
         : 'Analyzing page...';
     announce(announceMessage);
 
