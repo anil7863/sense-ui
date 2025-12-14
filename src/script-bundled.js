@@ -53,7 +53,11 @@ KEY PRINCIPLES:
 - Prioritize accessibility (WCAG 2.2) and usability when giving design advice
 - Only report what you can verify from the provided HTML, CSS, or screenshot
 - Do not offer code unless specifically requested
-- If information is uncertain or not visible, state the limitation clearly`,
+- If information is uncertain or not visible, state the limitation clearly
+
+LANGUAGE HANDLING:
+- If the user writes in a language other than English, respond in their language while maintaining the same technical depth, structure, formatting rules, and quality as specified in this prompt.
+`,
 
         DESCRIBE: `Provide a spatial visual design description of what's currently visible using the website (base it on the screenshot). Help create a mental map of the layout using directional and positional language. Use terminology familiar to programmers. Be specific but brief.
 
@@ -69,15 +73,11 @@ IMPORTANT RULES:
 
 4. Fully describe each element and section with all its details before moving to the next section. Never return to a previously described element or section.
 
+5. If the user writes in a language other than English, respond in their language while maintaining the same technical depth, structure, formatting rules, and quality as specified in this prompt.
+
 RESPONSE STRUCTURE:
 Start with an h3 heading: "Visual Design Description of [Website Name]"
-Then include these h4 subsections:
-
-#### Overall Aesthetic and Mood
-What's the immediate visual impression? Describe the aesthetic (minimalist/professional/modern/traditional/playful/corporate/etc.) and the overall mood and feeling it creates.
-
-#### Spatial Layout Description
-Describe the all the elements of the layout from top to bottom, using clear positional language:
+Then describe the all the elements of the layout from top to bottom, using clear positional language:
 
 - Start with what's at the very top (header/navigation area)
 - For each element, specify: position (top-left, top-center, top-right, etc.), color (hex codes), size, content, alignment of text/images, and spacing
@@ -90,7 +90,9 @@ End with: "Want me to analyze a specific element in more detail?"`,
 
         ISSUES: `Identify design and accessibility issues on the current webpage and provide actionable solutions.
 
-IMPORTANT: Only report issues you can actually verify from the HTML, CSS, and screenshot. If the page has no significant issues, say so - do NOT invent problems that don't exist. You may provide recommendations for improvement even when no critical issues are present.
+IMPORTANT: 
+- Only report issues you can actually verify from the HTML, CSS, and screenshot. If the page has no significant issues, say so - do NOT invent problems that don't exist. You may provide recommendations for improvement even when no critical issues are present.
+- If the user writes in a language other than English, respond in their language while maintaining the same technical depth, structure, formatting rules, and quality as specified in this prompt.
 
 CRITICAL FORMATTING RULES:
 - NEVER write HTML tags in your response (e.g., don't write "<h1>" or "<div>" or "<button>")
@@ -678,9 +680,10 @@ async function processUserInput(userInput, forceRefresh = false) {
     // Parse command
     const { command, text } = parseCommand(userInput);
     const commandPrompt = command ? getPromptForCommand(command) : '';
-    const systemPrompt = commandPrompt
-        ? `${CONFIG.PROMPTS.SYSTEM}\\n\\n${commandPrompt}`
-        : CONFIG.PROMPTS.SYSTEM;
+    // Only use SYSTEM prompt for custom prompts (no command)
+    const systemPrompt = command 
+        ? commandPrompt  // Use only command prompt for /describe and /issues
+        : CONFIG.PROMPTS.SYSTEM;  // Use SYSTEM prompt for custom prompts
 
     // Check if we need to capture or use cached context
     let context = {};
@@ -877,6 +880,24 @@ function setupEventListeners() {
         });
     }
 
+    // Describe button
+    const describeButton = document.getElementById('describe-btn');
+    if (describeButton) {
+        describeButton.addEventListener('click', () => {
+            chatInput.value = '/describe';
+            sendMessage();
+        });
+    }
+
+    // Issues button
+    const issuesButton = document.getElementById('issues-btn');
+    if (issuesButton) {
+        issuesButton.addEventListener('click', () => {
+            chatInput.value = '/issues';
+            sendMessage();
+        });
+    }
+
     // Download chat history button
     const downloadButton = document.getElementById('download-chat');
     if (downloadButton) {
@@ -947,6 +968,12 @@ async function sendMessage() {
             sendButton.textContent = 'Send';
             sendButton.setAttribute('aria-label', 'Send message');
         }
+
+        // Re-enable command buttons
+        const describeButton = document.getElementById('describe-btn');
+        const issuesButton = document.getElementById('issues-btn');
+        if (describeButton) describeButton.disabled = false;
+        if (issuesButton) issuesButton.disabled = false;
 
         announce('Generation stopped');
         return;
@@ -1032,7 +1059,7 @@ async function sendMessage() {
     const loadingDiv = document.createElement('div');
     loadingDiv.className = 'system-response loading-response';
     const loadingMessage = isDescribeCommand
-        ? '<p>Analyzing page... This may take 10-15 seconds.</p>'
+        ? '<p>Analyzing page... This may take a few seconds.</p>'
         : '<p>Analyzing page...</p>';
     loadingDiv.innerHTML = `<h2>SenseUI</h2><div class="loading-content">${loadingMessage}</div>`;
     chatMessages.appendChild(loadingDiv);
@@ -1055,6 +1082,12 @@ async function sendMessage() {
         sendButton.textContent = 'Stop';
         sendButton.setAttribute('aria-label', 'Stop generation');
     }
+
+    // Disable command buttons during generation
+    const describeButton = document.getElementById('describe-btn');
+    const issuesButton = document.getElementById('issues-btn');
+    if (describeButton) describeButton.disabled = true;
+    if (issuesButton) issuesButton.disabled = true;
 
     try {
         const response = await processUserInput(userInput);
@@ -1105,6 +1138,12 @@ async function sendMessage() {
             sendButton.textContent = 'Send';
             sendButton.setAttribute('aria-label', 'Send message');
         }
+
+        // Re-enable command buttons
+        const describeButton = document.getElementById('describe-btn');
+        const issuesButton = document.getElementById('issues-btn');
+        if (describeButton) describeButton.disabled = false;
+        if (issuesButton) issuesButton.disabled = false;
     }
 
     chatMessages.scrollTop = chatMessages.scrollHeight;
