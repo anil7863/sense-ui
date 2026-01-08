@@ -4,7 +4,7 @@ SenseUI is an open-source Chromium extension that gives blind and low-vision web
 
 We are actively looking forbBlind and low-vision developers to test and provide feedback. Participation is flexible and optional. You can participate in as many Sprints as you can. For more details go to [How to Contribute](#how-to-contribute)
 
-Current State: Sprint 2
+Current State: Sprint 3
 
 If you would like to join as a tester, please fill out [this form](https://docs.google.com/forms/d/e/1FAIpQLScDW_FCZznz-Nmws8N_mPTWvaSR4sbmvnxJ8kcTWSgy61M8wA/viewform?usp=sharing&ouid=113702676436730582551)
 
@@ -94,21 +94,24 @@ The goal for this sprint is to establish the core infrastructure: accessible int
 - AI Keys input from the settings page
 - AI-generated responses based on HTML/CSS and screenshots of the active tab
 
-### Sprint 3: Customization (December 7 - 22)
+### Sprint 3: Customization (December 9 - Current)
 
-- Settings page
-- More details soon
+- Fixes to visual description
+- Keyboard shortcut customization
+- Added full-page screenshot instead of just viewport-only, which can be changed on the settings page
+- Reset button for settings page
+- Quick action buttons added to compare against current slash commands
 
-### Holiday Break 
-From Dec 22 to January 4 
+### Sprint 4: Customization (All through January)
 
-### Sprint 4: Collaboration (January 4 - 16)
-Chat download, team sharing, documentation
+- Feedback customization (level of detail and instructions/context)
+- Chat download settings (only favorites or full chat)
+  
+### Sprint 5:  About page and Nice-to-Haves (Mid or end of February)
+- Finish polishing About page and add all necessary documentation
+- Nice-to-have's and newer suggested features (if time allows), edge cases
 
-### Sprint 5: Polish and feedback loop (January 19 - 31)
-Nice-to-have's and newer features (if time allows), edge cases
-
-### More details
+### Beta launch prediction: End of February of Early March 2026
 
 For detailed progress, visit the [SenseUI GitHub issues page](https://github.com/reginacas/sense-ui/issues)
 
@@ -124,7 +127,7 @@ Testers help us find issues and improve accessibility. Requirements:
 
 - You use a screen reader (NVDA, JAWS, VoiceOver)
 - You have experience or are learning web development
-- You can spend around 30 minutes testing it, every 2 to 3 weeks until the end of January approximately
+- You can spend around 30 minutes testing it, every 2 to 3 weeks until the end of February approximately
 
 At the start of each sprint, I create a tracking issue with features to test (labeled "current-sprint") with:
 - What features are in this sprint
