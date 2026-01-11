@@ -137,6 +137,8 @@ You download the Release, test it, and comment on what works and what breaks, su
 ### As a Developer
 
 If your heart desires, you can contribute code, fix bugs, or propose features.
+To find an approachable first issue to fix, you can check the ones with an "easy-fix" label [here](https://github.com/reginacas/sense-ui/issues?q=is%3Aissue%20state%3Aopen%20label%3Aeasy-fix)
+
 Simply fork the repository, make your changes and start a pull request.
 [Contact me](#contact) for any questions you have.
 
