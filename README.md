@@ -142,6 +142,10 @@ To find an approachable first issue to fix, you can check the ones with an "easy
 Simply fork the repository, make your changes and start a pull request.
 [Contact me](#contact) for any questions you have.
 
+### Participation of sighted contributors
+
+This project is built for blind and visually impaired developers, and their feedback and expertise guide its direction. Of course, sighted developers are also welcome to contribute, as long as their work supports these goals and respects the lived‑experience leadership of blind contributors. Collaboration across perspectives can only strenghten the project.
+
 ### Data Protection
 
 If you decide to participate and become part of the research study, you can read about how your personal data will be handled here: [Data protection](DATA_PROTECTION.md) 
@@ -188,6 +192,18 @@ SenseUI started from research on barriers blind and low-vision developers face w
 This project aims to co-design with blind and low-vision volunteers an open-source tool that enables independent work, supports career growth, and creates more inclusive development environments.
 
 To learn more about the research and the previous study we did to come up with the concept, see the project wiki: [SenseUI Wiki](https://github.com/reginacas/sense-ui/wiki)
+
+---
+
+## About the project maintainer
+
+I'm Regina Castro, a UX and web designer with more than 5 years of experience and a master student of Human-Computer Interaction. I'm passionate about accessibility and human-centered digital tools as well as open-source software and developer experience. While I’m not blind myself, this research has not been made without the constant collaboration with blind and visually impaired developers whose expertise and feedback have given direction to SenseUI.
+
+---
+
+## Disclosure about AI use
+
+Parts of the JavaScript codebase were written with assistance from Visual Studio Code’s Copilot tool. All generated code was tested to ensure functionality,  accessibility and security. 
 
 ---
 
