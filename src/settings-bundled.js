@@ -64,16 +64,16 @@ async function retrieveApiKey(keyName) {
         const result = await chrome.storage.local.get(keyName);
         const encrypted = result[keyName];
         if (!encrypted) return null;
-        
+
         const combined = new Uint8Array(atob(encrypted).split('').map(c => c.charCodeAt(0)));
         const salt = combined.slice(0, 16);
         const iv = combined.slice(16, 28);
         const encryptedData = combined.slice(28);
-        
+
         const password = await getEncryptionPassword();
         const key = await deriveKey(password, salt);
         const decryptedData = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: iv }, key, encryptedData);
-        
+
         const decoder = new TextDecoder();
         return decoder.decode(decryptedData);
     } catch (error) {
@@ -114,18 +114,18 @@ async function loadSettings() {
     ]);
     const settings = result[STORAGE_KEYS.USER_SETTINGS] || getDefaultSettings();
     settings.selectedProvider = result[STORAGE_KEYS.SELECTED_PROVIDER] || 'openai';
-    
+
     const openaiKey = await retrieveApiKey(STORAGE_KEYS.OPENAI_API_KEY);
     const geminiKey = await retrieveApiKey(STORAGE_KEYS.GEMINI_API_KEY);
     settings.hasOpenAIKey = !!openaiKey;
     settings.hasGeminiKey = !!geminiKey;
-    
+
     return settings;
 }
 
 async function saveSettings(settings) {
     const { openaiApiKey, geminiApiKey, selectedProvider, ...otherSettings } = settings;
-    
+
     if (selectedProvider) {
         await chrome.storage.local.set({ [STORAGE_KEYS.SELECTED_PROVIDER]: selectedProvider });
     }
@@ -150,10 +150,10 @@ function validateSettings(settings) {
 }
 
 async function resetSettings() {
-    // Keep API keys, reset everything else
+    // Keep API keys and selected provider, reset everything else
     const defaults = getDefaultSettings();
     await chrome.storage.local.set({ [STORAGE_KEYS.USER_SETTINGS]: defaults });
-    await chrome.storage.local.set({ [STORAGE_KEYS.SELECTED_PROVIDER]: 'openai' });
+    // Note: We do NOT reset STORAGE_KEYS.SELECTED_PROVIDER here anymore
 }
 
 async function clearApiKey(provider) {
@@ -197,7 +197,7 @@ const contextText = document.getElementById('context-text');
 // Function to toggle API key fields based on selected provider
 function toggleApiKeyFields() {
     const selectedProvider = providerOpenAI.checked ? 'openai' : 'gemini';
-    
+
     if (selectedProvider === 'openai') {
         // Show OpenAI fields
         if (openaiKeyLabel) openaiKeyLabel.style.display = '';
@@ -238,7 +238,7 @@ function showStatus(message, isError = false) {
 
 async function updateApiKeyStatus() {
     const status = await getApiKeyStatus();
-    
+
     if (status.hasOpenAI) {
         openaiStatus.textContent = '✓ Key configured';
         openaiStatus.className = 'hint success-text';
@@ -250,7 +250,7 @@ async function updateApiKeyStatus() {
         clearOpenAIBtn.style.display = 'none';
         openaiKeyInput.placeholder = 'Your OpenAI Key...';
     }
-    
+
     if (status.hasGemini) {
         geminiStatus.textContent = '✓ Key configured';
         geminiStatus.className = 'hint success-text';
@@ -267,7 +267,7 @@ async function updateApiKeyStatus() {
 async function loadCurrentSettings() {
     try {
         const settings = await loadSettings();
-        
+
         if (settings.detailLevel === 'comprehensive') {
             detailComprehensive.checked = true;
         } else if (settings.detailLevel === 'concise') {
@@ -275,17 +275,17 @@ async function loadCurrentSettings() {
         } else {
             detailNormal.checked = true;
         }
-        
+
         if (settings.downloadOption === 'favorites') {
             downloadFavorites.checked = true;
         } else {
             downloadAll.checked = true;
         }
-        
+
         if (settings.contextInstructions) {
             contextText.value = settings.contextInstructions;
         }
-        
+
         // Set the screenshot mode radio button
         const screenshotViewport = document.getElementById('screenshot-viewport');
         const screenshotFullpage = document.getElementById('screenshot-fullpage');
@@ -296,7 +296,7 @@ async function loadCurrentSettings() {
             screenshotViewport.checked = true;
             screenshotFullpage.checked = false;
         }
-        
+
         // Set the selected provider radio button
         if (settings.selectedProvider === 'gemini') {
             providerGemini.checked = true;
@@ -305,7 +305,7 @@ async function loadCurrentSettings() {
             providerOpenAI.checked = true;
             providerGemini.checked = false;
         }
-        
+
         await updateApiKeyStatus();
         toggleApiKeyFields(); // Show/hide fields based on selected provider
     } catch (error) {
@@ -316,44 +316,44 @@ async function loadCurrentSettings() {
 
 async function handleSubmit(event) {
     event.preventDefault();
-    
+
     try {
         const formData = new FormData(form);
         const settings = {};
-        
+
         const detailLevel = formData.get('detail');
         if (detailLevel) settings.detailLevel = detailLevel;
-        
+
         const downloadOption = formData.get('download');
         if (downloadOption) settings.downloadOption = downloadOption;
-        
+
         const screenshotMode = formData.get('screenshot');
         if (screenshotMode) settings.screenshotMode = screenshotMode;
-        
+
         settings.contextInstructions = formData.get('context') || '';
         settings.selectedProvider = formData.get('provider') || 'openai';
-        
+
         const openaiKey = openaiKeyInput.value.trim();
         const geminiKey = geminiKeyInput.value.trim();
-        
+
         if (openaiKey && openaiKey !== '••••••••••••••••') {
             settings.openaiApiKey = openaiKey;
         }
         if (geminiKey && geminiKey !== '••••••••••••••••') {
             settings.geminiApiKey = geminiKey;
         }
-        
+
         const validation = validateSettings(settings);
         if (!validation.valid) {
             showStatus(`Validation errors: ${validation.errors.join(', ')}`, true);
             return;
         }
-        
+
         await saveSettings(settings);
-        
+
         openaiKeyInput.value = '';
         geminiKeyInput.value = '';
-        
+
         await updateApiKeyStatus();
         showStatus('Settings saved successfully!');
     } catch (error) {
@@ -406,20 +406,35 @@ if (shortcutsBtn) {
 
 // Add event listener for reset settings button
 const resetBtn = document.getElementById('reset-settings');
-if (resetBtn) {
-    resetBtn.addEventListener('click', async () => {
-        if (confirm('Reset all settings to defaults? (API keys will not be affected)')) {
+const resetDialog = document.getElementById('reset-warning-dialog');
+const confirmResetBtn = document.getElementById('confirm-reset-action');
+const cancelResetBtn = document.getElementById('cancel-reset-action');
+
+if (resetBtn && resetDialog) {
+    resetBtn.addEventListener('click', () => {
+        resetDialog.showModal();
+    });
+
+    if (confirmResetBtn) {
+        confirmResetBtn.addEventListener('click', async () => {
             try {
                 await resetSettings();
                 showStatus('Settings reset to defaults');
                 // Reload settings to update UI
                 await loadCurrentSettings();
+                resetDialog.close();
             } catch (error) {
                 console.error('Error resetting settings:', error);
                 showStatus('Failed to reset settings', true);
             }
-        }
-    });
+        });
+    }
+
+    if (cancelResetBtn) {
+        cancelResetBtn.addEventListener('click', () => {
+            resetDialog.close();
+        });
+    }
 }
 
 loadCurrentSettings();
