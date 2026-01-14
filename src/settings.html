@@ -14,17 +14,17 @@
     <header>
         <h1 class="sr-only">Sense UI</h1>
         <nav>
-        <a href="index.html">Chat</a>
-        <br>
-        <a href="settings.html" aria-current="page">Settings</a>
-        <br>
-        <a href="about.html">About</a>
-    </nav>
+            <a href="index.html">Chat</a>
+            <br>
+            <a href="settings.html" aria-current="page">Settings</a>
+            <br>
+            <a href="about.html">About</a>
+        </nav>
     </header>
 
     <main id="main">
-            <h1>Settings</h1>
-            <p>Configure your API keys and customize SenseUI's behavior and responses.</p>
+        <h1>Settings</h1>
+        <p>Configure your API keys and customize SenseUI's behavior and responses.</p>
 
         <section>
             <form id="settings-form" novalidate>
@@ -33,12 +33,14 @@
                 <fieldset id="api-fieldset" aria-labelledby="api-legend">
                     <legend id="api-legend">Enter your API key to use SenseUI</legend>
                     <h3>How to get an API key</h3>
-                    <p>You can visit these links (opens in a new tab). If you already have one, continue to the next step.</p>
+                    <p>You can visit these links (opens in a new tab). If you already have one, continue to the next
+                        step.</p>
                     <ul>
                         <li><a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener">
                                 Get your OpenAI API key
                             </a></li>
-                        <li><a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener">Get your Google Gemini API key</a></li>
+                        <li><a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener">Get your
+                                Google Gemini API key</a></li>
                     </ul>
                     <br>
                     <!-- AI provider selection -->
@@ -82,13 +84,17 @@
                     <legend id="screenshot-legend">Choose which part of the page to capture for analysis.</legend>
                     <br>
                     <label for="screenshot-viewport">
-                        <input id="screenshot-viewport" type="radio" name="screenshot" value="viewport" checked aria-checked="true">
-                        Viewport only (default) — Captures only what's visible on screen (faster feedback, less tokens, more details)
+                        <input id="screenshot-viewport" type="radio" name="screenshot" value="viewport" checked
+                            aria-checked="true">
+                        Viewport only (default) — Captures only what's visible on screen (faster feedback, less tokens,
+                        more details)
                     </label>
                     <br>
                     <label for="screenshot-fullpage">
-                        <input id="screenshot-fullpage" type="radio" name="screenshot" value="fullpage" aria-checked="false">
-                        Full page — Captures entire page length (slower, more tokens, not ideal for infinite scroll pages or heavy dynamic content)
+                        <input id="screenshot-fullpage" type="radio" name="screenshot" value="fullpage"
+                            aria-checked="false">
+                        Full page — Captures entire page length (slower, more tokens, not ideal for infinite scroll
+                        pages or heavy dynamic content)
                     </label>
                 </fieldset>
                 <br>
@@ -158,13 +164,25 @@
                 <!-- Keyboard Shortcut Section -->
                 <h2>Keyboard Shortcut</h2>
                 <p>You can customize the keyboard shortcut to open/close SenseUI.</p>
-                <button type="button" id="open-shortcuts" class="btn-secondary">Change keyboard shortcut<span class="sr-only"> (opens the browser's extension manager in new tab)</span></button>
+                <button type="button" id="open-shortcuts" class="btn-secondary">Change keyboard shortcut<span
+                        class="sr-only"> (opens the browser's extension manager in new tab)</span></button>
                 <br>
                 <br>
                 <!-- End Keyboard Shortcut Section -->
-                    <button type="submit" id="save-settings" class="btn-primary">Save</button>
-                    <br>
-                    <button type="button" style="margin-top: 1rem;" id="reset-settings" class="btn-secondary">Reset to Defaults</button>
+
+                <dialog id="reset-warning-dialog">
+                    <h3>Warning</h3>
+                    <p tabindex="0">Are you sure you want to reset all preferences to defaults? API keys and provider
+                        selection will be preserved.</p>
+                    <div class="dialog-actions">
+                        <button type="button" id="cancel-reset-action" class="btn-secondary">Cancel</button>
+                        <button type="button" id="confirm-reset-action" class="btn-primary">Confirm</button>
+                    </div>
+                </dialog>
+                <button type="submit" id="save-settings" class="btn-primary">Save</button>
+                <br>
+                <button type="button" style="margin-top: 1rem;" id="reset-settings" class="btn-secondary">Reset to
+                    Defaults</button>
                 <!-- Status area for screen readers (updated via script on submit) -->
                 <div id="settings-status" role="status" aria-live="polite" class="visually-hidden" aria-atomic="true">
                 </div>
