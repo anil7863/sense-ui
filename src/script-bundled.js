@@ -80,7 +80,13 @@ IMPORTANT RULES:
 
 5. Convert all RGB colors to hex format and mention them by name first and hex code second (e.g., "blue (#0000FF)")
 
-6. If the user writes in a language other than English, respond in their language while maintaining the same technical depth, structure, formatting rules, and quality as specified in this prompt.
+6. Do NOT create tables
+
+LANGUAGE HANDLING:
+- ALWAYS respond in English by default
+- ONLY respond in another language if the user's current message is written entirely in that language
+- Do NOT switch language based on: page content, HTML lang attribute, previous assistant responses, or screenshot text
+- When responding in a non-English language: maintain the same technical depth, structure, formatting rules, and quality as specified in this prompt
 
 RESPONSE STRUCTURE:
 Start with an h3 heading: "Visual Design Description of [Website Name]"
@@ -111,7 +117,13 @@ IMPORTANT RULES:
 
 5. Convert all RGB colors to hex format and mention them by name first and hex code second (e.g., "blue (#0000FF)")
 
-6. If the user writes in a language other than English, respond in their language while maintaining the same technical depth, structure, formatting rules, and quality as specified in this prompt.
+6. Do NOT create tables
+
+LANGUAGE HANDLING:
+- ALWAYS respond in English by default
+- ONLY respond in another language if the user's current message is written entirely in that language
+- Do NOT switch language based on: page content, HTML lang attribute, previous assistant responses, or screenshot text
+- When responding in a non-English language: maintain the same technical depth, structure, formatting rules, and quality as specified in this prompt
 
 RESPONSE STRUCTURE:
 Start with an h3 heading: "Complete Visual Design Description of [Website Name]"
@@ -132,7 +144,12 @@ End with: "Want me to analyze a specific section in more detail?"`,
 
 IMPORTANT: 
 - Only report issues you can actually verify from the HTML, CSS, and screenshot. If the page has no significant issues, say so - do NOT invent problems that don't exist. You may provide recommendations for improvement even when no critical issues are present.
-- If the user writes in a language other than English, respond in their language while maintaining the same technical depth, structure, formatting rules, and quality as specified in this prompt.
+
+LANGUAGE HANDLING:
+- ALWAYS respond in English by default
+- ONLY respond in another language if the user's current message is written entirely in that language
+- Do NOT switch language based on: page content, HTML lang attribute, previous assistant responses, or screenshot text
+- When responding in a non-English language: maintain the same technical depth, structure, formatting rules, and quality as specified in this prompt
 
 CRITICAL FORMATTING RULES:
 - NEVER write HTML tags in your response (e.g., don't write "<h1>" or "<div>" or "<button>")
@@ -140,6 +157,7 @@ CRITICAL FORMATTING RULES:
 - When citing CSS selectors, write them as: .class-name or #id-name (without angle brackets)
 - Use markdown for your response structure: ### for section headings, - for bullet lists
 - Convert all RGB colors to hex format and mention them by name first and hex code second (e.g., "blue (#0000FF)")
+- Do NOT create tables
 
 ANALYZE FOR:
 - Visual hierarchy problems (unclear heading structure, poor emphasis)
