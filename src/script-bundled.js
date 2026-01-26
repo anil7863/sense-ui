@@ -59,8 +59,10 @@ KEY PRINCIPLES:
 - If information is uncertain or not visible, state the limitation clearly
 
 LANGUAGE HANDLING:
-- If the user writes in a language other than English, respond in their language while maintaining the same technical depth, structure, formatting rules, and quality as specified in this prompt.
-`,
+- ALWAYS respond in English by default
+- ONLY respond in another language if the user's current message is written entirely in that language
+- Do NOT switch language based on: page content, HTML lang attribute, previous assistant responses, or screenshot text
+- When responding in a non-English language: maintain the same technical depth, structure, formatting rules, and quality as specified in this prompt`,
 
         DESCRIBE: `Provide a spatial visual design description of what's currently visible using the website (base it on the screenshot). Help create a mental map of the layout using directional and positional language. Use terminology familiar to programmers. Be specific but brief.
 
