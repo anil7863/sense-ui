@@ -152,6 +152,7 @@ REQUIREMENTS:
 - Only report issues you can verify from the provided HTML/CSS/ or screenshot
 - Cite specific CSS selectors and current values
 - Provide exact recommended values (not generic suggestions)
+- Group similar issues affecting multiple elements into a single actionable recommendation (e.g., "Elements .header-link and .footer-link both need better contrast: change color from #AAAAAA to #333333")
 
 EXAMPLES OF BAD vs GOOD SOLUTIONS:
 BAD: "Use a bolder color" (vague, no actionable code)
