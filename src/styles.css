@@ -279,3 +279,15 @@ li {
     gap: 10px;
     margin-top: 20px;
 }
+
+/* ACCORDION STYLES */
+
+summary {
+    cursor: pointer;
+    margin-bottom: 0.5rem;
+}
+
+summary h2 {
+    display: inline;
+    margin-left: 0.3rem;
+}
