@@ -16,6 +16,8 @@
         <nav>
             <a href="index.html" aria-current="page">Chat</a>
             <br>
+            <a href="projects.html">Projects</a>
+            <br>
             <a href="settings.html">Settings</a>
             <br>
             <a href="help.html">Help</a>
@@ -33,6 +35,14 @@
                 <button type="button" id="issues-btn" class="btn-secondary">Find issues</button>
                 <button type="button" id="download-chat" class="btn-secondary" aria-label="Download current chat">Download</button>
             </div>
+            <!-- Project Selector -->
+        <div class="project-selector" aria-labelledby="project-selector-label">
+            <label for="active-project-select" id="project-selector-label">Active Project</label>
+            <select id="active-project-select" aria-describedby="project-selector-hint">
+                <option value="">No project selected</option>
+            </select>
+            <small id="project-selector-hint" class="sr-only">Select a project to provide context for AI feedback</small>
+        </div>
             <div class="chat-input-area" id="chat-form">
                 <label for="chat-input">Ask something about the page or use forward slash for commands</label>
                 <input id="chat-input" class="chat-input" type="text" autocomplete="off"
