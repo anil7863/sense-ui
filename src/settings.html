@@ -24,18 +24,17 @@
 
     <main id="main">
         <h1>Settings</h1>
-        <p>Configure your API keys and customize SenseUI's behavior and responses.</p>
-
             <form id="settings-form" novalidate>
                 <!-- API Configuration Section -->
                 <details name="settings" class="settings-section" open>
                     <summary>
-                        <h2>API Configuration</h2>
+                        <h2>Enter your AI Key</h2>
                     </summary>
                     <fieldset id="api-fieldset" aria-labelledby="api-legend">
-                        <legend id="api-legend">Enter your API key to use SenseUI</legend>
-                        <h3>How to get an API key</h3>
-                        <p>You can visit these links (opens in a new tab). If you already have one, continue to the next
+                        <legend id="api-legend">Enter your AI key to use SenseUI</legend>
+                        <!-- AI key instructions -->
+                        <h3>How to get an AI key</h3>
+                        <p>If you don't have a key yet, you can visit these links (opens in a new tab). If you already have one, continue to the next
                             step.</p>
                         <ul>
                             <li><a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener">
@@ -45,14 +44,13 @@
                                     Google Gemini API key</a></li>
                         </ul>
                         <br>
-                        <!-- AI provider selection -->
-                        <h3>Select an AI provider</h3>
-                        <label for="provider-select">AI Provider</label>
+                        <!-- AI key provider selection -->
+                        <h3>Select your AI key provider</h3>
                         <br>
                         <label for="provider-openai">
                             <input id="provider-openai" type="radio" name="provider" value="openai" checked
                                 aria-checked="true" />
-                            OpenAI (GPT-4)
+                            OpenAI
                         </label>
                         <br>
                         <label for="provider-gemini">
@@ -80,8 +78,11 @@
                             <br>
 
                             <!-- Model selection (provider-specific) -->
-                            <h3>Model selection</h3>
-                            <p>Choose which model SenseUI should use for this provider. If you are not sure, keep the auto option.</p>
+                            <h3>Model customization</h3>
+                            <p>If you wish to specify, choose which model SenseUI should use for this provider. If you are not sure, keep the auto option.
+                                To read more about model requirements, visit the <a href="help.html#available-models" target="_blank" rel="noopener">Help
+                                    page</a> (opens in a new tab).
+                            </p>
 
                             <!-- OpenAI model input -->
                             <label for="openai-model" id="openai-model-label">OpenAI model</label>
@@ -89,11 +90,12 @@
                             <input id="openai-model" name="openaiModel" list="openai-models" autocomplete="off"
                                 aria-describedby="openai-model-desc" />
                             <br>
-                            <small id="openai-model-desc" class="hint">You can pick a suggestion or type any OpenAI model name your account supports.</small>
+                            <small id="openai-model-desc" class="hint">You can pick a suggestion or type any model name your account and AI key provider supports.</small>
                             <datalist id="openai-models">
-                                <option value="auto (gpt-4o-mini)"></option>
-                                <option value="gpt-4o"></option>
+                                <option value="auto (gpt-4o-mini)" label="auto (GPT 4 O mini)"></option>
+                                <option value="gpt-4o" label="GPT 4 O"></option>
                                 <option value="gpt-4.1-mini"></option>
+                                <option value="gpt-4.1"></option>
                             </datalist>
                             <br>
 
