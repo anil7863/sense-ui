@@ -17,9 +17,7 @@ const CONFIG = {
         },
         GEMINI: {
             ENDPOINT: 'https://generativelanguage.googleapis.com/v1beta/models',
-            // Using gemini-flash-latest - automatically points to the latest stable Flash model
-            // This alias is updated by Google when new versions are released (with 2 weeks notice)
-            MODEL: 'gemini-flash-latest',
+            MODEL: 'gemini-3-flash-preview',
             MAX_TOKENS: 4000,
             TEMPERATURE: 0.4
         }
@@ -634,24 +632,55 @@ async function extractPageContent() {
 // LLM CLIENT
 // ============================================================================
 
-// Helper function to list available Gemini models
-async function listGeminiModels(apiKey) {
+// Helper to resolve which model to use for each provider based on settings
+async function getModelForProvider(provider) {
     try {
-        const response = await fetch(
-            `https://generativelanguage.googleapis.com/v1/models?key=${apiKey}`,
-            { method: 'GET', headers: { 'Content-Type': 'application/json' } }
-        );
-        if (!response.ok) {
-            console.error('Failed to list models:', response.status);
-            return [];
+        const result = await chrome.storage.local.get(CONFIG.STORAGE_KEYS.USER_SETTINGS);
+        const settings = result[CONFIG.STORAGE_KEYS.USER_SETTINGS] || {};
+
+        if (provider === 'openai') {
+            const raw = (settings.openaiModel || '').trim();
+            if (!raw) return CONFIG.API.OPENAI.MODEL;
+            const lower = raw.toLowerCase();
+            if (lower === 'auto' || lower.startsWith('auto ')) {
+                return CONFIG.API.OPENAI.MODEL;
+            }
+            return raw;
+        } else {
+            const raw = (settings.geminiModel || '').trim();
+            if (!raw) return CONFIG.API.GEMINI.MODEL;
+            const lower = raw.toLowerCase();
+            if (lower === 'auto' || lower.startsWith('auto ')) {
+                return CONFIG.API.GEMINI.MODEL;
+            }
+            return raw.startsWith('models/') ? raw : raw;
         }
-        const data = await response.json();
-        console.log('Available Gemini models:', data.models?.map(m => m.name));
-        return data.models || [];
     } catch (error) {
-        console.error('Error listing models:', error);
-        return [];
+        console.error('Error reading model from settings, using defaults:', error);
+        return provider === 'openai' ? CONFIG.API.OPENAI.MODEL : CONFIG.API.GEMINI.MODEL;
     }
+}
+
+function getUnknownModelHelpMessage() {
+    return `You entered an unknown or unsupported model name.
+
+Please check the list of currently available models from your provider:
+
+- OpenAI models: https://platform.openai.com/docs/models
+- Gemini models: https://ai.google.dev/models
+
+We recommend using one of the following:
+
+OpenAI:
+- auto (gpt-4o-mini)
+- gpt-4o
+ - gpt-4.1-mini
+
+Gemini:
+- auto (gemini-3-flash-preview)
+- gemini-3-pro-preview
+
+Once updated, retry your request.`;
 }
 
 async function sendToLLM(userMessage, context, systemPrompt, provider) {
@@ -676,15 +705,16 @@ async function sendToLLM(userMessage, context, systemPrompt, provider) {
     }
 
     const fullMessage = `${userMessage}${contextText}`;
+    const model = await getModelForProvider(provider);
 
     if (provider === 'openai') {
-        return await sendToOpenAI(apiKey, systemPrompt, fullMessage, context.screenshot);
+        return await sendToOpenAI(apiKey, systemPrompt, fullMessage, context.screenshot, model);
     } else {
-        return await sendToGemini(apiKey, systemPrompt, fullMessage, context.screenshot);
+        return await sendToGemini(apiKey, systemPrompt, fullMessage, context.screenshot, model);
     }
 }
 
-async function sendToOpenAI(apiKey, systemPrompt, userMessage, screenshot) {
+async function sendToOpenAI(apiKey, systemPrompt, userMessage, screenshot, modelName) {
     const messages = [
         { role: 'system', content: systemPrompt }
     ];
@@ -701,35 +731,44 @@ async function sendToOpenAI(apiKey, systemPrompt, userMessage, screenshot) {
         messages.push({ role: 'user', content: userMessage });
     }
 
+    const model = modelName || CONFIG.API.OPENAI.MODEL;
+
+    const body = {
+        model: model,
+        messages: messages,
+        temperature: CONFIG.API.OPENAI.TEMPERATURE
+    };
+
     const response = await fetch(CONFIG.API.OPENAI.ENDPOINT, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${apiKey}`
         },
-        body: JSON.stringify({
-            model: CONFIG.API.OPENAI.MODEL,
-            messages: messages,
-            temperature: CONFIG.API.OPENAI.TEMPERATURE,
-            max_tokens: CONFIG.API.OPENAI.MAX_TOKENS
-        }),
+        body: JSON.stringify(body),
         signal: currentAbortController?.signal
     });
 
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error?.message || `OpenAI API error: ${response.status}`);
+        const rawMessage = errorData.error?.message || `OpenAI API error: ${response.status}`;
+        const lower = rawMessage.toLowerCase();
+        if (lower.includes('model') && (lower.includes('not found') || lower.includes('does not exist') || lower.includes('not valid'))) {
+            throw new Error(getUnknownModelHelpMessage());
+        }
+        throw new Error(rawMessage);
     }
 
     const data = await response.json();
     // OpenAI returns the actual model used in data.model
-    const actualModel = data.model || CONFIG.API.OPENAI.MODEL;
+    const actualModel = data.model || model;
     console.log(`✅ Response generated using OpenAI model: ${actualModel}`);
     return data.choices[0].message.content;
 }
 
-async function sendToGemini(apiKey, systemPrompt, userMessage, screenshot) {
-    const endpoint = `${CONFIG.API.GEMINI.ENDPOINT}/${CONFIG.API.GEMINI.MODEL}:generateContent?key=${apiKey}`;
+async function sendToGemini(apiKey, systemPrompt, userMessage, screenshot, modelName) {
+    const model = modelName || CONFIG.API.GEMINI.MODEL;
+    const endpoint = `${CONFIG.API.GEMINI.ENDPOINT}/${model}:generateContent?key=${apiKey}`;
 
     // Combine system prompt with user message for Gemini
     const fullMessage = `${systemPrompt}\n\n${userMessage}`;
@@ -764,13 +803,9 @@ async function sendToGemini(apiKey, systemPrompt, userMessage, screenshot) {
         const errorMessage = errorData.error?.message || `Gemini API error: ${response.status}`;
         console.error('Gemini API Error:', errorData);
 
-        // If model not found, list available models
-        if (errorMessage.includes('not found') || errorMessage.includes('not supported')) {
-            console.log('Fetching available models for your API key...');
-            const models = await listGeminiModels(apiKey);
-            console.log('Try changing the MODEL in script-bundled.js to one of these:',
-                models.map(m => m.name.replace('models/', '')));
-            throw new Error(`${errorMessage}\n\nCheck the console to see available models for your API key.`);
+        const lower = errorMessage.toLowerCase();
+        if (lower.includes('model') && (lower.includes('not found') || lower.includes('not valid') || lower.includes('does not exist') || lower.includes('unsupported'))) {
+            throw new Error(getUnknownModelHelpMessage());
         }
 
         throw new Error(errorMessage);
@@ -794,12 +829,8 @@ async function sendToGemini(apiKey, systemPrompt, userMessage, screenshot) {
     }
 
     // Log which model was used - data.usageMetadata may contain actual model info
-    const actualModel = data.modelVersion || CONFIG.API.GEMINI.MODEL;
-    if (CONFIG.API.GEMINI.MODEL === 'gemini-flash-latest') {
-        console.log(`✅ Response generated using Gemini model: ${CONFIG.API.GEMINI.MODEL} (currently resolves to: ${actualModel})`);
-    } else {
-        console.log(`✅ Response generated using Gemini model: ${actualModel}`);
-    }
+    const actualModel = data.modelVersion || model;
+    console.log(`✅ Response generated using Gemini model: ${actualModel}`);
 
     // Log token usage if available
     if (data.usageMetadata) {

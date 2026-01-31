@@ -24,153 +24,209 @@
 
     <main id="main">
         <h1>Settings</h1>
-        <p>Configure your API keys and customize SenseUI's behavior and responses.</p>
-
-        <section>
             <form id="settings-form" novalidate>
                 <!-- API Configuration Section -->
-                <h2>API Configuration</h2>
-                <fieldset id="api-fieldset" aria-labelledby="api-legend">
-                    <legend id="api-legend">Enter your API key to use SenseUI</legend>
-                    <h3>How to get an API key</h3>
-                    <p>You can visit these links (opens in a new tab). If you already have one, continue to the next
-                        step.</p>
-                    <ul>
-                        <li><a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener">
-                                Get your OpenAI API key
-                            </a></li>
-                        <li><a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener">Get your
-                                Google Gemini API key</a></li>
-                    </ul>
-                    <br>
-                    <!-- AI provider selection -->
-                    <h3>Select an AI provider</h3>
-                    <label for="provider-select">AI Provider</label>
-                    <br>
-                    <label for="provider-openai">
-                        <input id="provider-openai" type="radio" name="provider" value="openai" checked
-                            aria-checked="true" />
-                        OpenAI (GPT-4)
-                    </label>
-                    <br>
-                    <label for="provider-gemini">
-                        <input id="provider-gemini" type="radio" name="provider" value="gemini" aria-checked="false" />
-                        Google Gemini
-                    </label>
-                    <br>
-                    <!--OpenAI key input-->
-                    <label for="openai-key">Enter your OpenAI key</label>
-                    <input type="password" id="openai-key" name="openaiApiKey" placeholder="Your OpenAI API key"
-                        aria-describedby="openai-key-desc" autocomplete="off" />
-                    <div id="openai-status" role="status" aria-live="polite" style="margin-top: 0.5em;"></div>
-                    <br>
-                    <button type="button" id="clear-openai-key" class="btn-secondary"
-                        style="display: none; margin-top: 0.5em;">Clear OpenAI Key</button>
-                    <!--Gemini key input-->
-                    <label for="gemini-key" style="display: none;">Enter your Gemini key</label>
-                    <input type="password" id="gemini-key" name="geminiApiKey" placeholder="Your Gemini API key"
-                        aria-describedby="gemini-key-desc" autocomplete="off" style="display: none;" />
-                    <div id="gemini-status" role="status" aria-live="polite" style="display: none; margin-top: 0.5em;">
-                    </div>
-                    <br>
-                    <button type="button" id="clear-gemini-key" class="btn-secondary"
-                        style="display: none; margin-top: 0.5em;">Clear Gemini Key</button>
-                    <br>
-                </fieldset>
+                <details name="settings" class="settings-section" open>
+                    <summary>
+                        <h2>Enter your AI Key</h2>
+                    </summary>
+                    <fieldset id="api-fieldset" aria-labelledby="api-legend">
+                        <legend id="api-legend">Enter your AI key to use SenseUI</legend>
+                        <!-- AI key instructions -->
+                        <h3>How to get an AI key</h3>
+                        <p>If you don't have a key yet, you can visit these links (opens in a new tab). If you already have one, continue to the next
+                            step.</p>
+                        <ul>
+                            <li><a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener">
+                                    Get your OpenAI API key
+                                </a></li>
+                            <li><a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener">Get your
+                                    Google Gemini API key</a></li>
+                        </ul>
+                        <br>
+                        <!-- AI key provider selection -->
+                        <h3>Select your AI key provider</h3>
+                        <br>
+                        <label for="provider-openai">
+                            <input id="provider-openai" type="radio" name="provider" value="openai" checked
+                                aria-checked="true" />
+                            OpenAI
+                        </label>
+                        <br>
+                        <label for="provider-gemini">
+                            <input id="provider-gemini" type="radio" name="provider" value="gemini" aria-checked="false" />
+                            Google Gemini
+                        </label>
+                        <br>
+                        <!--OpenAI key input-->
+                        <label for="openai-key">Enter your OpenAI key</label>
+                        <input type="password" id="openai-key" name="openaiApiKey" placeholder="Your OpenAI API key"
+                            aria-describedby="openai-key-desc" autocomplete="off" />
+                        <div id="openai-status" role="status" aria-live="polite" style="margin-top: 0.5em;"></div>
+                        <br>
+                        <button type="button" id="clear-openai-key" class="btn-secondary"
+                            style="display: none; margin-top: 0.5em;">Clear OpenAI Key</button>
+                        <!--Gemini key input-->
+                        <label for="gemini-key" style="display: none;">Enter your Gemini key</label>
+                        <input type="password" id="gemini-key" name="geminiApiKey" placeholder="Your Gemini API key"
+                            aria-describedby="gemini-key-desc" autocomplete="off" style="display: none;" />
+                        <div id="gemini-status" role="status" aria-live="polite" style="display: none; margin-top: 0.5em;">
+                        </div>
+                        <br>
+                        <button type="button" id="clear-gemini-key" class="btn-secondary"
+                                style="display: none; margin-top: 0.5em;">Clear Gemini Key</button>
+                            <br>
+
+                            <!-- Model selection (provider-specific) -->
+                            <h3>Model customization</h3>
+                            <p>If you wish to specify, choose which model SenseUI should use for this provider. If you are not sure, keep the auto option.
+                                To read more about model requirements, visit the <a href="help.html#available-models" target="_blank" rel="noopener">Help
+                                    page</a> (opens in a new tab).
+                            </p>
+
+                            <!-- OpenAI model input -->
+                            <label for="openai-model" id="openai-model-label">OpenAI model</label>
+                            <br>
+                            <input id="openai-model" name="openaiModel" list="openai-models" autocomplete="off"
+                                aria-describedby="openai-model-desc" />
+                            <br>
+                            <small id="openai-model-desc" class="hint">You can pick a suggestion or type any model name your account and AI key provider supports.</small>
+                            <datalist id="openai-models">
+                                <option value="auto (gpt-4o-mini)" label="auto (GPT 4 O mini)"></option>
+                                <option value="gpt-4o" label="GPT 4 O"></option>
+                                <option value="gpt-4.1-mini"></option>
+                                <option value="gpt-4.1"></option>
+                            </datalist>
+                            <br>
+
+                            <!-- Gemini model input -->
+                            <label for="gemini-model" id="gemini-model-label" style="display: none;">Gemini model</label>
+                            <br>
+                            <input id="gemini-model" name="geminiModel" list="gemini-models" autocomplete="off"
+                                aria-describedby="gemini-model-desc" style="display: none;" />
+                            <br>
+                            <small id="gemini-model-desc" class="hint" style="display: none;">You can pick a suggestion or type any Gemini model name your account supports.</small>
+                            <datalist id="gemini-models">
+                                <option value="auto (gemini-3-flash-preview)"></option>
+                                <option value="gemini-3-pro-preview"></option>
+                            </datalist>
+                            <br>
+                        </fieldset>
+                </details>
                 <!-- End API Configuration Section -->
                 <!-- Screenshot Capture Mode Section -->
-                <h2>Screenshot Capture Mode</h2>
-                <fieldset id="screenshot-fieldset" role="radiogroup" aria-labelledby="screenshot-legend">
-                    <legend id="screenshot-legend">Choose which part of the page to capture for analysis.</legend>
-                    <br>
-                    <label for="screenshot-viewport">
-                        <input id="screenshot-viewport" type="radio" name="screenshot" value="viewport" checked
-                            aria-checked="true">
-                        Viewport only (default) — Captures only what's visible on screen (faster feedback, less tokens,
-                        more details)
-                    </label>
-                    <br>
-                    <label for="screenshot-fullpage">
-                        <input id="screenshot-fullpage" type="radio" name="screenshot" value="fullpage"
-                            aria-checked="false">
-                        Full page — Captures entire page length (slower, more tokens, not ideal for infinite scroll
-                        pages or heavy dynamic content)
-                    </label>
-                </fieldset>
+                <details name="settings" class="settings-section">
+                    <summary>
+                        <h2>Screenshot Capture Mode</h2>
+                    </summary>
+                    <fieldset id="screenshot-fieldset" role="radiogroup" aria-labelledby="screenshot-legend">
+                        <legend id="screenshot-legend">Choose which part of the page to capture for analysis.</legend>
+                        <br>
+                        <label for="screenshot-viewport">
+                            <input id="screenshot-viewport" type="radio" name="screenshot" value="viewport" checked
+                                aria-checked="true">
+                            Viewport only (default) — Captures only what's visible on screen (faster feedback, less tokens,
+                            more details)
+                        </label>
+                        <br>
+                        <label for="screenshot-fullpage">
+                            <input id="screenshot-fullpage" type="radio" name="screenshot" value="fullpage"
+                                aria-checked="false">
+                            Full page — Captures entire page length (slower, more tokens, not ideal for infinite scroll
+                            pages or heavy dynamic content)
+                        </label>
+                    </fieldset>
+                </details>
                 <br>
                 <!-- End Screenshot Capture Mode Section -->
                 <!-- Feedback Detail Level Section -->
-                <h2>Feedback Detail Level</h2>
-                <fieldset id="detail-fieldset" role="radiogroup" aria-labelledby="detail-legend">
-                    <legend id="detail-legend">Choose how verbose SenseUI's feedback should be.</legend>
-                    <br>
-                    <label for="detail-comprehensive">
-                        <input id="detail-comprehensive" type="radio" name="detail" value="comprehensive"
-                            aria-checked="false">
-                        Comprehensive
-                    </label>
-                    <br>
-                    <label for="detail-normal">
-                        <input id="detail-normal" type="radio" name="detail" value="normal" checked aria-checked="true">
-                        Normal (default)
-                    </label>
-                    <br>
-                    <label for="detail-concise">
-                        <input id="detail-concise" type="radio" name="detail" value="concise" aria-checked="false">
-                        Concise
-                    </label>
-                </fieldset>
+                <details name="settings" class="settings-section">
+                    <summary>
+                        <h2>Feedback Detail Level</h2>
+                    </summary>
+                    <fieldset id="detail-fieldset" role="radiogroup" aria-labelledby="detail-legend">
+                        <legend id="detail-legend">Choose how verbose SenseUI's feedback should be.</legend>
+                        <br>
+                        <label for="detail-comprehensive">
+                            <input id="detail-comprehensive" type="radio" name="detail" value="comprehensive"
+                                aria-checked="false">
+                            Comprehensive
+                        </label>
+                        <br>
+                        <label for="detail-normal">
+                            <input id="detail-normal" type="radio" name="detail" value="normal" checked aria-checked="true">
+                            Normal (default)
+                        </label>
+                        <br>
+                        <label for="detail-concise">
+                            <input id="detail-concise" type="radio" name="detail" value="concise" aria-checked="false">
+                            Concise
+                        </label>
+                    </fieldset>
+                </details>
                 <br>
                 <!-- End Feedback Detail Level Section -->
                 <!-- Chat History Download Section -->
-                <h2>Chat History Download</h2>
-                <fieldset id="download-fieldset" role="radiogroup" aria-labelledby="download-legend">
-                    <legend id="download-legend">Select which conversations will be included when you export your
-                        history</legend>
-                    <br>
-                    <label for="download-all">
-                        <input id="download-all" type="radio" name="download" value="all" checked aria-checked="true">
-                        Download all
-                    </label>
-                    <br>
-                    <label for="download-favorites">
-                        <input id="download-favorites" type="radio" name="download" value="favorites"
-                            aria-checked="false">
-                        Only favorites
-                    </label>
-                </fieldset>
+                <details name="settings" class="settings-section">
+                    <summary>
+                        <h2>Chat History Download</h2>
+                    </summary>
+                    <fieldset id="download-fieldset" role="radiogroup" aria-labelledby="download-legend">
+                        <legend id="download-legend">Select which conversations will be included when you export your
+                            history</legend>
+                        <br>
+                        <label for="download-all">
+                            <input id="download-all" type="radio" name="download" value="all" checked aria-checked="true">
+                            Download all
+                        </label>
+                        <br>
+                        <label for="download-favorites">
+                            <input id="download-favorites" type="radio" name="download" value="favorites"
+                                aria-checked="false">
+                            Only favorites
+                        </label>
+                    </fieldset>
+                </details>
                 <br>
                 <!-- End Chat History Download Section -->
                 <!-- Add Context Section -->
-                <h2>Add Context</h2>
-                <fieldset id="context-fieldset" aria-labelledby="context-legend">
-                    <legend id="context-legend">Add any instructions or attach files to help improve feedback</legend>
-                    <label for="context-text">Instructions</label>
-                    <br>
-                    <textarea id="context-text" name="context" rows="4" cols="40" placeholder="Add instructions"
-                        aria-describedby="context-text-desc"></textarea>
-                    <br>
-                    <small id="context-text-desc">These instructions will be sent with every prompt to provide
-                        additional context.</small>
-                    <br>
-                    <label for="context-files">Attach files</label>
-                    <br>
-                    <input id="context-files" type="file" name="files" multiple aria-describedby="files-desc" />
-                    <br>
-                    <small id="files-desc" class="hint">You can attach files (images, PDFs). Max 10 MB per file.</small>
-                </fieldset>
+                <details name="settings" class="settings-section">
+                    <summary>
+                        <h2>Add Context</h2>
+                    </summary>
+                    <fieldset id="context-fieldset" aria-labelledby="context-legend">
+                        <legend id="context-legend">Add any instructions or attach files to help improve feedback</legend>
+                        <label for="context-text">Instructions</label>
+                        <br>
+                        <textarea id="context-text" name="context" rows="4" cols="40" placeholder="Add instructions"
+                            aria-describedby="context-text-desc"></textarea>
+                        <br>
+                        <small id="context-text-desc">These instructions will be sent with every prompt to provide
+                            additional context.</small>
+                        <br>
+                        <label for="context-files">Attach files</label>
+                        <br>
+                        <input id="context-files" type="file" name="files" multiple aria-describedby="files-desc" />
+                        <br>
+                        <small id="files-desc" class="hint">You can attach files (images, PDFs). Max 10 MB per file.</small>
+                    </fieldset>
+                </details>
                 <!-- End Add Context Section -->
                 <br>
                 <!-- Keyboard Shortcut Section -->
-                <h2>Keyboard Shortcut</h2>
-                <p>You can customize the keyboard shortcut to open/close SenseUI.</p>
-                <button type="button" id="open-shortcuts" class="btn-secondary">Change keyboard shortcut<span
-                        class="sr-only"> (opens the browser's extension manager in new tab)</span></button>
-                <br>
-                <br>
+                <details name="settings" class="settings-section">
+                    <summary>
+                        <h2>Keyboard Shortcut</h2>
+                    </summary>
+                    <p>You can customize the keyboard shortcut to open/close SenseUI.</p>
+                    <button type="button" id="open-shortcuts" class="btn-secondary">Change keyboard shortcut<span
+                            class="sr-only"> (opens the browser's extension manager in new tab)</span></button>
+                    <br>
+                    <br>
+                </details>
                 <!-- End Keyboard Shortcut Section -->
 
-                <dialog id="reset-warning-dialog">
+                <dialog id="reset-warning-dialog"> 
                     <h3>Warning</h3>
                     <p tabindex="0">Are you sure you want to reset all preferences to defaults? API keys and provider
                         selection will be preserved.</p>
@@ -187,7 +243,6 @@
                 <div id="settings-status" role="status" aria-live="polite" class="visually-hidden" aria-atomic="true">
                 </div>
             </form>
-        </section>
     </main>
     <script src="settings-bundled.js"></script>
 </body>

@@ -103,7 +103,9 @@ function getDefaultSettings() {
         downloadOption: 'all',
         contextInstructions: '',
         selectedProvider: 'openai',
-        screenshotMode: 'viewport'
+        screenshotMode: 'viewport',
+        openaiModel: 'auto (gpt-4o-mini)',
+        geminiModel: 'auto (gemini-3-flash-preview)'
     };
 }
 
@@ -114,6 +116,10 @@ async function loadSettings() {
     ]);
     const settings = result[STORAGE_KEYS.USER_SETTINGS] || getDefaultSettings();
     settings.selectedProvider = result[STORAGE_KEYS.SELECTED_PROVIDER] || 'openai';
+
+    // Backfill defaults for newly added settings
+    if (!settings.openaiModel) settings.openaiModel = 'auto (gpt-4o-mini)';
+    if (!settings.geminiModel) settings.geminiModel = 'auto (gemini-3-flash-preview)';
 
     const openaiKey = await retrieveApiKey(STORAGE_KEYS.OPENAI_API_KEY);
     const geminiKey = await retrieveApiKey(STORAGE_KEYS.GEMINI_API_KEY);
@@ -193,6 +199,38 @@ const detailConcise = document.getElementById('detail-concise');
 const downloadAll = document.getElementById('download-all');
 const downloadFavorites = document.getElementById('download-favorites');
 const contextText = document.getElementById('context-text');
+const openaiModelInput = document.getElementById('openai-model');
+const geminiModelInput = document.getElementById('gemini-model');
+const openaiModelLabel = document.getElementById('openai-model-label');
+const geminiModelLabel = document.getElementById('gemini-model-label');
+const geminiModelDesc = document.getElementById('gemini-model-desc');
+
+let hasOpenAIKeyConfigured = false;
+let hasGeminiKeyConfigured = false;
+
+function updateModelFieldsVisibility() {
+    if (!openaiModelInput || !geminiModelInput) return;
+
+    const selectedProvider = providerOpenAI.checked ? 'openai' : 'gemini';
+    const hasOpenAI = hasOpenAIKeyConfigured || (openaiKeyInput && openaiKeyInput.value.trim() !== '');
+    const hasGemini = hasGeminiKeyConfigured || (geminiKeyInput && geminiKeyInput.value.trim() !== '');
+
+    // Hide everything by default
+    if (openaiModelLabel) openaiModelLabel.style.display = 'none';
+    openaiModelInput.style.display = 'none';
+    if (geminiModelLabel) geminiModelLabel.style.display = 'none';
+    geminiModelInput.style.display = 'none';
+    if (geminiModelDesc) geminiModelDesc.style.display = 'none';
+
+    if (selectedProvider === 'openai' && hasOpenAI) {
+        if (openaiModelLabel) openaiModelLabel.style.display = '';
+        openaiModelInput.style.display = '';
+    } else if (selectedProvider === 'gemini' && hasGemini) {
+        if (geminiModelLabel) geminiModelLabel.style.display = '';
+        geminiModelInput.style.display = '';
+        if (geminiModelDesc) geminiModelDesc.style.display = '';
+    }
+}
 
 // Function to toggle API key fields based on selected provider
 function toggleApiKeyFields() {
@@ -225,6 +263,8 @@ function toggleApiKeyFields() {
         if (openaiStatus) openaiStatus.style.display = 'none';
         if (clearOpenAIBtn) clearOpenAIBtn.style.display = 'none';
     }
+
+    updateModelFieldsVisibility();
 }
 
 function showStatus(message, isError = false) {
@@ -238,6 +278,9 @@ function showStatus(message, isError = false) {
 
 async function updateApiKeyStatus() {
     const status = await getApiKeyStatus();
+
+    hasOpenAIKeyConfigured = status.hasOpenAI;
+    hasGeminiKeyConfigured = status.hasGemini;
 
     if (status.hasOpenAI) {
         openaiStatus.textContent = '✓ Key configured';
@@ -262,6 +305,8 @@ async function updateApiKeyStatus() {
         clearGeminiBtn.style.display = 'none';
         geminiKeyInput.placeholder = 'Your Gemini API key';
     }
+
+    updateModelFieldsVisibility();
 }
 
 async function loadCurrentSettings() {
@@ -286,6 +331,14 @@ async function loadCurrentSettings() {
             contextText.value = settings.contextInstructions;
         }
 
+        // Set the model inputs
+        if (openaiModelInput) {
+            openaiModelInput.value = settings.openaiModel || 'auto (gpt-4o-mini)';
+        }
+        if (geminiModelInput) {
+            geminiModelInput.value = settings.geminiModel || 'auto (gemini-3-flash-preview)';
+        }
+
         // Set the screenshot mode radio button
         const screenshotViewport = document.getElementById('screenshot-viewport');
         const screenshotFullpage = document.getElementById('screenshot-fullpage');
@@ -307,7 +360,7 @@ async function loadCurrentSettings() {
         }
 
         await updateApiKeyStatus();
-        toggleApiKeyFields(); // Show/hide fields based on selected provider
+        toggleApiKeyFields(); // Show/hide fields based on selected provider and update model visibility
     } catch (error) {
         console.error('Error loading settings:', error);
         showStatus('Failed to load settings', true);
@@ -332,6 +385,12 @@ async function handleSubmit(event) {
 
         settings.contextInstructions = formData.get('context') || '';
         settings.selectedProvider = formData.get('provider') || 'openai';
+
+        // Model selections (optional strings; treated as-is at runtime)
+        const openaiModel = formData.get('openaiModel');
+        const geminiModel = formData.get('geminiModel');
+        if (openaiModel !== null) settings.openaiModel = openaiModel.trim();
+        if (geminiModel !== null) settings.geminiModel = geminiModel.trim();
 
         const openaiKey = openaiKeyInput.value.trim();
         const geminiKey = geminiKeyInput.value.trim();
@@ -400,6 +459,14 @@ clearGeminiBtn.addEventListener('click', handleClearGemini);
 // Add event listeners to provider radio buttons
 providerOpenAI.addEventListener('change', toggleApiKeyFields);
 providerGemini.addEventListener('change', toggleApiKeyFields);
+
+// When user types an API key, re-evaluate when to show model fields
+if (openaiKeyInput) {
+    openaiKeyInput.addEventListener('input', updateModelFieldsVisibility);
+}
+if (geminiKeyInput) {
+    geminiKeyInput.addEventListener('input', updateModelFieldsVisibility);
+}
 
 // Add event listener for keyboard shortcuts button
 const shortcutsBtn = document.getElementById('open-shortcuts');
