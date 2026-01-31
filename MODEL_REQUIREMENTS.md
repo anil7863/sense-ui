@@ -63,3 +63,19 @@ This document specifies the capabilities an AI model must provide in order to wo
 - Predictable behavior under token limits (for example, truncation or explicit finish reasons rather than silent failure).
 - Robust to malformed or incomplete page data, returning a clear, safe error or a best-effort analysis rather than crashing.
 - Adheres to provider-level safety policies while still allowing detailed technical feedback on web designs and accessibility.
+
+## 8. Recommended and tested models
+
+While any compatible model that satisfies the requirements above may work, SenseUI is currently designed and tested with the following model options:
+
+- OpenAI (chat/completions):
+  - auto (gpt-4o-mini)
+  - gpt-4o
+  - gpt-4.1-mini
+- Gemini (generateContent):
+  - auto (gemini-3-flash-preview)
+  - gemini-3-pro-preview
+
+Other models may function, but are not explicitly validated and may produce different performance or behavior.
+
+At this time SenseUI intentionally does not support the GPT‑5 family (and newer) models, because they do not allow lowering the temperature below 1.0. SenseUI relies on using a lower temperature (for example 0.4) to keep responses focused, grounded in the actual page context, and less imaginative. Support for such models may be revisited if future versions provide configurable temperature controls.
