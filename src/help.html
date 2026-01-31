@@ -148,6 +148,24 @@
             </details>
 
             <details name="faq">
+                <summary><h2>Can I choose which AI model SenseUI uses?</h2></summary>
+                <div id="available-models">
+                    <p>Yes. On the Settings page, under "Enter your AI Key", you can:</p>
+                    <ul>
+                        <li>Select your provider (OpenAI or Google Gemini)</li>
+                        <li>Enter your API key for that provider</li>
+                        <li>Choose a model from a suggestion list or type a supported model name</li>
+                    </ul>
+                    <p>SenseUI is currently tested with a small set of focused, grounded models:</p>
+                    <ul>
+                        <li>OpenAI: auto (gpt-4o-mini), gpt-4o, gpt-4.1-mini</li>
+                        <li>Gemini: auto (gemini-3-flash-preview), gemini-3-pro-preview</li>
+                    </ul>
+                    <p>Newer GPT-5 family models are not supported yet, because they do not allow lowering the temperature below 1.0. SenseUI uses a lower temperature to keep answers closely tied to the actual page content instead of more random or speculative responses.</p>
+                </div>
+            </details>
+
+            <details name="faq">
                 <summary><h2>How to report issues?</h2></summary>
                 <div>
                     <p>If you encounter any issues, please report them on our GitHub repository's <a
