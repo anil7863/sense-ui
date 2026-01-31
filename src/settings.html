@@ -76,9 +76,40 @@
                         </div>
                         <br>
                         <button type="button" id="clear-gemini-key" class="btn-secondary"
-                            style="display: none; margin-top: 0.5em;">Clear Gemini Key</button>
-                        <br>
-                    </fieldset>
+                                style="display: none; margin-top: 0.5em;">Clear Gemini Key</button>
+                            <br>
+
+                            <!-- Model selection (provider-specific) -->
+                            <h3>Model selection</h3>
+                            <p>Choose which model SenseUI should use for this provider. If you are not sure, keep the auto option.</p>
+
+                            <!-- OpenAI model input -->
+                            <label for="openai-model" id="openai-model-label">OpenAI model</label>
+                            <br>
+                            <input id="openai-model" name="openaiModel" list="openai-models" autocomplete="off"
+                                aria-describedby="openai-model-desc" />
+                            <br>
+                            <small id="openai-model-desc" class="hint">You can pick a suggestion or type any OpenAI model name your account supports.</small>
+                            <datalist id="openai-models">
+                                <option value="auto (gpt-4o-mini)"></option>
+                                <option value="gpt-4o"></option>
+                                <option value="gpt-4.1-mini"></option>
+                            </datalist>
+                            <br>
+
+                            <!-- Gemini model input -->
+                            <label for="gemini-model" id="gemini-model-label" style="display: none;">Gemini model</label>
+                            <br>
+                            <input id="gemini-model" name="geminiModel" list="gemini-models" autocomplete="off"
+                                aria-describedby="gemini-model-desc" style="display: none;" />
+                            <br>
+                            <small id="gemini-model-desc" class="hint" style="display: none;">You can pick a suggestion or type any Gemini model name your account supports.</small>
+                            <datalist id="gemini-models">
+                                <option value="auto (gemini-3-flash-preview)"></option>
+                                <option value="gemini-3-pro-preview"></option>
+                            </datalist>
+                            <br>
+                        </fieldset>
                 </details>
                 <!-- End API Configuration Section -->
                 <!-- Screenshot Capture Mode Section -->
