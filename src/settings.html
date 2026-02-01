@@ -213,36 +213,13 @@
                 </details>
                 <br>
                 <!-- End Chat History Download Section -->
-                <!-- Add Context Section -->
-                <details name="settings" class="settings-section">
-                    <summary>
-                        <h2>Add Context</h2>
-                    </summary>
-                    <fieldset id="context-fieldset" aria-labelledby="context-legend">
-                        <legend id="context-legend">Add any instructions or attach files to help improve feedback</legend>
-                        <label for="context-text">Instructions</label>
-                        <br>
-                        <textarea id="context-text" name="context" rows="4" cols="40" placeholder="Add instructions"
-                            aria-describedby="context-text-desc"></textarea>
-                        <br>
-                        <small id="context-text-desc">These instructions will be sent with every prompt to provide
-                            additional context.</small>
-                        <br>
-                        <label for="context-files">Attach files</label>
-                        <br>
-                        <input id="context-files" type="file" name="files" multiple aria-describedby="files-desc" />
-                        <br>
-                        <small id="files-desc" class="hint">You can attach files (images, PDFs). Max 10 MB per file.</small>
-                    </fieldset>
-                </details>
-                <!-- End Add Context Section -->
                 <br>
                 <!-- Keyboard Shortcut Section -->
                 <details name="settings" class="settings-section">
                     <summary>
                         <h2>Keyboard Shortcut</h2>
                     </summary>
-                    <p>You can customize the keyboard shortcut to open/close SenseUI.</p>
+                    <p>You can customize the keyboard shortcut to open/close SenseUI. This won't be changed back when you reset this page, you'll need to reset it manually.</p>
                     <button type="button" id="open-shortcuts" class="btn-secondary">Change keyboard shortcut<span
                             class="sr-only"> (opens the browser's extension manager in new tab)</span></button>
                     <br>
@@ -252,8 +229,7 @@
 
                 <dialog id="reset-warning-dialog"> 
                     <h3>Warning</h3>
-                    <p tabindex="0">Are you sure you want to reset all preferences to defaults? API keys and provider
-                        selection will be preserved.</p>
+                    <p tabindex="0">Are you sure you want to reset all preferences to defaults? Keys and provider selection will be preserved. To reset a shortcut, go to the browser's extension manager.</p>
                     <div class="dialog-actions">
                         <button type="button" id="cancel-reset-action" class="btn-secondary">Cancel</button>
                         <button type="button" id="confirm-reset-action" class="btn-primary">Confirm</button>

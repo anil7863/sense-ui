@@ -38,7 +38,6 @@
             <select id="active-project-select" aria-describedby="project-selector-hint">
                 <option value="">No project selected</option>
             </select>
-            <small id="project-selector-hint" class="sr-only">Select a project to provide context for AI feedback</small>
         </div>
         <!-- Buttons container (hidden by default) -->
          <div class="buttons-container">
@@ -48,9 +47,7 @@
         <!-- Chat Input Area -->
         <div class="chat-input-area" id="chat-form">
             <label for="chat-input">Ask something about the page or use forward slash for commands</label>
-            <input id="chat-input" class="chat-input" type="text" autocomplete="off"
-                aria-describedby="command-hint" />
-            <span id="command-hint" class="sr-only">Type forward slash to see available commands</span>
+            <input id="chat-input" class="chat-input" type="text" autocomplete="off" />
             <datalist id="command-list">
                 <option value="/describe">
                 <option value="/issues">

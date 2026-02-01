@@ -1210,7 +1210,12 @@ function setupCommandSuggestions() {
     });
 
     chatInput.addEventListener('change', () => {
-        if (chatInput.value.startsWith('/')) announce(`Selected: ${chatInput.value}`);
+        const val = chatInput.value;
+        if (val.startsWith('/')) {
+            announce(`Selected: ${val}`);
+            // Auto-send the command when selected from autocomplete
+            setTimeout(() => sendMessage(), 0);
+        }
     });
 
     chatInput.addEventListener('keydown', (e) => {
