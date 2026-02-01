@@ -105,7 +105,8 @@ function getDefaultSettings() {
         selectedProvider: 'openai',
         screenshotMode: 'viewport',
         openaiModel: 'auto (gpt-4o-mini)',
-        geminiModel: 'auto (gemini-3-flash-preview)'
+        geminiModel: 'auto (gemini-3-flash-preview)',
+        showButtons: false
     };
 }
 
@@ -198,6 +199,7 @@ const detailNormal = document.getElementById('detail-normal');
 const detailConcise = document.getElementById('detail-concise');
 const downloadAll = document.getElementById('download-all');
 const downloadFavorites = document.getElementById('download-favorites');
+const showButtonsCheckbox = document.getElementById('show-buttons');
 const contextText = document.getElementById('context-text');
 const openaiModelInput = document.getElementById('openai-model');
 const geminiModelInput = document.getElementById('gemini-model');
@@ -350,6 +352,12 @@ async function loadCurrentSettings() {
             screenshotFullpage.checked = false;
         }
 
+        // Set the show buttons checkbox
+        const showButtonsCheckbox = document.getElementById('show-buttons');
+        if (showButtonsCheckbox) {
+            showButtonsCheckbox.checked = settings.showButtons || false;
+        }
+
         // Set the selected provider radio button
         if (settings.selectedProvider === 'gemini') {
             providerGemini.checked = true;
@@ -385,6 +393,7 @@ async function handleSubmit(event) {
 
         settings.contextInstructions = formData.get('context') || '';
         settings.selectedProvider = formData.get('provider') || 'openai';
+        settings.showButtons = formData.get('showButtons') === 'on';
 
         // Model selections (optional strings; treated as-is at runtime)
         const openaiModel = formData.get('openaiModel');
