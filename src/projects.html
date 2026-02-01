@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Projects - SenseUI</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!-- Skip link for keyboard/screen-reader users -->
+    <a href="#main" class="skip-link">Skip to main content</a>
+    <header>
+        <h1 class="sr-only">Sense UI</h1>
+        <nav>
+            <a href="index.html">Chat</a>
+            <br>
+            <a href="projects.html" aria-current="page">Projects</a>
+            <br>
+            <a href="settings.html">Settings</a>
+            <br>
+            <a href="help.html">Help</a>
+        </nav>
+    </header>
+
+    <main id="main">
+        <h1>Projects</h1>
+        <p>Manage project contexts to receive framework-specific and design-aligned AI feedback.</p>
+
+        <!-- Projects List -->
+        <section aria-labelledby="projects-list-heading">
+            <h2 id="projects-list-heading">Your Projects</h2>
+            <div id="projects-list" role="list">
+                <p id="no-projects-message">No projects yet. Create your first project below.</p>
+            </div>
+        </section>
+
+        <!-- Create/Edit Project Form -->
+        <section aria-labelledby="project-form-heading">
+            <h2 id="project-form-heading">Create New Project</h2>
+            <form id="project-form" novalidate>
+                <input type="hidden" id="edit-project-id" value="">
+                
+                <label for="project-name">Project Name <span aria-label="required">*</span></label>
+                <input type="text" id="project-name" name="projectName" required 
+                    aria-describedby="project-name-desc" autocomplete="off" />
+                <small id="project-name-desc" class="hint">Give your project a memorable name</small>
+                <br>
+
+                <label for="project-frameworks">Framework & Technologies <span aria-label="required">*</span></label>
+                <input type="text" id="project-frameworks" name="frameworks" list="frameworks-list" required
+                    aria-describedby="frameworks-desc" autocomplete="off" />
+                <datalist id="frameworks-list">
+                    <option value="React">
+                    <option value="Vue.js">
+                    <option value="Angular">
+                    <option value="Svelte">
+                    <option value="Next.js">
+                    <option value="Nuxt.js">
+                    <option value="Tailwind CSS">
+                    <option value="Bootstrap">
+                    <option value="Material-UI">
+                    <option value="Vanilla JavaScript">
+                    <option value="TypeScript">
+                    <option value="jQuery">
+                    <option value="HTML/CSS">
+                    <option value="WordPress">
+                    <option value="Shopify">
+                </datalist>
+                <small id="frameworks-desc" class="hint">Specify the main frameworks and technologies (e.g., "React, Tailwind CSS")</small>
+                <br>
+
+                <label for="project-aesthetic">Desired Aesthetic <span aria-label="required">*</span></label>
+                <input type="text" id="project-aesthetic" name="aesthetic" list="aesthetic-list" required
+                    aria-describedby="aesthetic-desc" autocomplete="off" />
+                <datalist id="aesthetic-list">
+                    <option value="Minimalist and professional">
+                    <option value="Modern and vibrant">
+                    <option value="Classic and elegant">
+                    <option value="Playful and colorful">
+                    <option value="Bold and experimental">
+                    <option value="Corporate and formal">
+                    <option value="Warm and friendly">
+                    <option value="Dark and sleek">
+                    <option value="Light and airy">
+                    <option value="Artistic and creative">
+                </datalist>
+                <small id="aesthetic-desc" class="hint">Describe the visual style you're aiming for</small>
+                <br>
+
+                <label for="project-purpose">Website Type & Purpose <span aria-label="required">*</span></label>
+                <input type="text" id="project-purpose" name="purpose" list="purpose-list" required
+                    aria-describedby="purpose-desc" autocomplete="off" />
+                <datalist id="purpose-list">
+                    <option value="E-commerce platform">
+                    <option value="Portfolio website">
+                    <option value="Blog or content site">
+                    <option value="Corporate website">
+                    <option value="Landing page">
+                    <option value="Web application">
+                    <option value="SaaS product">
+                    <option value="Educational platform">
+                    <option value="Community or forum">
+                    <option value="News or media site">
+                    <option value="Personal website">
+                    <option value="Non-profit or charity">
+                </datalist>
+                <small id="purpose-desc" class="hint">What is this website for?</small>
+                <br>
+
+                <button type="submit" id="save-project-btn" class="btn-primary">Create Project</button>
+                <button type="button" id="cancel-edit-btn" class="btn-secondary" style="display: none;">Cancel</button>
+                
+                <div id="project-status" role="status" aria-live="polite" class="visually-hidden" aria-atomic="true"></div>
+            </form>
+        </section>
+
+        <!-- Delete Confirmation Dialog -->
+        <dialog id="delete-dialog">
+            <h3>Delete Project?</h3>
+            <p tabindex="0" id="delete-dialog-text">Are you sure you want to delete this project? This action cannot be undone.</p>
+            <div class="dialog-actions">
+                <button type="button" id="cancel-delete" class="btn-secondary">Cancel</button>
+                <button type="button" id="confirm-delete" class="btn-primary">Delete</button>
+            </div>
+        </dialog>
+    </main>
+
+    <script src="projects-bundled.js"></script>
+</body>
+
+</html>

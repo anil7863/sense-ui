@@ -27,7 +27,9 @@ const CONFIG = {
         GEMINI_API_KEY: 'senseui_gemini_key',
         SELECTED_PROVIDER: 'senseui_provider',
         USER_SETTINGS: 'senseui_settings',
-        CHAT_HISTORY: 'senseui_chat_history'
+        CHAT_HISTORY: 'senseui_chat_history',
+        PROJECTS: 'senseui_projects',
+        ACTIVE_PROJECT: 'senseui_active_project'
     },
     PROMPTS: {
         SYSTEM: `You are a web design assistant helping a blind developer analyze the current webpage. Answer their questions clearly and concisely based on the screenshot, HTML, and CSS provided.
@@ -202,21 +204,54 @@ function parseCommand(userInput) {
     return { command: null, text: trimmed };
 }
 
+// Get active project from storage
+async function getActiveProject() {
+    try {
+        const result = await chrome.storage.local.get(CONFIG.STORAGE_KEYS.ACTIVE_PROJECT);
+        return result[CONFIG.STORAGE_KEYS.ACTIVE_PROJECT] || null;
+    } catch (error) {
+        console.error('Error getting active project:', error);
+        return null;
+    }
+}
+
+// Enhance system prompt with project context
+function enhancePromptWithProject(basePrompt, project) {
+    if (!project) {
+        console.log('🔍 No project context added');
+        return basePrompt;
+    }
+    
+    const projectContext = `\n\nPROJECT CONTEXT:
+This website uses ${project.frameworks}. The desired aesthetic is ${project.aesthetic}. The website purpose is ${project.purpose}. Keep these parameters in mind when providing feedback and ensure your suggestions align with the project's technologies and design direction.`;
+    
+    console.log('✅ Project context injected:', projectContext);
+    return basePrompt + projectContext;
+}
+
 // Get prompt for command
 async function getPromptForCommand(command) {
+    const activeProject = await getActiveProject();
+    let basePrompt = '';
+    
     switch (command) {
         case '/describe':
             // Check screenshot mode to determine which describe prompt to use
             const result = await chrome.storage.local.get(CONFIG.STORAGE_KEYS.USER_SETTINGS);
             const settings = result[CONFIG.STORAGE_KEYS.USER_SETTINGS] || {};
             const screenshotMode = settings.screenshotMode || 'viewport';
-            return screenshotMode === 'fullpage' ? CONFIG.PROMPTS.DESCRIBE_FULLPAGE : CONFIG.PROMPTS.DESCRIBE;
+            basePrompt = screenshotMode === 'fullpage' ? CONFIG.PROMPTS.DESCRIBE_FULLPAGE : CONFIG.PROMPTS.DESCRIBE;
+            break;
         case '/issues':
-            return CONFIG.PROMPTS.ISSUES;
+            basePrompt = CONFIG.PROMPTS.ISSUES;
+            break;
         default:
-            return ''; // No additional prompt - just use SYSTEM
+            basePrompt = ''; // No additional prompt - just use SYSTEM
     }
+    
+    return enhancePromptWithProject(basePrompt, activeProject);
 }
+
 
 // ============================================================================
 // ENCRYPTION UTILITIES
@@ -887,10 +922,16 @@ async function processUserInput(userInput, forceRefresh = false) {
     // Parse command
     const { command, text } = parseCommand(userInput);
     const commandPrompt = command ? await getPromptForCommand(command) : '';
+    
+    // Get active project and enhance system prompt
+    const activeProject = await getActiveProject();
+    const baseSystemPrompt = CONFIG.PROMPTS.SYSTEM;
+    const enhancedSystemPrompt = enhancePromptWithProject(baseSystemPrompt, activeProject);
+    
     // Only use SYSTEM prompt for custom prompts (no command)
     const systemPrompt = command 
-        ? commandPrompt  // Use only command prompt for /describe and /issues
-        : CONFIG.PROMPTS.SYSTEM;  // Use SYSTEM prompt for custom prompts
+        ? commandPrompt  // Use only command prompt for /describe and /issues (already enhanced)
+        : enhancedSystemPrompt;  // Use enhanced SYSTEM prompt for custom prompts
 
     // Check if we need to capture or use cached context
     let context = {};
@@ -941,6 +982,7 @@ let chatMessages;
 let chatInput;
 let commandDatalist;
 let introSection;
+let projectSelect;
 
 // Cache for page context (captured once per session)
 let cachedContext = null;
@@ -992,6 +1034,111 @@ async function clearChatHistory() {
     }
 }
 
+// ============================================================================
+// PROJECT MANAGEMENT
+// ============================================================================
+
+/**
+ * Get all projects from storage
+ */
+async function getAllProjects() {
+    try {
+        const result = await chrome.storage.local.get(CONFIG.STORAGE_KEYS.PROJECTS);
+        return result[CONFIG.STORAGE_KEYS.PROJECTS] || [];
+    } catch (error) {
+        console.error('Error getting projects:', error);
+        return [];
+    }
+}
+
+/**
+ * Set the active project
+ */
+async function setActiveProject(project) {
+    try {
+        if (project === null) {
+            await chrome.storage.local.remove(CONFIG.STORAGE_KEYS.ACTIVE_PROJECT);
+        } else {
+            await chrome.storage.local.set({ [CONFIG.STORAGE_KEYS.ACTIVE_PROJECT]: project });
+        }
+    } catch (error) {
+        console.error('Error setting active project:', error);
+        throw error;
+    }
+}
+
+/**
+ * Load projects into the dropdown
+ */
+async function loadProjectsDropdown() {
+    if (!projectSelect) return;
+    
+    const projects = await getAllProjects();
+    const activeProject = await getActiveProject();
+    
+    // Clear existing options except the first one (No project selected)
+    projectSelect.innerHTML = '<option value="">No project selected</option>';
+    
+    // Sort projects alphabetically
+    projects.sort((a, b) => a.name.localeCompare(b.name));
+    
+    // Add project options
+    projects.forEach(project => {
+        const option = document.createElement('option');
+        option.value = project.id;
+        option.textContent = project.name;
+        if (activeProject && activeProject.id === project.id) {
+            option.selected = true;
+        }
+        projectSelect.appendChild(option);
+    });
+}
+
+/**
+ * Handle project selection change
+ */
+async function handleProjectChange() {
+    const selectedId = projectSelect.value;
+    
+    if (!selectedId) {
+        // No project selected
+        await setActiveProject(null);
+        
+        // Add system message to chat
+        const systemMsg = document.createElement('div');
+        systemMsg.className = 'system-response';
+        systemMsg.innerHTML = `<h2>System</h2><p>Project context cleared. Using generic feedback mode.</p>`;
+        chatMessages.appendChild(systemMsg);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+        
+        announce('Project context cleared');
+        await saveChatHistory();
+        return;
+    }
+    
+    // Find the selected project
+    const projects = await getAllProjects();
+    const selectedProject = projects.find(p => p.id === selectedId);
+    
+    if (selectedProject) {
+        await setActiveProject(selectedProject);
+        
+        // Add system message to chat
+        const systemMsg = document.createElement('div');
+        systemMsg.className = 'system-response';
+        systemMsg.innerHTML = `<h2>System</h2><p>Project loaded: <strong>${selectedProject.name}</strong></p>
+        <p>AI feedback will now be aligned with:<br>
+        • Frameworks: ${selectedProject.frameworks}<br>
+        • Aesthetic: ${selectedProject.aesthetic}<br>
+        • Purpose: ${selectedProject.purpose}</p>`;
+        chatMessages.appendChild(systemMsg);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+        
+        announce(`Project loaded: ${selectedProject.name}`);
+        await saveChatHistory();
+    }
+}
+
 function announce(msg) {
     const live = document.createElement('div');
     live.setAttribute('role', 'status');
@@ -1009,9 +1156,16 @@ window.addEventListener('DOMContentLoaded', async () => {
     chatInput = document.getElementById('chat-input');
     commandDatalist = document.getElementById('command-list');
     introSection = document.querySelector('.intro');
+    projectSelect = document.getElementById('active-project-select');
 
     // Load saved chat history
     await loadChatHistory();
+    
+    // Load projects dropdown if it exists
+    if (projectSelect) {
+        await loadProjectsDropdown();
+        projectSelect.addEventListener('change', handleProjectChange);
+    }
 
     announce('SenseUI opened.');
 
