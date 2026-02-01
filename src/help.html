@@ -106,6 +106,17 @@
                  <summary><h2>What settings are available?</h2></summary>
                 <div>
                     <p>You can access the Settings page by navigating to the settings link in the navigation menu.</p>
+                    
+                    <h3>Screenshot Capture Mode</h3>
+                    <p>Choose which part of the page SenseUI captures for analysis:</p>
+                    
+                    <h4>Viewport only (Default)</h4>
+                    <p>Captures only what's currently visible in your browser window. This mode provides faster feedback, uses fewer tokens, and offers more detailed analysis. Best for analyzing specific sections or working iteratively on parts of your page.</p>
+                    
+                    <h4>Full page</h4>
+                    <p>Captures the entire page from top to bottom. This mode is slower and uses more tokens, but provides a broader overview of your entire page layout. Not ideal for infinite scroll pages or sites with heavy dynamic content.</p>
+                    
+                    <p><strong>Note:</strong> By default, SenseUI only analyzes what's visible in your viewport. If you're using the /describe command and want to see the whole page, switch to Full page mode in Settings.</p>
                    <!--<h3>Feedback Detail Level</h3>
                     <p>Choose how much detail SenseUI provides in its responses:</p>
         
