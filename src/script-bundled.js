@@ -79,7 +79,7 @@ IMPORTANT RULES:
 4. Fully describe each element and section with all its details before moving to the next section. Never return to a previously described element or section.
 
 RESPONSE STRUCTURE:
-Start with an h3 heading: "Visual Design Description of [Website Name]"
+Start with an h3 heading: "Visual Design Description of [Website Name] - Viewport View"
 Then describe all elements of the layout from top to bottom, using clear positional language:
 
 - Start with what's at the very top (header/navigation area)
@@ -106,7 +106,7 @@ IMPORTANT RULES:
 4. Fully describe each element and section with all its details before moving to the next section. Never return to a previously described element or section.
 
 RESPONSE STRUCTURE:
-Start with an h3 heading: "Complete Visual Design Description of [Website Name]"
+Start with an h3 heading: "Complete Visual Design Description of [Website Name] - Full Page View"
 Then describe ALL sections of the page from top to bottom, using clear positional language:
 
 - Start with the header/navigation at the very top
@@ -996,6 +996,33 @@ async function clearChatHistory() {
     }
 }
 
+// Load button visibility setting and show/hide buttons accordingly
+async function loadButtonVisibilitySetting() {
+    try {
+        const result = await chrome.storage.local.get(CONFIG.STORAGE_KEYS.USER_SETTINGS);
+        const settings = result[CONFIG.STORAGE_KEYS.USER_SETTINGS] || {};
+        const showButtons = settings.showButtons || false;
+
+        const describeButton = document.getElementById('describe-btn');
+        const issuesButton = document.getElementById('issues-btn');
+        const buttonsContainer = document.querySelector('.buttons-container');
+
+        if (describeButton && issuesButton && buttonsContainer) {
+            if (showButtons) {
+                describeButton.style.display = '';
+                issuesButton.style.display = '';
+                buttonsContainer.style.display = '';
+            } else {
+                describeButton.style.display = 'none';
+                issuesButton.style.display = 'none';
+                buttonsContainer.style.display = 'none';
+            }
+        }
+    } catch (error) {
+        console.error('Error loading button visibility setting:', error);
+    }
+}
+
 // ============================================================================
 // PROJECT MANAGEMENT
 // ============================================================================
@@ -1128,6 +1155,9 @@ window.addEventListener('DOMContentLoaded', async () => {
         await loadProjectsDropdown();
         projectSelect.addEventListener('change', handleProjectChange);
     }
+
+    // Load button visibility setting
+    await loadButtonVisibilitySetting();
 
     announce('SenseUI opened.');
 
