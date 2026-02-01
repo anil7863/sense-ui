@@ -217,11 +217,15 @@ async function getActiveProject() {
 
 // Enhance system prompt with project context
 function enhancePromptWithProject(basePrompt, project) {
-    if (!project) return basePrompt;
+    if (!project) {
+        console.log('🔍 No project context added');
+        return basePrompt;
+    }
     
     const projectContext = `\n\nPROJECT CONTEXT:
-This website uses ${project.frameworks}. The desired aesthetic is ${project.aesthetic}. The website purpose is ${project.purpose}. Keep these parameters in mind when providing feedback and ensure your suggestions align with the project's framework capabilities and design direction.`;
+This website uses ${project.frameworks}. The desired aesthetic is ${project.aesthetic}. The website purpose is ${project.purpose}. Keep these parameters in mind when providing feedback and ensure your suggestions align with the project's technologies and design direction.`;
     
+    console.log('✅ Project context injected:', projectContext);
     return basePrompt + projectContext;
 }
 

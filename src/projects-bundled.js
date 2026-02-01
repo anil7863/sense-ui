@@ -37,13 +37,16 @@ async function getAllProjects() {
  */
 async function saveProject(project, projectId = null) {
     try {
+        console.log('💾 Attempting to save project:', { project, projectId });
         const projects = await getAllProjects();
+        console.log('📋 Current projects count:', projects.length);
         
         if (projectId) {
             // Update existing project - preserve existing fields like createdAt
             const index = projects.findIndex(p => p.id === projectId);
             if (index !== -1) {
                 projects[index] = { ...projects[index], ...project };
+                console.log('✏️ Updated existing project at index:', index);
             }
         } else {
             // Create new project
@@ -53,12 +56,15 @@ async function saveProject(project, projectId = null) {
                 createdAt: new Date().toISOString()
             };
             projects.push(newProject);
+            console.log('➕ Created new project with ID:', newProject.id);
         }
         
         await chrome.storage.local.set({ [STORAGE_KEYS.PROJECTS]: projects });
+        console.log('✅ Project saved successfully to storage');
         return projectId ? projects.find(p => p.id === projectId) : projects[projects.length - 1];
     } catch (error) {
-        console.error('Error saving project:', error);
+        console.error('❌ Error saving project:', error);
+        console.error('Error details:', error.message, error.stack);
         throw error;
     }
 }
@@ -129,21 +135,25 @@ let projectToDelete = null;
 async function renderProjectsList() {
     const projects = await getAllProjects();
     const projectsList = document.getElementById('projects-list');
-    const noProjectsMessage = document.getElementById('no-projects-message');
+    
+    if (!projectsList) {
+        console.error('❌ projects-list element not found in DOM');
+        return;
+    }
+    
+    // Clear the list
+    projectsList.innerHTML = '';
     
     if (projects.length === 0) {
-        noProjectsMessage.style.display = 'block';
-        projectsList.innerHTML = '';
+        const noProjectsMessage = document.createElement('p');
+        noProjectsMessage.id = 'no-projects-message';
+        noProjectsMessage.textContent = 'No projects yet. Create your first project below.';
         projectsList.appendChild(noProjectsMessage);
         return;
     }
     
-    noProjectsMessage.style.display = 'none';
-    
     // Sort projects alphabetically by name
     projects.sort((a, b) => a.name.localeCompare(b.name));
-    
-    projectsList.innerHTML = '';
     
     projects.forEach(project => {
         const projectItem = document.createElement('div');
@@ -296,6 +306,7 @@ async function handleFormSubmit(event) {
     const project = { name, frameworks, aesthetic, purpose };
     
     try {
+        console.log('📝 Form submitted with data:', { name, frameworks, aesthetic, purpose, editId });
         const savedProject = await saveProject(project, editId || null);
         
         if (editId) {
@@ -312,7 +323,9 @@ async function handleFormSubmit(event) {
         resetForm();
         await renderProjectsList();
     } catch (error) {
-        announceToScreenReader('Error saving project. Please try again.');
+        console.error('❌ Error in handleFormSubmit:', error);
+        console.error('Error details:', error.message, error.stack);
+        announceToScreenReader(`Error saving project: ${error.message}. Please try again.`);
     }
 }
 
