@@ -103,11 +103,17 @@
                 </div>
             </details>
              <details name="faq">
-                 <summary><h2>What settings are available?</h2></summary>
+                 <summary><h2>How does SenseUI analyze my page?</h2></summary>
                 <div>
-                    <p>You can access the Settings page by navigating to the settings link in the navigation menu.</p>
+                    <p>SenseUI captures three key pieces of information from your webpage:</p>
+                    <ul>
+                        <li><strong>HTML structure:</strong> The semantic markup and content of your page</li>
+                        <li><strong>CSS styles:</strong> The visual styling rules applied to your elements</li>
+                        <li><strong>Screenshot:</strong> A visual capture of how your page actually renders</li>
+                    </ul>
+                    <p>The AI analyzes these together to provide accurate, context-aware feedback about your page's design, accessibility, and usability. It cross-references what the code says with what's actually visible in the screenshot to ensure its analysis matches reality.</p>
                     
-                    <h3>Screenshot Capture Mode</h3>
+                    <h3>How does the screenshot modes work?</h3>
                     <p>Choose which part of the page SenseUI captures for analysis:</p>
                     
                     <h4>Viewport only (Default)</h4>
@@ -117,46 +123,6 @@
                     <p>Captures the entire page from top to bottom. This mode is slower and uses more tokens, but provides a broader overview of your entire page layout. Not ideal for infinite scroll pages or sites with heavy dynamic content.</p>
                     
                     <p><strong>Note:</strong> By default, SenseUI only analyzes what's visible in your viewport. If you're using the /describe command and want to see the whole page, switch to Full page mode in Settings.</p>
-                   <!--<h3>Feedback Detail Level</h3>
-                    <p>Choose how much detail SenseUI provides in its responses:</p>
-        
-                    <h5>Comprehensive</h5>
-                    <p>Detailed responses with explanations of design principles, code examples, and learning opportunities.
-                        Best for building visual design knowledge and understanding the "why" behind recommendations.</p>
-        
-                    <h5>Balanced (Default)</h5>
-                    <p>Clear, specific recommendations with brief reasoning. Includes numerical values and actionable steps
-                        without extensive code examples. Ideal for most workflows.</p>
-        
-                    <h5>Concise</h5>
-                    <p>Direct, actionable recommendations only. Minimal explanations, maximum efficiency. Best for quick
-                        verification or when you already understand the concepts.</p>-->
-                    <h3>How can I add more context?</h3>
-                    <p>You can provide extra information to help SenseUI give more relevant feedback in the "Add Context" section:</p>
-                    <ul>
-                        <li>Custom Instructions: Add specific requirements, preferences, or constraints for your project (e.g.,
-                            "Always prioritize accessibility", "Use Material Design principles", "Maintain mobile-first
-                            approach")</li>
-                        <li>Project Guidelines: Upload brand guidelines, design systems documentation, or project requirements
-                            documents (PRDs) to ensure recommendations align with your project's standards</li>
-                    </ul>
-        
-                    <!--<h3>Chat History Settings</h3>
-                    <p>Control what gets included when you download your chat history:</p>
-                    <ul>
-                        <li>Download Entire Chat: Saves all messages from the current session</li>
-                        <li>Download Favorited Messages Only: Saves only messages you've marked as favorites</li>
-                    </ul>-->
-                    <!--<h3>Downloading Chat History (non-functional at this Sprint)</h3>
-                    <p>The chat history feature allows you to save conversations for documentation, team collaboration, or
-                        future reference.</p>
-                    <p>To download:</p>
-                    <ol>
-                        <li>On the chat, navigate to the "Download Chat History" button</li>
-                        <li>Press <kbd>Enter</kbd></li>
-                        <li>Your chat will be saved as a plain text (<code>.txt</code>) file to your default downloads location
-                        </li>
-                    </ol>-->
                 </div>
             </details>
 
