@@ -196,6 +196,51 @@
             </details>
 
             <details name="faq">
+                <summary><h2>How does SenseUI use my data?</h2></summary>
+                <div>
+                    <p>SenseUI prioritizes your privacy. Here's exactly what happens:</p>
+                    
+                    <h3>Installation and code transparency</h3>
+                    <p>SenseUI is distributed through the Chrome Web Store and is open source. The complete source code is publicly available on <a href="https://github.com/reginacas/sense-ui" target="_blank" rel="noopener noreferrer">GitHub<span class="sr-only"> (opens in new tab)</span></a>, allowing anyone to audit exactly what the extension does.</p>
+                    
+                    <h3>Data stored locally in your browser</h3>
+                    <p>The following data is stored only on your device using Chrome's local storage:</p>
+                    <ul>
+                        <li><strong>API keys:</strong> Stored encrypted and never shared with anyone except the AI provider you selected (OpenAI or Google Gemini)</li>
+                        <li><strong>Settings:</strong> Your preferences like screenshot mode, selected AI provider, and model choice</li>
+                        <li><strong>Chat history:</strong> Your conversation with SenseUI, stored only in your browser</li>
+                        <li><strong>Projects:</strong> Your project details including frameworks, aesthetics, and purpose</li>
+                    </ul>
+                    <p>This data stays on your device and is browser-specific. It's not synced across devices, not uploaded to any servers, and is not accessible to the extension developers or anyone else.</p>
+                    
+                    <h3>Data sent to AI services</h3>
+                    <p>When you ask SenseUI to analyze a page, the following is sent directly from your browser to your chosen AI provider (OpenAI or Google Gemini):</p>
+                    <ul>
+                        <li>The HTML structure of the page</li>
+                        <li>The CSS styles of the page</li>
+                        <li>A screenshot of the page (viewport or full page, depending on your settings)</li>
+                        <li>Your question or prompt</li>
+                        <li>Your active project context (if you have one selected)</li>
+                    </ul>
+                    
+                    <h3>Important privacy guarantees</h3>
+                    <ul>
+                        <li><strong>No SenseUI servers:</strong> We don't operate any servers and don't collect, store, or have access to any of your data. All communication goes directly from your browser to the AI provider you choose.</li>
+                        <li><strong>AI provider policies:</strong> Data sent to OpenAI or Google Gemini is subject to their respective privacy policies. Review them before use:
+                            <ul>
+                                <li><a href="https://openai.com/policies/privacy-policy" target="_blank" rel="noopener noreferrer">OpenAI Privacy Policy<span class="sr-only"> (opens in new tab)</span></a></li>
+                                <li><a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Google Privacy Policy<span class="sr-only"> (opens in new tab)</span></a></li>
+                            </ul>
+                        </li>
+                        <li><strong>Your responsibility:</strong> Do not share confidential, proprietary, or sensitive information through SenseUI. If your code contains API keys, secrets, or private data, remove them before analysis.</li>
+                        <li><strong>Uninstalling:</strong> If you uninstall SenseUI from the Chrome Web Store, all locally stored data (settings, chat history, projects) is automatically removed from your browser.</li>
+                    </ul>
+                    
+                    <p>For more details about data protection in the research context, see the <a href="https://github.com/reginacas/sense-ui/blob/main/DATA_PROTECTION.md" target="_blank" rel="noopener noreferrer">Data Protection documentation<span class="sr-only"> (opens in new tab)</span></a>.</p>
+                </div>
+            </details>
+
+            <details name="faq">
                 <summary><h2>How to report issues?</h2></summary>
                 <div>
                     <p>If you encounter any issues, please report them on our GitHub repository's <a
