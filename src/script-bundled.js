@@ -331,7 +331,6 @@ function formatResponse(responseText, options = {}) {
         includeHeading = true,
         headingText = 'SenseUI Response',
         addCopyButton = true,
-        addFavoriteButton = true,
         responseId = `response-${Date.now()}`
     } = options;
 
@@ -348,12 +347,6 @@ function formatResponse(responseText, options = {}) {
     if (addCopyButton) {
         html += `<button class="copy-button" data-target="${responseId}" aria-label="Copy response to clipboard">
             Copy to clipboard
-        </button>`;
-    }
-
-    if (addFavoriteButton) {
-        html += `<button class="favorite-button" data-target="${responseId}" aria-label="Mark this response as favorite">
-            Mark as favorite
         </button>`;
     }
 
@@ -377,14 +370,6 @@ function attachResponseActions(container) {
                     console.error('Failed to copy:', err);
                 }
             }
-        });
-    });
-
-    const favoriteButtons = container.querySelectorAll('.favorite-button');
-    favoriteButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            const isFavorited = button.classList.toggle('favorited');
-            button.textContent = isFavorited ? 'Remove from favorites' : 'Mark as favorite';
         });
     });
 }
@@ -923,8 +908,7 @@ async function processUserInput(userInput, forceRefresh = false) {
     const responseHTML = formatResponse(responseText, {
         headingText: 'SenseUI said:',
         includeHeading: true,
-        addCopyButton: true,
-        addFavoriteButton: true
+        addCopyButton: true
     });
 
     const summary = responseText.substring(0, 150) + (responseText.length > 150 ? '...' : '');
