@@ -1,3 +1,5 @@
+<img src="src/icons/icon128.png" alt="SenseUI logo: stylized eye with curly bracket forming a face, emitting a beam of light that illuminates the letters UI of the word SenseUI">
+
 # SenseUI
 
 SenseUI is an open-source Chromium extension that gives blind and low-vision web developers real-time, actionable feedback on their web designs. Get visual descriptions of your pages and receive design recommendations without relying on sighted colleagues or generic AI tools that lack context on your website and deliver vague, unhelpful feedback for blind devs. I'm making this project as part of my master's thesis in Human-Computer Interaction, but this repository will not be deleted or closed after the completion of my degree. It will remain open-source and everyone is free to fork it, change it, adapt and use freely.
