@@ -1,8 +1,16 @@
 {
   "manifest_version": 3,
   "name": "SenseUI",
-  "version": "0.4.0",
-  "description": "(Sprint 4) AI-powered visual design feedback for blind and visually impaired developers",
+  "short_name": "SenseUI",
+  "version": "1.0.0",
+  "description": "AI-powered visual design feedback for blind and visually impaired developers",
+  "author": "Regina Castro",
+  "homepage_url": "https://github.com/reginacas/sense-ui",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
   "permissions": [
     "activeTab",
     "storage",
@@ -14,7 +22,12 @@
   ],
   "action": {
     "default_popup": "index.html",
-    "default_title": "SenseUI"
+    "default_title": "SenseUI",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
   },
   "commands": {
     "_execute_action": {
