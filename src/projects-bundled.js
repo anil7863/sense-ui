@@ -165,14 +165,24 @@ async function renderProjectsList() {
         
         const projectName = document.createElement('h3');
         projectName.textContent = project.name;
-        
-        const projectDetails = document.createElement('p');
-        projectDetails.innerHTML = `<strong>Frameworks:</strong> ${project.frameworks}<br>
-                                    <strong>Aesthetic:</strong> ${project.aesthetic}<br>
-                                    <strong>Purpose:</strong> ${project.purpose}`;
-        
         projectInfo.appendChild(projectName);
-        projectInfo.appendChild(projectDetails);
+        
+        // Create collapsible details section
+        const detailsElement = document.createElement('details');
+        detailsElement.className = 'project-details-toggle';
+        
+        const summary = document.createElement('summary');
+        summary.textContent = 'Details';
+        
+        const projectDetails = document.createElement('div');
+        projectDetails.className = 'project-details-content';
+        projectDetails.innerHTML = `<p><strong>Frameworks:</strong> ${project.frameworks}</p>
+                                    <p><strong>Aesthetic:</strong> ${project.aesthetic}</p>
+                                    <p><strong>Purpose:</strong> ${project.purpose}</p>`;
+        
+        detailsElement.appendChild(summary);
+        detailsElement.appendChild(projectDetails);
+        projectInfo.appendChild(detailsElement);
         
         const projectActions = document.createElement('div');
         projectActions.className = 'project-actions';

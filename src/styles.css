@@ -369,6 +369,36 @@ summary h2 {
     line-height: 1.6;
 }
 
+.project-details-toggle {
+    margin-top: 0.5rem;
+}
+
+.project-details-toggle summary {
+    cursor: pointer;
+    color: var(--secondary-color);
+    font-size: 0.9rem;
+    padding: 0.25rem 0;
+    list-style-position: inside;
+    user-select: none;
+}
+
+.project-details-toggle summary:hover,
+.project-details-toggle summary:focus {
+    color: var(--primary-color);
+    text-decoration: underline;
+}
+
+.project-details-content {
+    margin-top: 0.5rem;
+    padding-left: 1.5rem;
+}
+
+.project-details-content p {
+    margin: 0.25rem 0;
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
 .project-actions {
     display: flex;
     flex-direction: column;
