@@ -229,7 +229,7 @@ function updateModelFieldsVisibility() {
         modelSection.style.display = shouldShowSection ? '' : 'none';
     }
 
-    // Hide AI key instructions if any key is configured
+    // Hide API key instructions if any key is configured
     const hasAnyKey = hasOpenAI || hasGemini;
     if (aiKeyInstructions) {
         aiKeyInstructions.style.display = hasAnyKey ? 'none' : '';
