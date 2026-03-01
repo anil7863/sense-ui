@@ -68,12 +68,14 @@ header {
 nav {
     text-align: right;
     padding: 1vh 2vw;
+    height: 0;
 }
 
 nav a {
     background-color: var(--background-color);
     font-size: 1.5rem;
     color: var(--secondary-color);
+    border: 2px solid var(--secondary-color);
     border-radius: 10rem;
     padding: 0.35rem 0.85rem;
     margin-bottom: 0.5rem;
@@ -81,10 +83,10 @@ nav a {
 }
 
 nav a[aria-current="page"] {
-    text-decoration: underline;
     color: var(--primary-color);
+    border: 2px solid var(--primary-color);
 }
-
+            
 a {
     color: var(--primary-color);
     text-decoration: none;
@@ -102,7 +104,6 @@ button:focus,
 button:active,
 .chat-input:focus {
     outline: 5px solid rgb(252, 106, 21);
-    outline-offset: 5px;
 }
 
 h1 {
