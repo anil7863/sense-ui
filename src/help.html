@@ -26,7 +26,36 @@
     <main id="main">
         <h1>How to use SenseUI</h1>
         <div class="faq-container">
-            <h2>Opening the extension</h2>
+            <h2>Getting started</h2>
+            <details name="faq">
+                <summary><h3>What is SenseUI and how can it help me?</h3></summary>
+                <div>
+                    <p>SenseUI is a Chrome extension that provides real-time AI feedback on your webpage's design, layout, and accessibility. It helps programmers with visual impairments understand their website's visual design better and receive actionable suggestions for improvement.</p>
+                </div>
+            </details>
+            <details name="faq">
+                <summary><h3>How do I start?</h3></summary>
+                <div>
+                <ol>
+                    <li class="step">
+                    <span>1. Configure Your AI Provider</span>
+                    <p>Add your OpenAI or Google Gemini API key in the Settings page. Don't worry, your keys are stored securely and never leave your browser.</p>
+                    </li>
+
+                <li class="step">
+                    <span>2. Create Your First Project</span>
+                    <p>Improve and get more tailored AI feedback by creating projects.
+                        Switch between projects using a dropdown in the chat interface. For quick, one-off analyses of random websites, you can skip creating a project.
+                    </p>
+                </li>
+
+                <li class="step">
+                    <span>3. Get AI Feedback</span>
+                    <p>Open SenseUI on any webpage to analyze the current page within the chat using the commands available or giving a custom prompt.</p>
+                </li>
+                </ol>         
+            </div>
+            </details>
             <details name="faq">
                 <summary><h3>How do I open the extension?</h3></summary>
                 <div>
@@ -72,6 +101,7 @@
                         <li>/refresh: Re-captures page data (HTML, CSS, and screenshot)</li>
                         <li>/clear: Clears the current chat session</li>
                     </ul>
+                    <p>Each command uses a specialized system prompt optimized to provide feedback tailored specifically for blind and visually impaired developers. For example, the /describe command uses spatial and directional language to help you build a mental map of the page layout.</p>
                 </div>
             </details>
 
@@ -101,6 +131,12 @@
                     </ul>
                 </div>
             </details>
+            <details name="faq">
+                <summary><h3>How do I download the current chat?</h3></summary>
+                <div>
+                    <p>To download your current chat session, click the "Download current chat" button located in the footer of the chat panel. This will save your entire conversation as a .txt file on your device.</p>
+                </div>
+            </details>
             <h2>Understanding SenseUI's analysis</h2>
              <details name="faq">
                  <summary><h3>How does SenseUI analyze my page?</h3></summary>
@@ -112,6 +148,7 @@
                         <li>Screenshot: A visual capture of how your page actually renders</li>
                     </ul>
                     <p>The AI analyzes these together to provide accurate, context-aware feedback about your page's design, accessibility, and usability. It cross-references what the code says with what's actually visible in the screenshot to ensure its analysis matches reality.</p>
+                    <p>SenseUI uses a personalized system prompt that instructs the AI to provide feedback specifically tailored for blind and visually impaired developers. This includes using clear directional language, prioritizing accessibility (WCAG 2.2), avoiding verbose formatting, and ensuring all responses are screen reader-friendly.</p>
                 </details>
                 <details name="faq">
                     <summary><h3>How does SenseUI take screenshots?</h3></summary>   
@@ -174,7 +211,68 @@
                     <p>For quick, one-off analyses of random websites, you can skip creating a project and use SenseUI without an active project context.</p>
                 </div>
             </details>
-        <h2>AI Models</h2>
+        <h2>Technical Details</h2>
+            <details name="faq">
+                <summary><h3>How does SenseUI work under the hood?</h3></summary>
+                <div>
+                    <p>SenseUI is a Chrome extension built with HTML, CSS, and JavaScript. It uses the Chrome Extensions API to interact with web pages and manage data locally in the browser.</p>
+                    <p>When you open the SenseUI panel, it captures the current webpage's HTML structure, CSS styles, and a screenshot. This data is sent directly from your browser to your chosen AI provider (OpenAI or Google Gemini) along with the system prompts, your prompt and active project context (if any).</p>
+                    <p>The AI processes this information to generate feedback about your page's design, accessibility, and usability. The response is then displayed in the chat interface for you to review and act upon.</p>
+                </div>
+            </details>
+            <details name="faq">
+                <summary><h3>Which system prompts are being used?</h3></summary>
+                <div>
+                    <p>The system prompts are defined in the extension's source code and can be viewed in the extension's GitHub repository or in the <a href="https://github.com/reginacas/sense-ui/blob/main/PROMPTS.MD">Prompts Page</a> in Github.</p>
+                    <p>They were created with the input and collaboration of contributors of this community.</p>
+                    <p>If you have suggestions to improve the prompt system, please submit your ideas through the <a href="https://github.com/reginacas/sense-ui/issues">Issues page</a></p>
+                </div>
+            </details>
+        <h2>API Keys and Models</h2>
+            <details name="faq">
+                <summary><h3>How do I get an API key?</h3></summary>
+                <div>
+                    <p>To use SenseUI, you need to provide your own API key from either OpenAI or Google Gemini. Here's how to get one:</p>
+                    <h4>OpenAI API Key</h4>
+                    <ol>
+                        <li>Go to the OpenAI website: <a href="https://platform.openai.com/signup" target="_blank" rel="noopener noreferrer">https://platform.openai.com/signup<span class="sr-only"> (opens in new tab)</span></a></li>
+                        <li>Create an account or log in if you already have one</li>
+                        <li>Navigate to the API Keys section in your account dashboard</li>
+                        <li>Click "Create new secret key" and copy the generated API key</li>
+                    </ol>
+                    <h4>Google Gemini API Key</h4>
+                    <ol>
+                        <li>Go to the Google Cloud Console: <a href="https://console.cloud.google.com/" target="_blank" rel="noopener noreferrer">https://console.cloud.google.com/<span class="sr-only"> (opens in new tab)</span></a></li>
+                        <li>Create a new project or select an existing one</li>
+                        <li>Enable the Gemini API for your project</li>
+                        <li>Navigate to the "Credentials" section and click "Create credentials"</li>
+                        <li>Select "API key" and copy the generated API key</li>
+                    </ol>
+                </div>
+            </details>
+            <details name="faq">
+                <summary><h3>Is it safe to use my API key with SenseUI?</h3></summary>
+                <div>
+                    <p>Yes. Your API key is stored securely in your browser's local storage and is encrypted. It is only used to authenticate requests sent directly from your browser to the AI provider you selected (OpenAI or Google Gemini). The extension developers do not have access to your API key, and it is never transmitted to any servers operated by us.</p>
+                    <p>However, please ensure that you do not share sensitive information through SenseUI, as the data sent to the AI provider (including your prompts and page data) may be stored and used according to the provider's policies. Always review the privacy policies of OpenAI and Google Gemini before use.</p>
+                </div>
+            </details>
+            <details name="faq">
+                <summary><h3>Can I use SenseUI without an API key?</h3></summary>
+                <div>
+                    <p>No. An API key from either OpenAI or Google Gemini is required to use SenseUI, as the extension relies on these AI services to provide feedback and analysis.</p>
+                </div>
+            </details>
+            <details name="faq">
+                <summary><h3>Can I use a free API key?</h3></summary>
+                <div>
+                    <p>Yes, you can use a free API key from OpenAI or Google Gemini. However, please note that free tiers often come with limitations such as lower usage limits, access to fewer models, or slower response times.</p>
+                </div>
+            </details>
+            <details name="faq">
+                <summary><h3>How can I change or delete my API key?</h3></summary>
+                <p>To paste another key, simply highlight the existing API key in the input field and replace it with your new key. To delete, click on the "Clear OpenAI/Gemini Key" button to remove from your browser's local storage.</p>
+            </details>
             <details name="faq">
                 <summary><h3>Can I choose which AI model SenseUI uses?</h3></summary>
                 <div id="available-models">
@@ -182,7 +280,7 @@
                     <ul>
                         <li>Select your provider (OpenAI or Google Gemini)</li>
                         <li>Enter your API key for that provider</li>
-                        <li>Choose a model from a suggestion list or type a supported model name. To learn more about which models are supported, visit the [Model requirements](https://github.com/reginacas/sense-ui/blob/main/MODEL_REQUIREMENTS.md) documentation page.</li>
+                        <li>Choose a model from a suggestion list or type a supported model name. To learn more about which models are supported, visit the <a href="https://github.com/reginacas/sense-ui/blob/main/MODEL_REQUIREMENTS.md">Model requirements</a> documentation page.</li>
                     </ul>
                     <p>SenseUI is currently tested with a small set of focused, grounded models:</p>
                     <ul>
@@ -192,6 +290,7 @@
                     <p>Newer GPT-5 family models are not supported yet, because they do not allow lowering the temperature below 1.0. SenseUI uses a lower temperature to keep answers closely tied to the actual page content instead of more random or speculative responses.</p>
                 </div>
             </details>
+            
         <h2>Data privacy</h2>
             <details name="faq">
                 <summary><h3>How does SenseUI use my data?</h3></summary>
