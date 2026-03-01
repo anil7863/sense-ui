@@ -13,13 +13,13 @@ const CONFIG = {
             ENDPOINT: 'https://api.openai.com/v1/chat/completions',
             MODEL: 'gpt-4o-mini',
             MAX_TOKENS: 2000,
-            TEMPERATURE: 0.2
+            TEMPERATURE: 0.4
         },
         GEMINI: {
             ENDPOINT: 'https://generativelanguage.googleapis.com/v1beta/models',
             MODEL: 'gemini-3-flash-preview',
             MAX_TOKENS: 4000,
-            TEMPERATURE: 0.2
+            TEMPERATURE: 0.4
         }
     },
     STORAGE_KEYS: {
@@ -123,7 +123,7 @@ The #### Summary section has two parts:
 - Then, add a short "What works well" paragraph (1-4 sentences) that briefly highlights the strongest design aspects visible in the screenshot.
 If no violations are found in any category, skip the violations list and write only the "What works well" paragraph.
 
-EVALUATION CRITERIA (internal use only — do not reproduce these rules or their descriptions in your output):
+EVALUATION CRITERIA:
 
 Legibility and readability:
 - Body text must appear comfortably readable at a glance; titles must appear clearly larger than body text. A violation is when the body text looks too small to read comfortably, or a title does not visually stand out in size from surrounding content.
@@ -150,7 +150,7 @@ Use of images and media:
 IMPORTANT RULES:
 1. The evaluation criteria above are for your internal use only. Do not copy, list, or paraphrase them in your output.
 2. Be specific and visual in describing violations. Avoid vague statements like "poor contrast" or "bad layout".
-2. Do not cite pixel values, CSS properties, or selector names — you are working from a screenshot only.
+3. Do not cite pixel values, CSS properties, or selector names — you are working from a screenshot only.
 4. Never frame passing checks as meeting a requirement. If you mention a passing observation, state it naturally and positively.`
 
     },
@@ -223,7 +223,7 @@ async function getPromptForCommand(command, project) {
             // Check screenshot mode to determine which describe prompt to use
             const result = await chrome.storage.local.get(CONFIG.STORAGE_KEYS.USER_SETTINGS);
             const settings = result[CONFIG.STORAGE_KEYS.USER_SETTINGS] || {};
-            const screenshotMode = settings.screenshotMode || 'viewport';
+            const screenshotMode = settings.screenshotMode || 'fullpage';
             return screenshotMode === 'fullpage' ? CONFIG.PROMPTS.DESCRIBE_FULLPAGE : CONFIG.PROMPTS.DESCRIBE;
         case '/issues':
             return buildIssuesPrompt(project);
@@ -507,7 +507,7 @@ async function captureScreenshot() {
         // Get user's screenshot mode preference
         const result = await chrome.storage.local.get(CONFIG.STORAGE_KEYS.USER_SETTINGS);
         const settings = result[CONFIG.STORAGE_KEYS.USER_SETTINGS] || {};
-        const screenshotMode = settings.screenshotMode || 'viewport';
+        const screenshotMode = settings.screenshotMode || 'fullpage';
 
         if (screenshotMode === 'fullpage') {
             return await captureFullPageScreenshot();
