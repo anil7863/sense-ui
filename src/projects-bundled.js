@@ -31,7 +31,7 @@ async function getAllProjects() {
 
 /**
  * Save a new project or update an existing one
- * @param {Object} project - Project object with name, frameworks, aesthetic, purpose
+ * @param {Object} project - Project object with name, aesthetic, purpose
  * @param {string} projectId - Optional ID for updating existing project
  * @returns {Promise<Object>} The saved project with ID
  */
@@ -176,8 +176,7 @@ async function renderProjectsList() {
         
         const projectDetails = document.createElement('div');
         projectDetails.className = 'project-details-content';
-        projectDetails.innerHTML = `<p><strong>Frameworks:</strong> ${project.frameworks}</p>
-                                    <p><strong>Aesthetic:</strong> ${project.aesthetic}</p>
+        projectDetails.innerHTML = `<p><strong>Aesthetic:</strong> ${project.aesthetic}</p>
                                     <p><strong>Purpose:</strong> ${project.purpose}</p>`;
         
         detailsElement.appendChild(summary);
@@ -216,7 +215,6 @@ async function renderProjectsList() {
  */
 function editProject(project) {
     document.getElementById('project-name').value = project.name;
-    document.getElementById('project-frameworks').value = project.frameworks;
     document.getElementById('project-aesthetic').value = project.aesthetic;
     document.getElementById('project-purpose').value = project.purpose;
     document.getElementById('edit-project-id').value = project.id;
@@ -302,7 +300,6 @@ async function handleFormSubmit(event) {
     event.preventDefault();
     
     const name = document.getElementById('project-name').value.trim();
-    const frameworks = document.getElementById('project-frameworks').value.trim();
     const aesthetic = document.getElementById('project-aesthetic').value.trim();
     const purpose = document.getElementById('project-purpose').value.trim();
     const editId = document.getElementById('edit-project-id').value;
@@ -313,10 +310,10 @@ async function handleFormSubmit(event) {
         return;
     }
     
-    const project = { name, frameworks, aesthetic, purpose };
+    const project = { name, aesthetic, purpose };
     
     try {
-        console.log('📝 Form submitted with data:', { name, frameworks, aesthetic, purpose, editId });
+        console.log('📝 Form submitted with data:', { name, aesthetic, purpose, editId });
         const savedProject = await saveProject(project, editId || null);
         
         if (editId) {
