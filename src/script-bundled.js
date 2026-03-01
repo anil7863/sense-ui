@@ -927,7 +927,6 @@ let sendButton;
 let chatMessages;
 let chatInput;
 let commandDatalist;
-let introSection;
 let projectSelect;
 
 // Cache for page context (captured once per session)
@@ -959,10 +958,6 @@ async function loadChatHistory() {
             chatMessages.innerHTML = savedHtml;
             // Reattach event listeners to restored messages
             attachResponseActions(chatMessages);
-            // Hide intro if there are messages
-            if (introSection && savedHtml.trim()) {
-                introSection.style.display = 'none';
-            }
             console.log('✅ Chat history restored');
         }
     } catch (error) {
@@ -1124,11 +1119,19 @@ function announce(msg) {
 }
 
 window.addEventListener('DOMContentLoaded', async () => {
+    // Check if this is the first time opening the extension
+    const result = await chrome.storage.local.get('senseui_first_time');
+    if (result.senseui_first_time === true) {
+        // Clear the flag and redirect to welcome page
+        await chrome.storage.local.set({ 'senseui_first_time': false });
+        window.location.href = 'welcome.html';
+        return; // Stop further initialization
+    }
+
     sendButton = document.querySelector('.chat-send');
     chatMessages = document.getElementById('chat-messages');
     chatInput = document.getElementById('chat-input');
     commandDatalist = document.getElementById('command-list');
-    introSection = document.querySelector('.intro');
     projectSelect = document.getElementById('active-project-select');
 
     // Load saved chat history
@@ -1387,8 +1390,6 @@ async function sendMessage() {
         }
         return;
     }
-
-    if (introSection) introSection.style.display = 'none';
 
     const userMessage = document.createElement('div');
     userMessage.className = 'user-message';

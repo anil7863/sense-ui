@@ -28,7 +28,7 @@
         <h1>Settings</h1>
             <form id="settings-form" novalidate>
                 <!-- API Configuration Section -->
-                <details name="settings" class="settings-section" open>
+                <details name="settings" class="settings-section">
                     <summary>
                         <h2>Enter your API Key</h2>
                     </summary>
@@ -160,7 +160,6 @@
                         <small id="fullpage-desc" class="hint">Captures the entire page from top to bottom. Slower, uses more tokens, provides broader overview. Not ideal for infinite scroll pages or sites with heavy dynamic content.</small>
                     </fieldset>
                 </details>
-                <br>
                 <!-- End Screenshot Capture Mode Section -->
                 <!-- Quick Action Buttons Section -->
                 <details name="settings" class="settings-section">
@@ -178,7 +177,6 @@
                         <small class="hint">When hidden, you can still use /describe and /issues commands by typing them in the input field.</small>
                     </fieldset>
                 </details>
-                <br>
                 <!-- End Quick Action Buttons Section -->
                 <!-- Feedback Detail Level Section -->
                 <details name="settings" class="settings-section">
@@ -205,32 +203,7 @@
                         </label>
                     </fieldset>
                 </details>
-                <br>
                 <!-- End Feedback Detail Level Section -->
-                <!-- Chat History Download Section -->
-                <details name="settings" class="settings-section">
-                    <summary>
-                        <h2>Chat History Download</h2>
-                    </summary>
-                    <fieldset id="download-fieldset" role="radiogroup" aria-labelledby="download-legend">
-                        <legend id="download-legend">Select which conversations will be included when you export your
-                            history</legend>
-                        <br>
-                        <label for="download-all">
-                            <input id="download-all" type="radio" name="download" value="all" checked aria-checked="true">
-                            Download all
-                        </label>
-                        <br>
-                        <label for="download-favorites">
-                            <input id="download-favorites" type="radio" name="download" value="favorites"
-                                aria-checked="false">
-                            Only favorites
-                        </label>
-                    </fieldset>
-                </details>
-                <br>
-                <!-- End Chat History Download Section -->
-                <br>
                 <!-- Keyboard Shortcut Section -->
                 <details name="settings" class="settings-section">
                     <summary>
