@@ -151,6 +151,10 @@ li {
     font-size: 1rem;
 }
 
+summary h3 {
+    font-size: 1rem;
+    display: inline;
+}
 
 
 /* CHAT INTERFACE */
