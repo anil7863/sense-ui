@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Settings - SenseUI</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!-- Skip link for keyboard/screen-reader users -->
+    <a href="#main" class="skip-link">Skip to main content</a>
+    <header>
+        <h1 class="sr-only">Sense UI</h1>
+        <nav>
+            <a href="index.html">Chat</a>
+            <br>
+            <a href="projects.html">Projects</a>
+            <br>
+            <a href="settings.html" aria-current="page">Settings</a>
+            <br>
+            <a href="help.html">Help</a>
+        </nav>
+    </header>
+
+    <main id="main">
+        <h1>Settings</h1>
+            <form id="settings-form" novalidate>
+                <!-- API Configuration Section -->
+                <details name="settings" class="settings-section" open>
+                    <summary>
+                        <h2>Enter your AI Key</h2>
+                    </summary>
+                    <fieldset id="api-fieldset" aria-labelledby="api-legend">
+                        <legend id="api-legend">Enter your AI key to use SenseUI</legend>
+                        <!-- AI key instructions -->
+                        <h3>How to get an AI key</h3>
+                        <p>If you don't have a key yet, you can visit these links (opens in a new tab). If you already have one, continue to the next
+                            step.</p>
+                        <ul>
+                            <li><a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener">
+                                    Get your OpenAI API key
+                                </a></li>
+                            <li><a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener">Get your
+                                    Google Gemini API key</a></li>
+                        </ul>
+                        <br>
+                        <!-- AI key provider selection -->
+                        <h3>Select your AI key provider</h3>
+                        <br>
+                        <label for="provider-openai">
+                            <input id="provider-openai" type="radio" name="provider" value="openai" checked
+                                aria-checked="true" />
+                            OpenAI
+                        </label>
+                        <br>
+                        <label for="provider-gemini">
+                            <input id="provider-gemini" type="radio" name="provider" value="gemini" aria-checked="false" />
+                            Google Gemini
+                        </label>
+                        <br>
+                        <!--OpenAI key input-->
+                        <label for="openai-key">Enter your OpenAI key</label>
+                        <input type="password" id="openai-key" name="openaiApiKey" placeholder="Your OpenAI API key"
+                            aria-describedby="openai-key-desc" autocomplete="off" />
+                        <div id="openai-status" role="status" aria-live="polite" style="margin-top: 0.5em;"></div>
+                        <br>
+                        <button type="button" id="clear-openai-key" class="btn-secondary"
+                            style="display: none; margin-top: 0.5em;">Clear OpenAI Key</button>
+                        <!--Gemini key input-->
+                        <label for="gemini-key" style="display: none;">Enter your Gemini key</label>
+                        <input type="password" id="gemini-key" name="geminiApiKey" placeholder="Your Gemini API key"
+                            aria-describedby="gemini-key-desc" autocomplete="off" style="display: none;" />
+                        <div id="gemini-status" role="status" aria-live="polite" style="display: none; margin-top: 0.5em;">
+                        </div>
+                        <br>
+                        <button type="button" id="clear-gemini-key" class="btn-secondary"
+                                style="display: none; margin-top: 0.5em;">Clear Gemini Key</button>
+                            <br>
+
+                            <!-- Model selection (provider-specific) -->
+                            <h3>Model customization</h3>
+                            <p>If you wish to specify, choose which model SenseUI should use for this provider. If you are not sure, keep the auto option.
+                                To read more about model requirements, visit the <a href="help.html#available-models" target="_blank" rel="noopener">Help
+                                    page</a> (opens in a new tab).
+                            </p>
+
+                            <!-- OpenAI model input -->
+                            <label for="openai-model" id="openai-model-label">OpenAI model</label>
+                            <br>
+                            <input id="openai-model" name="openaiModel" list="openai-models" autocomplete="off"
+                                aria-describedby="openai-model-desc" />
+                            <br>
+                            <small id="openai-model-desc" class="hint">You can pick a suggestion or type any model name your account and AI key provider supports.</small>
+                            <datalist id="openai-models">
+                                <option value="auto (gpt-4o-mini)" label="auto (GPT 4 O mini)"></option>
+                                <option value="gpt-4o" label="GPT 4 O"></option>
+                                <option value="gpt-4.1-mini"></option>
+                                <option value="gpt-4.1"></option>
+                            </datalist>
+                            <br>
+
+                            <!-- Gemini model input -->
+                            <label for="gemini-model" id="gemini-model-label" style="display: none;">Gemini model</label>
+                            <br>
+                            <input id="gemini-model" name="geminiModel" list="gemini-models" autocomplete="off"
+                                aria-describedby="gemini-model-desc" style="display: none;" />
+                            <br>
+                            <small id="gemini-model-desc" class="hint" style="display: none;">You can pick a suggestion or type any Gemini model name your account supports.</small>
+                            <datalist id="gemini-models">
+                                <option value="auto (gemini-3-flash-preview)"></option>
+                                <option value="gemini-3-pro-preview"></option>
+                            </datalist>
+                            <br>
+                        </fieldset>
+                </details>
+                <!-- End API Configuration Section -->
+                <!-- Screenshot Capture Mode Section -->
+                <details name="settings" class="settings-section">
+                    <summary>
+                        <h2>Screenshot Capture Mode</h2>
+                    </summary>
+                    <fieldset id="screenshot-fieldset" role="radiogroup" aria-labelledby="screenshot-legend" aria-describedby="screenshot-info">
+                        <legend id="screenshot-legend">Choose which part of the page to capture for analysis.</legend>
+                        <div id="screenshot-info" class="info-box">
+                            <p><strong>Important:</strong> By default, SenseUI only captures what's currently visible in your browser window (viewport). If you need to analyze an entire page, switch to Full page mode below.</p>
+                        </div>
+                        <br>
+                        <label for="screenshot-viewport">
+                            <input id="screenshot-viewport" type="radio" name="screenshot" value="viewport" checked
+                                aria-checked="true" aria-describedby="viewport-desc">
+                            Viewport only (default)
+                        </label>
+                        <small id="viewport-desc" class="hint">Captures only what's visible on screen right now. Faster feedback, uses fewer tokens, provides more detailed analysis. Best for analyzing specific sections or working iteratively.</small>
+                        <br>
+                        <br>
+                        <label for="screenshot-fullpage">
+                            <input id="screenshot-fullpage" type="radio" name="screenshot" value="fullpage"
+                                aria-checked="false" aria-describedby="fullpage-desc">
+                            Full page
+                        </label>
+                        <small id="fullpage-desc" class="hint">Captures the entire page from top to bottom. Slower, uses more tokens, provides broader overview. Not ideal for infinite scroll pages or sites with heavy dynamic content.</small>
+                    </fieldset>
+                </details>
+                <br>
+                <!-- End Screenshot Capture Mode Section -->
+                <!-- Quick Action Buttons Section -->
+                <details name="settings" class="settings-section">
+                    <summary>
+                        <h2>Quick Action Buttons</h2>
+                    </summary>
+                    <fieldset id="buttons-fieldset" aria-labelledby="buttons-legend">
+                        <legend id="buttons-legend">Show or hide the Describe and Issues quick action buttons in the chat interface.</legend>
+                        <br>
+                        <label for="show-buttons">
+                            <input id="show-buttons" type="checkbox" name="showButtons" aria-checked="false">
+                            Show Describe and Issues buttons
+                        </label>
+                        <br>
+                        <small class="hint">When hidden, you can still use /describe and /issues commands by typing them in the input field.</small>
+                    </fieldset>
+                </details>
+                <br>
+                <!-- End Quick Action Buttons Section -->
+                <!-- Feedback Detail Level Section -->
+                <details name="settings" class="settings-section">
+                    <summary>
+                        <h2>Feedback Detail Level</h2>
+                    </summary>
+                    <fieldset id="detail-fieldset" role="radiogroup" aria-labelledby="detail-legend">
+                        <legend id="detail-legend">Choose how verbose SenseUI's feedback should be.</legend>
+                        <br>
+                        <label for="detail-comprehensive">
+                            <input id="detail-comprehensive" type="radio" name="detail" value="comprehensive"
+                                aria-checked="false">
+                            Comprehensive
+                        </label>
+                        <br>
+                        <label for="detail-normal">
+                            <input id="detail-normal" type="radio" name="detail" value="normal" checked aria-checked="true">
+                            Normal (default)
+                        </label>
+                        <br>
+                        <label for="detail-concise">
+                            <input id="detail-concise" type="radio" name="detail" value="concise" aria-checked="false">
+                            Concise
+                        </label>
+                    </fieldset>
+                </details>
+                <br>
+                <!-- End Feedback Detail Level Section -->
+                <!-- Chat History Download Section -->
+                <details name="settings" class="settings-section">
+                    <summary>
+                        <h2>Chat History Download</h2>
+                    </summary>
+                    <fieldset id="download-fieldset" role="radiogroup" aria-labelledby="download-legend">
+                        <legend id="download-legend">Select which conversations will be included when you export your
+                            history</legend>
+                        <br>
+                        <label for="download-all">
+                            <input id="download-all" type="radio" name="download" value="all" checked aria-checked="true">
+                            Download all
+                        </label>
+                        <br>
+                        <label for="download-favorites">
+                            <input id="download-favorites" type="radio" name="download" value="favorites"
+                                aria-checked="false">
+                            Only favorites
+                        </label>
+                    </fieldset>
+                </details>
+                <br>
+                <!-- End Chat History Download Section -->
+                <br>
+                <!-- Keyboard Shortcut Section -->
+                <details name="settings" class="settings-section">
+                    <summary>
+                        <h2>Keyboard Shortcuts</h2>
+                    </summary>
+                    <p>You have the option to customize three configurable shortcuts to open and close SenseUI:</p>
+                    <ul>
+                        <li><strong>Open SenseUI (Popup Mode)</strong>: `Ctrl+Shift+S`. Drops down the standard popup.</li>
+                        <li><strong>Open SenseUI Side Panel</strong>: `Ctrl+Shift+Y`. Docks the persistent side panel.</li>
+                        <li><strong>Close SenseUI Side Panel</strong>: `Ctrl+Shift+X`. Closes the active side panel.</li>
+                    </ul>
+                    <p>Click below to explicitly customize any of these modes. These won't be changed back when you reset this page.</p>
+                    <button type="button" id="open-shortcuts" class="btn-secondary">Change keyboard shortcuts<span
+                            class="sr-only"> (opens the browser's extension manager in new tab)</span></button>
+                    <br>
+                    <br>
+                </details>
+                <!-- End Keyboard Shortcut Section -->
+
+                <dialog id="reset-warning-dialog"> 
+                    <h3>Warning</h3>
+                    <p tabindex="0">Are you sure you want to reset all preferences to defaults? Keys and provider selection will be preserved. To reset a shortcut, go to the browser's extension manager.</p>
+                    <div class="dialog-actions">
+                        <button type="button" id="cancel-reset-action" class="btn-secondary">Cancel</button>
+                        <button type="button" id="confirm-reset-action" class="btn-primary">Confirm</button>
+                    </div>
+                </dialog>
+                <div style="display: flex; gap: 10px; margin-top: 1rem;">
+                    <button type="submit" id="save-settings" class="btn-secondary">Save</button>
+                    <button type="button" id="save-settings-return" class="btn-primary">Save and return to home</button>
+                </div>
+                <br>
+                <button type="button" style="margin-top: 1rem;" id="reset-settings" class="btn-secondary">Reset to
+                    Defaults</button>
+                <!-- Status area for screen readers (updated via script on submit) -->
+                <div id="settings-status" role="status" aria-live="polite" class="visually-hidden" aria-atomic="true">
+                </div>
+            </form>
+    </main>
+    <script src="settings-bundled.js"></script>
+</body>
+
+</html>
