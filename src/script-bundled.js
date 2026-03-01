@@ -52,7 +52,7 @@ CSS ANALYSIS RULES:
 - If CSS and screenshot don't match, trust the screenshot
 
 KEY PRINCIPLES:
-- Answer the question asked - be direct and concise for simple questions
+- Answer the question asked - be direct and concise. Don't add fluff.
 - Prioritize accessibility (WCAG 2.2) and usability when giving design advice
 - Only report what you can verify from the provided HTML, CSS, or screenshot
 - Do not offer code unless specifically requested
@@ -120,7 +120,7 @@ Then describe ALL sections of the page from top to bottom, using clear positiona
 
 End with: "Want me to analyze a specific section in more detail?"`,
 
-        ISSUES: `Identify design and accessibility issues on the current webpage and provide actionable solutions.
+         ISSUES: `Identify design and accessibility issues on the current webpage and provide actionable solutions.
 
 IMPORTANT: 
 - Only report issues you can actually verify from the HTML, CSS, and screenshot. If the page has no significant issues, say so - do NOT invent problems that don't exist. You may provide recommendations for improvement even when no critical issues are present.
@@ -147,6 +147,7 @@ GOOD: "Increase .card-content padding from 8px to 16px for improved readability"
 
 BAD: "Make the button more prominent" (unclear what to change)
 GOOD: "Increase .primary-btn font-size from 14px to 16px and add padding: 12px 24px"`
+
 
     },
 
@@ -592,10 +593,29 @@ async function extractPageContent() {
                         viewport: { width: window.innerWidth, height: window.innerHeight }
                     };
                 }
+                function extractComputedStyles() {
+                    const PROPS = ['font-size', 'line-height', 'font-family', 'color', 'background-color', 'margin', 'margin-top', 'margin-bottom', 'margin-left', 'margin-right', 'padding', 'padding-top', 'padding-bottom', 'padding-left', 'padding-right', 'text-align', 'width', 'border-color'];
+                    const SELECTORS = ['body', 'h1', 'h2', 'h3', 'h4', 'p', 'li', 'a', 'button', 'input', 'label', 'header', 'main', 'footer', 'nav', 'section', 'article', '[class*="container"]', '[class*="wrapper"]', '[class*="card"]'];
+                    const results = [];
+                    for (const sel of SELECTORS) {
+                        const els = Array.from(document.querySelectorAll(sel)).slice(0, 3);
+                        for (const el of els) {
+                            const cs = window.getComputedStyle(el);
+                            const identifier = el.id ? `#${el.id}` : el.className ? `${el.tagName.toLowerCase()}.${el.className.trim().split(' ')[0]}` : el.tagName.toLowerCase();
+                            const styles = {};
+                            for (const prop of PROPS) {
+                                styles[prop] = cs.getPropertyValue(prop).trim();
+                            }
+                            results.push({ selector: identifier, styles });
+                        }
+                    }
+                    return results;
+                }
                 return {
                     html: extractHTML().substring(0, 100000),
                     css: extractCSS().substring(0, 50000),
-                    metadata: extractMetadata()
+                    metadata: extractMetadata(),
+                    computedStyles: extractComputedStyles()
                 };
             }
         });
@@ -681,6 +701,13 @@ async function sendToLLM(userMessage, context, systemPrompt, provider) {
     }
     if (context.css) {
         contextText += `\\n\\nCSS:\\n${context.css.substring(0, 15000)}`;
+    }
+    if (context.computedStyles && context.computedStyles.length > 0) {
+        const stylesText = context.computedStyles.map(entry => {
+            const props = Object.entries(entry.styles).map(([k, v]) => `  ${k}: ${v}`).join('\\n');
+            return `${entry.selector}:\\n${props}`;
+        }).join('\\n\\n');
+        contextText += `\\n\\nCOMPUTED STYLES (browser-resolved values):\\n${stylesText}`;
     }
 
     const fullMessage = `${userMessage}${contextText}`;
@@ -847,6 +874,7 @@ async function capturePageContext() {
             context.html = pageContent.html;
             context.css = pageContent.css;
             context.metadata = pageContent.metadata;
+            context.computedStyles = pageContent.computedStyles;
             context.url = pageContent.metadata?.url;
             console.log('✅ Page content extracted:', pageContent.metadata?.title || 'Unknown page');
             announce('Page content extracted');
