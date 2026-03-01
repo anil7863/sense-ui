@@ -1,32 +1,18 @@
 # Contributing to SenseUI
 
+SenseUI is an open-source project and its success relies on the collaboration and input from our talented and dedicated contributors.
+We don't simply have "useYour willingness to join this cause and community is extremely valued. 
+Please take a moment to read the project values first.
+
 ## Project Values
 
-- Community-driven: Development decisions emerge from continuous collaboration with BVI developers
-- Accessibility-first: All features must meet WCAG AAA standards
-- Transparency: Development happens in the open, with clear documentation
-
-As a contributor, you may:
-- Create feature branches and submit pull requests
-- Address identified issues through code contributions
-- Participate in sprint planning discussions
-
-## Development Process
-
-SenseUI follows an iterative sprint-based development approach:
-
-1. Planning: I'll propose features and accessibility issues on the mailing list, and the 
-community can help prioritize or suggest changes.
-2. Development: Me and other volunteer developers build features according to the backlog
-3. Testing: Testers evaluate functionality and accessibility
-4. Retrospective: Reflect on the process and gather feedback (every 2 sprints)
-5. Release: Publish a new version
-
-Each sprint lasts 2 to 3 weeks, running until end of January/early February 2026.
+- Accessibility-first: All features must meet at least WCAG 2.2 AA standards
+- We believe in transparency. Development happens in the open, with clear documentation. Important decisions are taken with input from the community in the [Discussions page](https://github.com/reginacas/sense-ui/discussions).
+- SenseUI's goal is not to replace developers, or shift the control and decision making away from them. The goal is to be a part of their tool-kit for gaining confidence and independence when working on UI tasks. We are not looking to monetize from this tool.
 
 ## To try the extension:
 
-1. Download the latest build from (Releases)[https://github.com/reginacas/sense-ui/releases]
+1. Download the latest build from [Releases](https://github.com/reginacas/sense-ui/releases)
 
 4. Open Chrome and go to the [Extensions page](chrome://extensions) or write: chrome://extensions in the address bar (this link can only be opened with Chrome)
 
@@ -52,17 +38,6 @@ Each sprint lasts 2 to 3 weeks, running until end of January/early February 2026
 
 - GitHub Issues: Bug reports, feature requests, and technical discussions
 - Github discussions: add a question, comment or concern.
-- Retrospective calls: Bi-sprint reflection sessions (optional)
-
-### Sprint Retrospectives
-
-Every 2 sprints, we hold retrospective calls to discuss:
-- What worked well in the development process
-- What created difficulties or barriers
-- What could be improved about collaboration
-- Insights on accessibility and usability
-
-These calls focus on the **process** itself, not just product evaluation. Your voice helps shape how we work together.
 
 ## Questions?
 

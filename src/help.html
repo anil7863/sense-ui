@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Help - Sense UI</title>
+    <title>Help</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="styles.css">
 </head>
@@ -24,16 +24,45 @@
     </nav>
     </header>
     <main id="main">
-        <h1>Help</h1>
+        <h1>How to use SenseUI</h1>
         <div class="faq-container">
-
+            <h2>Getting started</h2>
             <details name="faq">
-                <summary><h2>How do I open the extension?</h2></summary>
+                <summary><h3>What is SenseUI and how can it help me?</h3></summary>
                 <div>
-                    <h3>Using the keyboard shortcut</h3>
+                    <p>SenseUI is a Chrome extension that provides real-time AI feedback on your webpage's design, layout, and accessibility. It helps programmers with visual impairments understand their website's visual design better and receive actionable suggestions for improvement.</p>
+                </div>
+            </details>
+            <details name="faq">
+                <summary><h3>How do I start?</h3></summary>
+                <div>
+                <ol>
+                    <li class="step">
+                    <span>1. Configure Your AI Provider</span>
+                    <p>Add your OpenAI or Google Gemini API key in the Settings page. Don't worry, your keys are stored securely and never leave your browser.</p>
+                    </li>
+
+                <li class="step">
+                    <span>2. Create Your First Project</span>
+                    <p>Improve and get more tailored AI feedback by creating projects.
+                        Switch between projects using a dropdown in the chat interface. For quick, one-off analyses of random websites, you can skip creating a project.
+                    </p>
+                </li>
+
+                <li class="step">
+                    <span>3. Get AI Feedback</span>
+                    <p>Open SenseUI on any webpage to analyze the current page within the chat using the commands available or giving a custom prompt.</p>
+                </li>
+                </ol>         
+            </div>
+            </details>
+            <details name="faq">
+                <summary><h3>How do I open the extension?</h3></summary>
+                <div>
+                    <h4>Using the keyboard shortcut</h4>
                     <p>Press <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>S</kbd> (or <kbd>Cmd</kbd> + <kbd>Shift</kbd> +
                         <kbd>S</kbd> on Mac) to open the SenseUI panel.</p>
-                    <h3>Pinning the extension to your toolbar</h3>
+                    <h4>Pinning the extension to your toolbar</h4>
                     <ol>
                         <li>Open Chrome's extension menu (located in the toolbar palette next to the address bar)</li>
                         <li>You can also access Chrome's extensions by going to <a href="chrome://extensions/" target="_blank"
@@ -46,7 +75,7 @@
                 </div>
             </details>
             <details name="faq">
-                <summary><h2>Can I change the keyboard shortcut?</h2></summary>
+                <summary><h3>Can I change the keyboard shortcut?</h3></summary>
                 <div>
                     <p>Yes! You can customize the keyboard shortcut by opening the browser's extension manager. Click the
                         "Open shortcuts page" button below to access it directly.</p>
@@ -59,24 +88,25 @@
                         </ul>
                 </div>
             </details>
-
+            <h2>Chatting with SenseUI</h2>
             <details name="faq">
-                <summary><h2>What commands are available?</h2></summary>
+                <summary><h3>What chat commands are available?</h3></summary>
                 <div>
                     <p>SenseUI provides quick commands for common tasks. Type <kbd>/</kbd> in the input field to access them.</p>
-                    <h3>Available commands</h3>
+                    <h4>Available commands</h4>
                     <ul>
                         <li>/describe: Generates a visual description of the page</li>
                         <li>/issues: Identifies design issues ranging from critical accessibility problems to mild visual
-                            inconsistencies</li>
+                            inconsistencies and offers actionable solutions</li>
                         <li>/refresh: Re-captures page data (HTML, CSS, and screenshot)</li>
                         <li>/clear: Clears the current chat session</li>
                     </ul>
+                    <p>Each command uses a specialized system prompt optimized to provide feedback tailored specifically for blind and visually impaired developers. For example, the /describe command uses spatial and directional language to help you build a mental map of the page layout.</p>
                 </div>
             </details>
 
             <details name="faq">
-                <summary><h2>Can I ask custom questions?</h2></summary>
+                <summary><h3>Can I ask custom questions?</h3></summary>
                 <div>
                     <p>Yes! You can ask anything about your webpage by typing a custom prompt directly into the input field at the bottom of
                         the SenseUI panel. Simply focus the field, type your question or request, and press <kbd>Enter</kbd> to
@@ -85,68 +115,73 @@
             </details>
 
             <details name="faq">
-                <summary><h2>How can I navigate the chat?</h2></summary>
+                <summary><h3>How can I navigate the chat?</h3></summary>
                 <div>
                     <p>User and System responses are structured with semantic headings that you
-                            can navigate using your screen reader's heading navigation shortcuts.</p>
+                    can navigate using your screen reader's heading navigation shortcuts.</p>
                 </div>
             </details>
             <details name="faq">
-                <summary><h2>What actions can I perform on messages?</h2></summary>
+                <summary><h3>What actions can I perform on messages?</h3></summary>
                 <div>
-                    <p>Each AI response includes action buttons (functionality will be implemented in a later sprint):</p>
+                    <p>Each AI response includes action buttons:</p>
                     <ul>
                         <li>Copy to Clipboard</li>
-                        <li>Mark as Favorite. This flags important messages to selectively download when you export your chat
-                            history.</li>
+                        <li>Download message (as a .txt file)</li>
                     </ul>
                 </div>
             </details>
-             <details name="faq">
-                 <summary><h2>How does SenseUI analyze my page?</h2></summary>
+            <details name="faq">
+                <summary><h3>How do I download the current chat?</h3></summary>
                 <div>
+                    <p>To download your current chat session, click the "Download current chat" button located in the footer of the chat panel. This will save your entire conversation as a .txt file on your device.</p>
+                </div>
+            </details>
+            <h2>Understanding SenseUI's analysis</h2>
+             <details name="faq">
+                 <summary><h3>How does SenseUI analyze my page?</h3></summary>
+                 <div>
                     <p>SenseUI captures three key pieces of information from your webpage:</p>
                     <ul>
-                        <li><strong>HTML structure:</strong> The semantic markup and content of your page</li>
-                        <li><strong>CSS styles:</strong> The visual styling rules applied to your elements</li>
-                        <li><strong>Screenshot:</strong> A visual capture of how your page actually renders</li>
+                        <li>HTML structure: The semantic markup and content of your page</li>
+                        <li>CSS styles: The visual styling rules applied to your elements</li>
+                        <li>Screenshot: A visual capture of how your page actually renders</li>
                     </ul>
                     <p>The AI analyzes these together to provide accurate, context-aware feedback about your page's design, accessibility, and usability. It cross-references what the code says with what's actually visible in the screenshot to ensure its analysis matches reality.</p>
-                    
-                    <h3>How does the screenshot modes work?</h3>
-                    <p>Choose which part of the page SenseUI captures for analysis:</p>
-                    
-                    <h4>Viewport only (Default)</h4>
-                    <p>Captures only what's currently visible in your browser window. This mode provides faster feedback, uses fewer tokens, and offers more detailed analysis. Best for analyzing specific sections or working iteratively on parts of your page.</p>
-                    
-                    <h4>Full page</h4>
+                    <p>SenseUI uses a personalized system prompt that instructs the AI to provide feedback specifically tailored for blind and visually impaired developers. This includes using clear directional language, prioritizing accessibility (WCAG 2.2), avoiding verbose formatting, and ensuring all responses are screen reader-friendly.</p>
+                </details>
+                <details name="faq">
+                    <summary><h3>How does SenseUI take screenshots?</h3></summary>   
+                    <p>SenseUI takes the screenshot of your webpage at the beginning of your session, as well as everytime you refresh the page. This is sent to the 
+                        AI along with the HTML/CSS and your prompt, to provide visual context for its analysis.</p>
+                    <p>You can choose which part of the page SenseUI captures for analysis:</p>
+                    <h4>Full page (Default mode)</h4>
                     <p>Captures the entire page from top to bottom. This mode is slower and uses more tokens, but provides a broader overview of your entire page layout. Not ideal for infinite scroll pages or sites with heavy dynamic content.</p>
-                    
-                    <p><strong>Note:</strong> By default, SenseUI only analyzes what's visible in your viewport. If you're using the /describe command and want to see the whole page, switch to Full page mode in Settings.</p>
-                </div>
-            </details>
-
+                    <h4>Viewport only</h4>
+                    <p>Captures only what's currently visible in your browser window. This mode provides faster feedback, uses fewer tokens, and offers more detailed analysis. Best for analyzing specific sections or working iteratively on parts of your page.</p>
+                  </div>
+                </details>
+            <h2>Projects</h2>
             <details name="faq" id="projects-help">
-                <summary><h2>How do I use Projects?</h2></summary>
+                <summary><h3>How do I use Projects?</h3></summary>
                 <div>
                     <p>Projects allow you to provide context about your website so SenseUI can give framework-specific and design-aligned feedback. When a project is active, SenseUI considers your specified technologies, aesthetic goals, and website purpose in its analysis and recommendations.</p>
-                    
-                    <h3>Creating a Project</h3>
+                    <h4>Creating a Project</h4>
                     <ol>
                         <li>Navigate to the Projects page from the navigation menu</li>
                         <li>Fill out the "Create New Project" form with the following required information:
                             <ul>
-                                <li><strong>Project Name:</strong> A memorable name for your project</li>
-                                <li><strong>Framework & Technologies:</strong> Specify the main frameworks and technologies you're using (e.g., "React, Tailwind CSS"). You can select from suggestions or type your own.</li>
-                                <li><strong>Desired Aesthetic:</strong> Describe the visual style you're aiming for (e.g., "Minimalist and professional", "Modern and vibrant")</li>
-                                <li><strong>Website Type & Purpose:</strong> What is this website for? (e.g., "E-commerce platform", "Portfolio website", "Blog")</li>
+                                <li>Project Name: A memorable name for your project</li>
+                                <li>Framework & Technologies: Specify the main frameworks and technologies you're using (e.g., "React, Tailwind CSS"). You can select one from suggestions, or if you use more than one of they are not listed, you can just type them.</li>
+                                <li>Desired Aesthetic: Describe the visual style you're aiming for (e.g., "Minimalist and professional", "Modern and vibrant")</li>
+                                <li>Website Type & Purpose: What is this website for? (e.g., "E-commerce platform", "Portfolio website", "Blog")</li>
                             </ul>
                         </li>
                         <li>Press the "Create Project" button</li>
                         <li>You'll hear a confirmation that your project was created successfully</li>
                     </ol>
                     
-                    <h3>Activating a Project</h3>
+                    <h4>Activating a Project</h4>
                     <p>To receive project-specific feedback:</p>
                     <ol>
                         <li>Go to the Chat page (main page)</li>
@@ -156,16 +191,16 @@
                     </ol>
                     <p>Once activated, all AI responses will consider your project's frameworks, aesthetic, and purpose when providing feedback.</p>
                     
-                    <h3>Managing Your Projects</h3>
+                    <h4>Managing Your Projects</h4>
                     <p>On the Projects page, you can:</p>
                     <ul>
-                        <li><strong>View all projects:</strong> Your projects are listed under "Your Projects" section</li>
-                        <li><strong>Edit a project:</strong> Navigate to the Edit button for the project you want to modify, press it, update the information in the form, and press "Save Changes"</li>
-                        <li><strong>Delete a project:</strong> Navigate to the Delete button for the project you want to remove, press it, and confirm the deletion in the dialog. This action cannot be undone.</li>
-                        <li><strong>Deactivate project context:</strong> In the Chat page, select "No project selected" from the Active Project dropdown to return to generic feedback mode</li>
+                        <li>View all projects: Your projects are listed under "Your Projects" section</li>
+                        <li>Edit a project: Navigate to the Edit button for the project you want to modify, press it, update the information in the form, and press "Save Changes"</li>
+                        <li>Delete a project: Navigate to the Delete button for the project you want to remove, press it, and confirm the deletion in the dialog. This action cannot be undone.</li>
+                        <li>Deactivate project context: In the Chat page, select "No project selected" from the Active Project dropdown to return to generic feedback mode</li>
                     </ul>
                     
-                    <h3>When to Use Projects</h3>
+                    <h4>When to use Projects</h4>
                     <p>Projects are most useful when:</p>
                     <ul>
                         <li>You're working on a specific website with defined design goals</li>
@@ -176,15 +211,76 @@
                     <p>For quick, one-off analyses of random websites, you can skip creating a project and use SenseUI without an active project context.</p>
                 </div>
             </details>
-
+        <h2>Technical Details</h2>
             <details name="faq">
-                <summary><h2>Can I choose which AI model SenseUI uses?</h2></summary>
+                <summary><h3>How does SenseUI work under the hood?</h3></summary>
+                <div>
+                    <p>SenseUI is a Chrome extension built with HTML, CSS, and JavaScript. It uses the Chrome Extensions API to interact with web pages and manage data locally in the browser.</p>
+                    <p>When you open the SenseUI panel, it captures the current webpage's HTML structure, CSS styles, and a screenshot. This data is sent directly from your browser to your chosen AI provider (OpenAI or Google Gemini) along with the system prompts, your prompt and active project context (if any).</p>
+                    <p>The AI processes this information to generate feedback about your page's design, accessibility, and usability. The response is then displayed in the chat interface for you to review and act upon.</p>
+                </div>
+            </details>
+            <details name="faq">
+                <summary><h3>Which system prompts are being used?</h3></summary>
+                <div>
+                    <p>The system prompts are defined in the extension's source code and can be viewed in the extension's GitHub repository or in the <a href="https://github.com/reginacas/sense-ui/blob/main/PROMPTS.MD">Prompts Page</a> in Github.</p>
+                    <p>They were created with the input and collaboration of contributors of this community.</p>
+                    <p>If you have suggestions to improve the prompt system, please submit your ideas through the <a href="https://github.com/reginacas/sense-ui/issues">Issues page</a></p>
+                </div>
+            </details>
+        <h2>API Keys and Models</h2>
+            <details name="faq">
+                <summary><h3>How do I get an API key?</h3></summary>
+                <div>
+                    <p>To use SenseUI, you need to provide your own API key from either OpenAI or Google Gemini. Here's how to get one:</p>
+                    <h4>OpenAI API Key</h4>
+                    <ol>
+                        <li>Go to the OpenAI website: <a href="https://platform.openai.com/signup" target="_blank" rel="noopener noreferrer">https://platform.openai.com/signup<span class="sr-only"> (opens in new tab)</span></a></li>
+                        <li>Create an account or log in if you already have one</li>
+                        <li>Navigate to the API Keys section in your account dashboard</li>
+                        <li>Click "Create new secret key" and copy the generated API key</li>
+                    </ol>
+                    <h4>Google Gemini API Key</h4>
+                    <ol>
+                        <li>Go to the Google Cloud Console: <a href="https://console.cloud.google.com/" target="_blank" rel="noopener noreferrer">https://console.cloud.google.com/<span class="sr-only"> (opens in new tab)</span></a></li>
+                        <li>Create a new project or select an existing one</li>
+                        <li>Enable the Gemini API for your project</li>
+                        <li>Navigate to the "Credentials" section and click "Create credentials"</li>
+                        <li>Select "API key" and copy the generated API key</li>
+                    </ol>
+                </div>
+            </details>
+            <details name="faq">
+                <summary><h3>Is it safe to use my API key with SenseUI?</h3></summary>
+                <div>
+                    <p>Yes. Your API key is stored securely in your browser's local storage and is encrypted. It is only used to authenticate requests sent directly from your browser to the AI provider you selected (OpenAI or Google Gemini). The extension developers do not have access to your API key, and it is never transmitted to any servers operated by us.</p>
+                    <p>However, please ensure that you do not share sensitive information through SenseUI, as the data sent to the AI provider (including your prompts and page data) may be stored and used according to the provider's policies. Always review the privacy policies of OpenAI and Google Gemini before use.</p>
+                </div>
+            </details>
+            <details name="faq">
+                <summary><h3>Can I use SenseUI without an API key?</h3></summary>
+                <div>
+                    <p>No. An API key from either OpenAI or Google Gemini is required to use SenseUI, as the extension relies on these AI services to provide feedback and analysis.</p>
+                </div>
+            </details>
+            <details name="faq">
+                <summary><h3>Can I use a free API key?</h3></summary>
+                <div>
+                    <p>Yes, you can use a free API key from OpenAI or Google Gemini. However, please note that free tiers often come with limitations such as lower usage limits, access to fewer models, or slower response times.</p>
+                </div>
+            </details>
+            <details name="faq">
+                <summary><h3>How can I change or delete my API key?</h3></summary>
+                <p>To paste another key, simply highlight the existing API key in the input field and replace it with your new key. To delete, click on the "Clear OpenAI/Gemini Key" button to remove from your browser's local storage.</p>
+            </details>
+            <details name="faq">
+                <summary><h3>Can I choose which AI model SenseUI uses?</h3></summary>
                 <div id="available-models">
                     <p>Yes. On the Settings page, under "Enter your API Key", you can:</p>
                     <ul>
                         <li>Select your provider (OpenAI or Google Gemini)</li>
                         <li>Enter your API key for that provider</li>
-                        <li>Choose a model from a suggestion list or type a supported model name</li>
+                        <li>Choose a model from a suggestion list or type a supported model name. To learn more about which models are supported, visit the <a href="https://github.com/reginacas/sense-ui/blob/main/MODEL_REQUIREMENTS.md">Model requirements</a> documentation page.</li>
                     </ul>
                     <p>SenseUI is currently tested with a small set of focused, grounded models:</p>
                     <ul>
@@ -194,9 +290,10 @@
                     <p>Newer GPT-5 family models are not supported yet, because they do not allow lowering the temperature below 1.0. SenseUI uses a lower temperature to keep answers closely tied to the actual page content instead of more random or speculative responses.</p>
                 </div>
             </details>
-
+            
+        <h2>Data privacy</h2>
             <details name="faq">
-                <summary><h2>How does SenseUI use my data?</h2></summary>
+                <summary><h3>How does SenseUI use my data?</h3></summary>
                 <div>
                     <p>SenseUI prioritizes your privacy. Here's exactly what happens:</p>
                     
@@ -239,12 +336,19 @@
                     <p>For more details about data protection in the research context, see the <a href="https://github.com/reginacas/sense-ui/blob/main/DATA_PROTECTION.md" target="_blank" rel="noopener noreferrer">Data Protection documentation<span class="sr-only"> (opens in new tab)</span></a>.</p>
                 </div>
             </details>
-
+        <h2>Reporting issues and contributing</h2>
             <details name="faq">
-                <summary><h2>How to report issues?</h2></summary>
+                <summary><h3>How to report issues?</h3></summary>
                 <div>
                     <p>If you encounter any issues, please report them on our GitHub repository's <a
                             href="https://github.com/reginacas/sense-ui/issues"> Issues page</a>.</p>
+                </div>
+            </details>
+            <details name="faq">
+                <summary><h3>How can I contribute to the project?</h3></summary>
+                <div>
+                    <p>If you'd like to contribute to SenseUI, please see our <a
+                            href="https://github.com/reginacas/sense-ui/blob/main/CONTRIBUTING.md">Contribution Guide</a>.</p>
                 </div>
             </details>
         </div>
