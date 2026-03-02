@@ -371,11 +371,15 @@ function formatResponse(responseText, options = {}) {
         </button>`;
     }
 
+    html += `<button class="view-screenshot-button btn-tertiary" style="display:none;" aria-label="View screenshot used for this analysis">
+        View screenshot
+    </button>`;
+
     html += '</div></div>';
     return html;
 }
 
-function attachResponseActions(container) {
+function attachResponseActions(container, screenshot) {
     const copyButtons = container.querySelectorAll('.copy-button');
     copyButtons.forEach(button => {
         button.addEventListener('click', async () => {
@@ -393,6 +397,20 @@ function attachResponseActions(container) {
             }
         });
     });
+
+    if (screenshot) {
+        const screenshotButtons = container.querySelectorAll('.view-screenshot-button');
+        screenshotButtons.forEach(button => {
+            button.style.display = '';
+            button.addEventListener('click', () => {
+                const win = window.open();
+                if (win) {
+                    win.document.write(`<img src="${screenshot}" style="max-width:100%;" alt="Screenshot used for analysis">`);
+                    win.document.title = 'SenseUI – Analysis screenshot';
+                }
+            });
+        });
+    }
 }
 
 // ============================================================================
@@ -968,6 +986,7 @@ async function processUserInput(userInput, forceRefresh = false) {
     return {
         html: responseHTML,
         summary: `SenseUI said: ${summary}`,
+        screenshot: context.screenshot || null,
         error: null
     };
 }
@@ -1491,7 +1510,7 @@ async function sendMessage() {
         responseDiv.setAttribute('role', 'article');
         responseDiv.innerHTML = response.html;
         chatMessages.appendChild(responseDiv);
-        attachResponseActions(responseDiv);
+        attachResponseActions(responseDiv, response.screenshot);
         announce('Response received');
 
         // Save chat history after successful response

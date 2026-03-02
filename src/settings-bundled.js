@@ -343,9 +343,9 @@ async function loadCurrentSettings() {
         }
 
         if (settings.downloadOption === 'favorites') {
-            downloadFavorites.checked = true;
+            if (downloadFavorites) downloadFavorites.checked = true;
         } else {
-            downloadAll.checked = true;
+            if (downloadAll) downloadAll.checked = true;
         }
 
         if (settings.contextInstructions) {
@@ -411,7 +411,7 @@ async function handleSubmit(event) {
         if (screenshotMode) settings.screenshotMode = screenshotMode;
 
         settings.contextInstructions = formData.get('context') || '';
-        settings.selectedProvider = formData.get('provider') || 'openai';
+        settings.selectedProvider = providerGemini?.checked ? 'gemini' : 'openai';
         settings.showButtons = formData.get('showButtons') === 'on';
 
         // Model selections (optional strings; treated as-is at runtime)
