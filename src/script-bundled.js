@@ -365,6 +365,9 @@ function formatResponse(responseText, options = {}) {
         html += `<button class="copy-button" data-target="${responseId}" aria-label="Copy response to clipboard">
             Copy to clipboard
         </button>`;
+        html += `<button class="download-button btn-tertiary" data-target="${responseId}" aria-label="Download response as text file">
+            Download .txt
+        </button>`;
     }
 
     html += '</div></div>';
@@ -387,6 +390,24 @@ function attachResponseActions(container, screenshot) {
                     console.error('Failed to copy:', err);
                 }
   }
+        });
+    });
+
+    const downloadButtons = container.querySelectorAll('.download-button');
+    downloadButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const targetId = button.getAttribute('data-target');
+            const content = document.getElementById(targetId);
+            if (content) {
+                const text = content.innerText || content.textContent;
+                const blob = new Blob([text], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'senseui-response.txt';
+                a.click();
+                URL.revokeObjectURL(url);
+            }
         });
     });
 
