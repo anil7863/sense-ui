@@ -1391,20 +1391,37 @@ function setupEventListeners() {
     }
 }
 
-function downloadChatHistory() {
+async function downloadChatHistory() {
     if (!chatMessages || !chatMessages.innerHTML.trim()) {
         announce('No chat history to download');
         return;
     }
 
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        const pageUrl = tabs[0]?.url || 'Unknown page';
-        const pageTitle = tabs[0]?.title || 'Unknown title';
-        const timestamp = new Date().toLocaleString();
+    announce('Preparing download...');
 
-        const screenshot = cachedContext?.screenshot || null;
+    const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    const pageUrl = activeTab?.url || 'Unknown page';
+    const pageTitle = activeTab?.title || 'Unknown title';
+    const timestamp = new Date().toLocaleString();
 
-        const inlineStyles = `
+    // Use cached screenshot or capture a fresh one now
+    let screenshot = cachedContext?.screenshot || null;
+    if (!screenshot) {
+        try {
+            screenshot = await captureScreenshot();
+        } catch (e) {
+            console.warn('Could not capture screenshot for export:', e);
+        }
+    }
+
+    const screenshotSection = screenshot
+        ? `<section class="screenshot-section">
+            <h2>Screenshot used for analysis</h2>
+            <img src="${screenshot}" alt="Screenshot of ${pageTitle} captured during analysis" style="max-width:100%;border:1px solid #444;border-radius:4px;">
+           </section>`
+        : '';
+
+    const inlineStyles = `
             :root { --primary-color: #f4c653; --secondary-color: #BEDAFF; --background-color: #02031a; }
             *, *::before, *::after { box-sizing: border-box; }
             body { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--background-color); color: white; margin: 0; padding: 2rem; line-height: 1.6; }
@@ -1412,12 +1429,11 @@ function downloadChatHistory() {
             .export-header h1 { color: var(--primary-color); font-size: 1.5rem; margin: 0 0 0.5rem; }
             .export-header p { color: #aaa; font-size: 0.875rem; margin: 0.2rem 0; }
             .export-header a { color: var(--secondary-color); }
-            .content-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 2rem; align-items: start; }
-            .content-layout.no-screenshot { grid-template-columns: 1fr; }
-            .chat-history h2 { color: var(--secondary-color); font-size: 1.1rem; margin: 0 0 1rem; }
-            .screenshot-panel { position: sticky; top: 2rem; }
-            .screenshot-panel h2 { color: var(--secondary-color); font-size: 1.1rem; margin: 0 0 1rem; }
-            .screenshot-panel img { max-width: 100%; border: 1px solid #444; border-radius: 4px; display: block; }
+            main { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 2rem; align-items: start; }
+            @media (max-width: 800px) { main { grid-template-columns: 1fr; } }
+            .screenshot-section { margin-bottom: 2rem; }
+            .screenshot-section h2 { color: var(--secondary-color); font-size: 1.1rem; margin-bottom: 0.75rem; }
+            .chat-history h2 { color: var(--secondary-color); font-size: 1.1rem; margin-bottom: 0.75rem; }
             .system-response { margin-bottom: 1.5rem; padding: 1rem; border: 1px solid #333; border-radius: 6px; background: #0d0e2a; }
             .system-response h2 { color: var(--secondary-color); font-size: 1rem; margin: 0 0 0.5rem; }
             .user-message { margin-bottom: 1.5rem; padding: 0.75rem 1rem; background: #1a1b35; border-radius: 6px; border-left: 3px solid var(--primary-color); }
@@ -1429,19 +1445,9 @@ function downloadChatHistory() {
             a { color: var(--primary-color); }
             pre, code { background: #1a1b35; padding: 0.2em 0.4em; border-radius: 3px; font-size: 0.9em; }
             strong { color: var(--primary-color); }
-            @media (max-width: 700px) { .content-layout { grid-template-columns: 1fr; } .screenshot-panel { position: static; } }
         `;
 
-        const screenshotAside = screenshot
-            ? `<aside class="screenshot-panel" aria-labelledby="screenshot-heading">
-                <h2 id="screenshot-heading">Screenshot used for analysis</h2>
-                <img src="${screenshot}" alt="Screenshot of ${pageTitle} captured at the time of analysis">
-               </aside>`
-            : '';
-
-        const layoutClass = screenshot ? 'content-layout' : 'content-layout no-screenshot';
-
-        const html = `<!DOCTYPE html>
+    const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -1451,33 +1457,30 @@ function downloadChatHistory() {
 </head>
 <body>
     <header class="export-header">
-        <h1>SenseUI Chat Export</h1>
+        <h1>SenseUI chat session export</h1>
         <p><strong>Page:</strong> ${pageTitle}</p>
         <p><strong>URL:</strong> <a href="${pageUrl}">${pageUrl}</a></p>
         <p><strong>Exported:</strong> ${timestamp}</p>
     </header>
     <main>
-        <div class="${layoutClass}">
-            <section class="chat-history" aria-labelledby="chat-history-heading">
-                <h2 id="chat-history-heading">Chat history</h2>
-                ${chatMessages.innerHTML}
-            </section>
-            ${screenshotAside}
-        </div>
+        ${screenshotSection}
+        <section class="chat-history" aria-label="Chat history">
+            <h2>Chat session</h2>
+            ${chatMessages.innerHTML}
+        </section>
     </main>
 </body>
 </html>`;
 
-        const blob = new Blob([html], { type: 'text/html' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `senseui-chat-${Date.now()}.html`;
-        a.click();
-        URL.revokeObjectURL(url);
+    const blob = new Blob([html], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `senseui-chat-${Date.now()}.html`;
+    a.click();
+    URL.revokeObjectURL(url);
 
-        announce('Chat history downloaded as HTML');
-    });
+    announce('Chat history downloaded as HTML');
 }
 
 document.addEventListener('keydown', (e) => {
