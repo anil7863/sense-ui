@@ -421,7 +421,7 @@ async function captureFullPageScreenshot() {
         const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true });
         if (!activeTab) throw new Error('No active tab found');
 
-        // Get page dimensions and current scroll position
+        // Get page dimensions, scroll position, and device pixel ratio
         const [dimensions] = await chrome.scripting.executeScript({
             target: { tabId: activeTab.id },
             func: () => {
@@ -431,12 +431,13 @@ async function captureFullPageScreenshot() {
                     viewportHeight: window.innerHeight,
                     viewportWidth: window.innerWidth,
                     originalScrollX: window.scrollX,
-                    originalScrollY: window.scrollY
+                    originalScrollY: window.scrollY,
+                    devicePixelRatio: window.devicePixelRatio || 1
                 };
             }
         });
 
-        const { pageHeight, pageWidth, viewportHeight, viewportWidth, originalScrollX, originalScrollY } = dimensions.result;
+        const { pageHeight, pageWidth, viewportHeight, viewportWidth, originalScrollX, originalScrollY, devicePixelRatio } = dimensions.result;
 
         // If page fits in viewport, just capture normally
         if (pageHeight <= viewportHeight) {
@@ -447,9 +448,21 @@ async function captureFullPageScreenshot() {
             return dataUrl;
         }
 
+        // Hide scrollbars for all screenshots without affecting layout
+        await chrome.scripting.executeScript({
+            target: { tabId: activeTab.id },
+            func: () => {
+                const style = document.createElement('style');
+                style.id = '__sense_no_scrollbar';
+                style.textContent = '::-webkit-scrollbar { display: none !important; } * { scrollbar-width: none !important; }';
+                document.head.appendChild(style);
+            }
+        });
+
         // Calculate number of screenshots needed
         const screenshotsNeeded = Math.ceil(pageHeight / viewportHeight);
         const screenshots = [];
+        const scrollPositions = [];
 
         // Scroll through page and capture screenshots
         for (let i = 0; i < screenshotsNeeded; i++) {
@@ -465,33 +478,72 @@ async function captureFullPageScreenshot() {
             // Small delay to let page render
             await new Promise(resolve => setTimeout(resolve, 100));
 
+            // Read the actual (potentially clamped) scroll position
+            const [actualScroll] = await chrome.scripting.executeScript({
+                target: { tabId: activeTab.id },
+                func: () => window.scrollY
+            });
+            scrollPositions.push(actualScroll.result);
+
             // Capture this section
             const dataUrl = await chrome.tabs.captureVisibleTab(null, {
                 format: CONFIG.LIMITS.SCREENSHOT_FORMAT,
                 quality: Math.round(CONFIG.LIMITS.SCREENSHOT_QUALITY * 100)
             });
-
             screenshots.push(dataUrl);
+
+            // After the first screenshot, hide fixed/sticky elements so they
+            // don't repeat in every subsequent segment
+            if (i === 0) {
+                await chrome.scripting.executeScript({
+                    target: { tabId: activeTab.id },
+                    func: () => {
+                        window.__senseHiddenEls = [];
+                        document.querySelectorAll('*').forEach(el => {
+                            const pos = window.getComputedStyle(el).position;
+                            if (pos === 'fixed' || pos === 'sticky') {
+                                window.__senseHiddenEls.push({ el, visibility: el.style.visibility });
+                                el.style.visibility = 'hidden';
+                            }
+                        });
+                    }
+                });
+            }
         }
 
-        // Restore original scroll position
+        // Restore scroll position, fixed/sticky elements, and scrollbars
         await chrome.scripting.executeScript({
             target: { tabId: activeTab.id },
             func: (x, y) => window.scrollTo(x, y),
             args: [originalScrollX, originalScrollY]
         });
 
+        await chrome.scripting.executeScript({
+            target: { tabId: activeTab.id },
+            func: () => {
+                if (window.__senseHiddenEls) {
+                    window.__senseHiddenEls.forEach(({ el, visibility }) => {
+                        el.style.visibility = visibility;
+                    });
+                    delete window.__senseHiddenEls;
+                }
+                const style = document.getElementById('__sense_no_scrollbar');
+                if (style) style.remove();
+            }
+        });
+
         // Stitch screenshots together on a canvas
-        return await stitchScreenshots(screenshots, viewportWidth, viewportHeight, pageHeight);
+        return await stitchScreenshots(screenshots, scrollPositions, viewportWidth, viewportHeight, pageHeight, devicePixelRatio);
     } catch (error) {
         console.error('Error capturing full page screenshot:', error);
         return null;
     }
 }
 
-async function stitchScreenshots(screenshots, width, height, totalHeight) {
+async function stitchScreenshots(screenshots, scrollPositions, width, height, totalHeight, devicePixelRatio) {
     return new Promise((resolve) => {
         const canvas = document.createElement('canvas');
+        // Canvas is sized in CSS pixels so the output matches the page layout 1:1
         canvas.width = width;
         canvas.height = totalHeight;
         const ctx = canvas.getContext('2d');
@@ -506,12 +558,13 @@ async function stitchScreenshots(screenshots, width, height, totalHeight) {
                 loadedCount++;
 
                 if (loadedCount === screenshots.length) {
-                    // Draw all images onto canvas
                     images.forEach((image, i) => {
-                        ctx.drawImage(image, 0, i * height);
+                        // captureVisibleTab returns physical pixels (CSS px * devicePixelRatio).
+                        // Specifying destination size (width × height in CSS px) scales it
+                        // back down so the stitched image is never zoomed in on HiDPI screens.
+                        ctx.drawImage(image, 0, scrollPositions[i], width, height);
                     });
 
-                    // Convert to data URL
                     resolve(canvas.toDataURL(CONFIG.LIMITS.SCREENSHOT_FORMAT, CONFIG.LIMITS.SCREENSHOT_QUALITY));
                 }
             };
