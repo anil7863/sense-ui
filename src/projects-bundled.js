@@ -325,6 +325,9 @@ async function handleFormSubmit(event) {
             }
         } else {
             announceToScreenReader(`Project "${name}" created successfully`);
+            await setActiveProject(savedProject);
+            window.location.href = 'index.html#active-project-select';
+            return;
         }
         
         resetForm();
