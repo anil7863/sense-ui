@@ -141,24 +141,35 @@
              <details name="faq">
                  <summary><h3>How does SenseUI analyze my page?</h3></summary>
                  <div>
-                    <p>SenseUI captures three key pieces of information from your webpage:</p>
+                    <p>SenseUI captures context from your webpage and sends it to the AI. What gets sent depends on the command you use:</p>
+                    <h4>/describe command</h4>
+                    <p>Sends the full context to the AI:</p>
                     <ul>
-                        <li>HTML structure: The semantic markup and content of your page</li>
-                        <li>CSS styles: The visual styling rules applied to your elements</li>
-                        <li>Screenshot: A visual capture of how your page actually renders</li>
+                        <li>HTML structure: the semantic markup and content of your page</li>
+                        <li>CSS styles: the visual styling rules applied to your elements</li>
+                        <li>Computed styles: browser-resolved values for key properties (font size, color, spacing, etc.)</li>
+                        <li>Screenshot: a visual capture of how your page renders</li>
                     </ul>
-                    <p>The AI analyzes these together to provide accurate, context-aware feedback about your page's design, accessibility, and usability. It cross-references what the code says with what's actually visible in the screenshot to ensure its analysis matches reality.</p>
-                    <p>SenseUI uses a personalized system prompt that instructs the AI to provide feedback specifically tailored for blind and visually impaired developers. This includes using clear directional language, prioritizing accessibility (WCAG 2.2), avoiding verbose formatting, and ensuring all responses are screen reader-friendly.</p>
+                    <h4>/issues, custom prompts, and all other commands</h4>
+                    <p>Sends only:</p>
+                    <ul>
+                        <li>Screenshot: a visual capture of how your page renders</li>
+                        <li>Page metadata: the page title and URL</li>
+                    </ul>
+                    <p>This keeps the prompts more focused, avoiding data overload and hallucinations. The richer context; HTML and CSS, is only provided when a detailed spatial description is needed.</p>
+                    <p>SenseUI uses a system prompt that instructs the AI to provide feedback specifically tailored for blind and visually impaired developers. This includes using clear directional language, avoiding verbose formatting, and ensuring all responses are screen reader-friendly.</p>
+                </div>
                 </details>
                 <details name="faq">
-                    <summary><h3>How does SenseUI take screenshots?</h3></summary>   
-                    <p>SenseUI takes the screenshot of your webpage at the beginning of your session, as well as everytime you refresh the page. This is sent to the 
-                        AI along with the HTML/CSS and your prompt, to provide visual context for its analysis.</p>
+                    <summary><h3>How does SenseUI take screenshots?</h3></summary>
+                    <div>
+                    <p>SenseUI captures a screenshot the first time you send a message on a page. It is then cached and reused for the rest of your session on that page, so subsequent messages don't require a new capture. If you navigate to a different page, a fresh screenshot is captured automatically.</p>
+                    <p>To manually force a new capture at any time, use the <kbd>/refresh</kbd> command. This re-captures the screenshot, HTML, and CSS from the current page.</p>
                     <p>You can choose which part of the page SenseUI captures for analysis:</p>
                     <h4>Full page (Default mode)</h4>
                     <p>Captures the entire page from top to bottom. This mode is slower and uses more tokens, but provides a broader overview of your entire page layout. Not ideal for infinite scroll pages or sites with heavy dynamic content.</p>
                     <h4>Viewport only</h4>
-                    <p>Captures only what's currently visible in your browser window. This mode provides faster feedback, uses fewer tokens, and offers more detailed analysis. Best for analyzing specific sections or working iteratively on parts of your page.</p>
+                    <p>Captures only what's currently visible in your browser window. Best for analyzing specific sections or working iteratively on parts of your page.</p>
                   </div>
                 </details>
             <h2>Projects</h2>
