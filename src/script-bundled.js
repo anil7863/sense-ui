@@ -1397,35 +1397,86 @@ function downloadChatHistory() {
         return;
     }
 
-    // Get plain text version of chat
-    const chatText = chatMessages.innerText || chatMessages.textContent;
-
-    // Get current page info
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         const pageUrl = tabs[0]?.url || 'Unknown page';
         const pageTitle = tabs[0]?.title || 'Unknown title';
+        const timestamp = new Date().toLocaleString();
 
-        // Add metadata
-        const timestamp = new Date().toISOString();
-        const header = `SenseUI Chat History
-Date: ${timestamp}
-Page: ${pageTitle}
-URL: ${pageUrl}
-${'='.repeat(70)}
+        const screenshot = cachedContext?.screenshot || null;
 
-`;
-        const fullText = header + chatText;
+        const inlineStyles = `
+            :root { --primary-color: #f4c653; --secondary-color: #BEDAFF; --background-color: #02031a; }
+            *, *::before, *::after { box-sizing: border-box; }
+            body { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--background-color); color: white; margin: 0; padding: 2rem; line-height: 1.6; }
+            .export-header { border-bottom: 1px solid #444; padding-bottom: 1rem; margin-bottom: 2rem; }
+            .export-header h1 { color: var(--primary-color); font-size: 1.5rem; margin: 0 0 0.5rem; }
+            .export-header p { color: #aaa; font-size: 0.875rem; margin: 0.2rem 0; }
+            .export-header a { color: var(--secondary-color); }
+            .content-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 2rem; align-items: start; }
+            .content-layout.no-screenshot { grid-template-columns: 1fr; }
+            .chat-history h2 { color: var(--secondary-color); font-size: 1.1rem; margin: 0 0 1rem; }
+            .screenshot-panel { position: sticky; top: 2rem; }
+            .screenshot-panel h2 { color: var(--secondary-color); font-size: 1.1rem; margin: 0 0 1rem; }
+            .screenshot-panel img { max-width: 100%; border: 1px solid #444; border-radius: 4px; display: block; }
+            .system-response { margin-bottom: 1.5rem; padding: 1rem; border: 1px solid #333; border-radius: 6px; background: #0d0e2a; }
+            .system-response h2 { color: var(--secondary-color); font-size: 1rem; margin: 0 0 0.5rem; }
+            .user-message { margin-bottom: 1.5rem; padding: 0.75rem 1rem; background: #1a1b35; border-radius: 6px; border-left: 3px solid var(--primary-color); }
+            .response-actions { display: none; }
+            p { color: white; font-size: 1rem; margin: 0.5rem 0; }
+            h3 { font-size: 1rem; color: white; }
+            ul, ol { padding-left: 1.5rem; margin: 0.5rem 0; }
+            li { font-size: 1rem; color: white; }
+            a { color: var(--primary-color); }
+            pre, code { background: #1a1b35; padding: 0.2em 0.4em; border-radius: 3px; font-size: 0.9em; }
+            strong { color: var(--primary-color); }
+            @media (max-width: 700px) { .content-layout { grid-template-columns: 1fr; } .screenshot-panel { position: static; } }
+        `;
 
-        // Create download
-        const blob = new Blob([fullText], { type: 'text/plain' });
+        const screenshotAside = screenshot
+            ? `<aside class="screenshot-panel" aria-labelledby="screenshot-heading">
+                <h2 id="screenshot-heading">Screenshot used for analysis</h2>
+                <img src="${screenshot}" alt="Screenshot of ${pageTitle} captured at the time of analysis">
+               </aside>`
+            : '';
+
+        const layoutClass = screenshot ? 'content-layout' : 'content-layout no-screenshot';
+
+        const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SenseUI Chat – ${pageTitle}</title>
+    <style>${inlineStyles}</style>
+</head>
+<body>
+    <header class="export-header">
+        <h1>SenseUI Chat Export</h1>
+        <p><strong>Page:</strong> ${pageTitle}</p>
+        <p><strong>URL:</strong> <a href="${pageUrl}">${pageUrl}</a></p>
+        <p><strong>Exported:</strong> ${timestamp}</p>
+    </header>
+    <main>
+        <div class="${layoutClass}">
+            <section class="chat-history" aria-labelledby="chat-history-heading">
+                <h2 id="chat-history-heading">Chat history</h2>
+                ${chatMessages.innerHTML}
+            </section>
+            ${screenshotAside}
+        </div>
+    </main>
+</body>
+</html>`;
+
+        const blob = new Blob([html], { type: 'text/html' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `senseui-chat-${Date.now()}.txt`;
+        a.download = `senseui-chat-${Date.now()}.html`;
         a.click();
         URL.revokeObjectURL(url);
 
-        announce('Chat history downloaded');
+        announce('Chat history downloaded as HTML');
     });
 }
 
