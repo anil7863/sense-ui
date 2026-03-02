@@ -103,7 +103,7 @@ function getDefaultSettings() {
         downloadOption: 'all',
         contextInstructions: '',
         selectedProvider: 'openai',
-        screenshotMode: 'viewport',
+        screenshotMode: 'fullpage',
         openaiModel: '',
         geminiModel: '',
         showButtons: false
