@@ -140,9 +140,12 @@
                     </summary>
                     <fieldset id="screenshot-fieldset" role="radiogroup" aria-labelledby="screenshot-legend" aria-describedby="screenshot-info">
                         <legend id="screenshot-legend">Choose which part of the page to capture for analysis.</legend>
-                        <div id="screenshot-info" class="info-box">
-                            <p><strong>Important:</strong> By default, SenseUI only captures what's currently visible in your browser window (viewport). If you need to analyze an entire page, switch to Full page mode below.</p>
-                        </div>
+                        <label for="screenshot-fullpage">
+                            <input id="screenshot-fullpage" type="radio" name="screenshot" value="fullpage" checked
+                                aria-checked="true" aria-describedby="fullpage-desc">
+                            Full page (default)
+                        </label>
+                        <small id="fullpage-desc" class="hint">Captures the entire page from top to bottom. Slower, uses more tokens, provides broader overview. Not ideal for infinite scroll pages or sites with heavy dynamic content.</small>
                         <br>
                         <label for="screenshot-viewport">
                             <input id="screenshot-viewport" type="radio" name="screenshot" value="viewport"
@@ -152,13 +155,7 @@
                         <small id="viewport-desc" class="hint">Captures only what's visible on screen right now. Faster feedback, uses fewer tokens, provides more detailed analysis. Best for analyzing specific sections or working iteratively.</small>
                         <br>
                         <br>
-                        <label for="screenshot-fullpage">
-                            <input id="screenshot-fullpage" type="radio" name="screenshot" value="fullpage" checked
-                                aria-checked="true" aria-describedby="fullpage-desc">
-                            Full page (default)
-                        </label>
-                        <small id="fullpage-desc" class="hint">Captures the entire page from top to bottom. Slower, uses more tokens, provides broader overview. Not ideal for infinite scroll pages or sites with heavy dynamic content.</small>
-                    </fieldset>
+                        </fieldset>
                 </details>
                 <!-- End Screenshot Capture Mode Section -->
                 <!-- Quick Action Buttons Section -->
