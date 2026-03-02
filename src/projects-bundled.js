@@ -224,8 +224,9 @@ function editProject(project) {
     document.getElementById('save-project-btn').textContent = 'Save Changes';
     document.getElementById('cancel-edit-btn').style.display = 'inline-block';
     
-    // Scroll to form
+    // Scroll to form and move focus to the first field
     document.getElementById('project-form').scrollIntoView({ behavior: 'smooth' });
+    document.getElementById('project-name').focus();
     
     // Announce to screen readers
     announceToScreenReader('Editing project: ' + project.name);
@@ -323,11 +324,19 @@ async function handleFormSubmit(event) {
             if (activeProject && activeProject.id === editId) {
                 await setActiveProject(savedProject);
             }
+            const stayOnPage = document.getElementById('stay-on-page')?.checked;
+            if (!stayOnPage) {
+                window.location.href = 'index.html#active-project-select';
+                return;
+            }
         } else {
             announceToScreenReader(`Project "${name}" created successfully`);
             await setActiveProject(savedProject);
-            window.location.href = 'index.html#active-project-select';
-            return;
+            const stayOnPage = document.getElementById('stay-on-page')?.checked;
+            if (!stayOnPage) {
+                window.location.href = 'index.html#active-project-select';
+                return;
+            }
         }
         
         resetForm();
