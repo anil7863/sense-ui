@@ -220,6 +220,18 @@ footer {
     background-color: var(--background-color);
 }
 
+.stay-on-page-option {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.stay-on-page-option label {
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
 .btn-primary {
     padding: 0.5rem 1rem;
     background: var(--primary-color);
@@ -468,7 +480,6 @@ summary h2 {
 
 #project-form label {
     display: block;
-    margin-top: 1rem;
     margin-bottom: 0.25rem;
     color: var(--secondary-color);
     font-weight: bold;
