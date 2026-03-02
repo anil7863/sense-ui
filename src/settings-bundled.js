@@ -99,8 +99,6 @@ function validateApiKeyFormat(apiKey, provider) {
 // ============================================================================
 function getDefaultSettings() {
     return {
-        detailLevel: 'normal',
-        downloadOption: 'all',
         contextInstructions: '',
         selectedProvider: 'openai',
         screenshotMode: 'fullpage',
@@ -195,11 +193,6 @@ const clearGeminiBtn = document.getElementById('clear-gemini-key');
 const statusDiv = document.getElementById('settings-status');
 const openaiStatus = document.getElementById('openai-status');
 const geminiStatus = document.getElementById('gemini-status');
-const detailComprehensive = document.getElementById('detail-comprehensive');
-const detailNormal = document.getElementById('detail-normal');
-const detailConcise = document.getElementById('detail-concise');
-const downloadAll = document.getElementById('download-all');
-const downloadFavorites = document.getElementById('download-favorites');
 const showButtonsCheckbox = document.getElementById('show-buttons');
 const contextText = document.getElementById('context-text');
 const openaiModelInput = document.getElementById('openai-model');
@@ -335,20 +328,6 @@ async function loadCurrentSettings() {
     try {
         const settings = await loadSettings();
 
-        if (settings.detailLevel === 'comprehensive') {
-            detailComprehensive.checked = true;
-        } else if (settings.detailLevel === 'concise') {
-            detailConcise.checked = true;
-        } else {
-            detailNormal.checked = true;
-        }
-
-        if (settings.downloadOption === 'favorites') {
-            if (downloadFavorites) downloadFavorites.checked = true;
-        } else {
-            if (downloadAll) downloadAll.checked = true;
-        }
-
         if (settings.contextInstructions) {
             contextText.value = settings.contextInstructions;
         }
@@ -401,12 +380,6 @@ async function handleSubmit(event) {
     try {
         const formData = new FormData(form);
         const settings = {};
-
-        const detailLevel = formData.get('detail');
-        if (detailLevel) settings.detailLevel = detailLevel;
-
-        const downloadOption = formData.get('download');
-        if (downloadOption) settings.downloadOption = downloadOption;
 
         settings.screenshotMode = formData.get('screenshot') || 'fullpage';
 

@@ -4,7 +4,7 @@
 
 This document details the prompts used in SenseUI and the engineering process behind them. The prompts were developed through an iterative process combining initial research-based design with extensive prompt engineering to optimize accessibility and usability for blind developers.
 
-**Last Updated:** February 1, 2026
+**Last Updated:** March 2, 2026
 
 ---
 
@@ -86,7 +86,7 @@ IMPORTANT RULES:
 4. Fully describe each element and section with all its details before moving to the next section. Never return to a previously described element or section.
 
 RESPONSE STRUCTURE:
-Start with an h3 heading: "Visual Design Description of [Website Name]"
+Start with an h3 heading: "Visual Design Description of [Website Name] - Viewport View"
 Then describe all elements of the layout from top to bottom, using clear positional language:
 
 - Start with what's at the very top (header/navigation area)
@@ -123,7 +123,7 @@ IMPORTANT RULES:
 4. Fully describe each element and section with all its details before moving to the next section. Never return to a previously described element or section.
 
 RESPONSE STRUCTURE:
-Start with an h3 heading: "Complete Visual Design Description of [Website Name]"
+Start with an h3 heading: "Complete Visual Design Description of [Website Name] - Full Page View"
 Then describe ALL sections of the page from top to bottom, using clear positional language:
 
 - Start with the header/navigation at the very top
@@ -147,33 +147,43 @@ End with: "Want me to analyze a specific section in more detail?"
 **Purpose:** Adds issue-analysis instructions. Combined with SYSTEM prompt when `/issues` is used.
 
 ```
-Identify design and accessibility issues on the current webpage and provide actionable solutions.
+Analyze the current webpage for design issues.
 
-IMPORTANT: 
-- Only report issues you can actually verify from the HTML, CSS, and screenshot. If the page has no significant issues, say so - do NOT invent problems that don't exist. You may provide recommendations for improvement even when no critical issues are present.
+OUTPUT FORMAT:
+Start with: ### Issue checklist for [Website Name]
+Then list only the violations you found, grouped under the relevant category heading (#### Legibility and readability, #### Layout and spacing, #### Color and contrast, #### Use of images and media, #### Accessibility, #### Summary).
+Only include a category heading if there is at least one violation under it. Do not include empty categories.
+The #### Summary section has two parts:
+- First, list all violations with a visual description of where they appear on the page and a concrete fix. Add a brief explanation of why the violation is a problem for users and a specific suggestion for how to fix it. Group the same violation affecting multiple elements into one item.
+- Then, add a short ### What works well section that briefly highlights the strongest design aspects visible in the screenshot.
+If no violations are found in any category, skip the violations list and write only the "What works well" paragraph.
 
 ANALYZE FOR:
-- Visual hierarchy problems (unclear heading structure, poor emphasis)
-- Layout issues (misalignments, inconsistent spacing, overflow problems)
-- Readability concerns (font sizes, line heights, text density, line lengths, text alignments, low contrast with background)
-- Inconsistencies (spacing, font sizes, color scheme deviations)
-- Accessibility violations (contrast ratios - verify from CSS colors)
+Legibility and readability:
+- Body text must appear comfortably readable at a glance; titles must appear clearly larger than body text. A violation is when the body text looks too small to read comfortably, or a title does not visually stand out in size from surrounding content.
+- Decorative or narrow/condensed fonts must only be used for headlines, not body text.
+- Body text lines should not span uncomfortably wide. Violation: lines of body text stretch across the full width of a wide container, making it hard to track from line to line.
+- Lines of text within paragraphs should have visible breathing room between them.
 
-REQUIREMENTS:
-- Only report issues you can verify from the provided HTML/CSS or screenshot
-- Cite specific CSS selectors and current values
-- Provide exact recommended values (not generic suggestions)
-- Group similar issues affecting multiple elements into a single actionable recommendation (e.g., "Elements .header-link and .footer-link both need better contrast: change color from #AAAAAA to #333333")
+Layout and spacing:
+- Adjacent UI elements must have visible space between them. Violation: two or more elements appear to touch or nearly touch with no visible gap.
+- Content inside a container must not appear flush against the container's edge.
+- Closely grouped elements must be visually aligned.
+- Long text must be left-aligned; center-alignment is only appropriate for short headings.
+- Bullet list text must never be center-aligned.
+- Elements must not overlap each other.
 
-EXAMPLES OF BAD vs GOOD SOLUTIONS:
-BAD: "Use a bolder color" (vague, no actionable code)
-GOOD: "Change .hero-title color from #999999 to #333333 for better contrast"
+Color and contrast:
+- Text must be easy to read against its background.
+- Colors on the page should look harmonious together.
 
-BAD: "The spacing feels cramped" (subjective, no specifics)
-GOOD: "Increase .card-content padding from 8px to 16px for improved readability"
+Use of images and media:
+- Images must appear sharp and clear.
+- Image sizes must suit their context.
 
-BAD: "Make the button more prominent" (unclear what to change)
-GOOD: "Increase .primary-btn font-size from 14px to 16px and add padding: 12px 24px"
+IMPORTANT RULES:
+1. Be specific and visual in describing violations. Avoid vague statements like "poor contrast" or "bad layout".
+2. Do not cite pixel values, hex color codes, CSS properties, or selector names — you are working from a screenshot only. Describe colors by name (e.g., "light grey", "dark navy") without inventing hex values.
 ```
 
 **Note:** Formatting rules, language handling, and CSS analysis rules are inherited from SYSTEM prompt (not repeated here).
@@ -184,15 +194,31 @@ GOOD: "Increase .primary-btn font-size from 14px to 16px and add padding: 12px 2
 
 **Purpose:** Adds project-specific constraints when a project is active. Optional layer that's only injected when needed.
 
+For all commands except `/issues`:
+
 ```
 PROJECT CONTEXT:
-This website uses [frameworks]. The desired aesthetic is [aesthetic]. The website purpose is [purpose]. Keep these parameters in mind when providing feedback and ensure your suggestions align with the project's technologies and design direction.
+The desired aesthetic is [aesthetic]. The website purpose is [purpose]. Keep these parameters in mind when providing feedback and ensure your suggestions align with the project's design direction.
+```
+
+For `/issues` with an active project, appended directly to the issues prompt:
+
+```
+PROJECT PARAMETERS (provided by the user):
+- Design aesthetic: "[aesthetic]"
+- Website purpose: "[purpose]"
+
+REQUIRED FINAL SECTION — NO EXCEPTIONS:
+After the Summary section, you MUST always add a section with the heading "#### Aesthetic & Purpose Fit".
+Do not skip this section. Do not merge it with Summary. Do not omit it if there are no violations.
+In this section, assess how well the current page reflects the project parameters above.
+Identify specific misalignments — elements, styles, or patterns that clash with or underserve the intended aesthetic and purpose — and suggest concrete improvements. If the page aligns well, say so briefly and explain why.
 ```
 
 **Injection Logic:**
 - Only added when user has an active project selected
 - Applied AFTER SYSTEM + command prompts
-- Skipped entirely for non-project queries
+- For `/issues`: project parameters embedded inline in the prompt instead of appended separately
 
 ---
 
@@ -269,22 +295,22 @@ Major restructuring to eliminate redundancy and improve efficiency:
 
 ```javascript
 OPENAI: {
-    MODEL: 'gpt-4o-mini',
-    MAX_TOKENS: 2000,
-    TEMPERATURE: 0.4
+    MODEL: 'gpt-4o',
+    MAX_TOKENS: 6000,
+    TEMPERATURE: 0.3
 }
 
 GEMINI: {
-    MODEL: 'gemini-2.0-flash-preview',
-    MAX_TOKENS: 4000,
+    MODEL: 'gemini-3-flash-preview',
+    MAX_TOKENS: 6000,
     TEMPERATURE: 0.4
 }
 ```
 
 **Rationale:**
-- Temperature 0.4: Optimized for consistent, objective, factual output
-- Max tokens 2000-4000: Sufficient for detailed responses without truncation
-- Models: Cost-effective options balancing quality, speed, and availability
+- OpenAI temperature 0.3 / Gemini 0.4: Optimized for consistent, objective, factual output
+- Max tokens 6000: Sufficient for detailed full-page responses without truncation
+- Models: Default models; users can override with a custom model name in Settings
 
 ---
 
@@ -298,4 +324,4 @@ GEMINI: {
 
 ---
 
-**Last Updated:** February 1, 2026  
+**Last Updated:** March 2, 2026  
