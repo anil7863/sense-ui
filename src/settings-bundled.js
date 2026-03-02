@@ -121,6 +121,7 @@ async function loadSettings() {
     // Backfill defaults for newly added settings
     if (settings.openaiModel === undefined) settings.openaiModel = '';
     if (settings.geminiModel === undefined) settings.geminiModel = '';
+    if (settings.screenshotMode === undefined) settings.screenshotMode = 'fullpage';
 
     const openaiKey = await retrieveApiKey(STORAGE_KEYS.OPENAI_API_KEY);
     const geminiKey = await retrieveApiKey(STORAGE_KEYS.GEMINI_API_KEY);
@@ -363,12 +364,12 @@ async function loadCurrentSettings() {
         // Set the screenshot mode radio button
         const screenshotViewport = document.getElementById('screenshot-viewport');
         const screenshotFullpage = document.getElementById('screenshot-fullpage');
-        if (settings.screenshotMode === 'fullpage') {
-            screenshotFullpage.checked = true;
-            screenshotViewport.checked = false;
-        } else {
+        if (settings.screenshotMode === 'viewport') {
             screenshotViewport.checked = true;
             screenshotFullpage.checked = false;
+        } else {
+            screenshotFullpage.checked = true;
+            screenshotViewport.checked = false;
         }
 
         // Set the show buttons checkbox
@@ -407,8 +408,7 @@ async function handleSubmit(event) {
         const downloadOption = formData.get('download');
         if (downloadOption) settings.downloadOption = downloadOption;
 
-        const screenshotMode = formData.get('screenshot');
-        if (screenshotMode) settings.screenshotMode = screenshotMode;
+        settings.screenshotMode = formData.get('screenshot') || 'fullpage';
 
         settings.contextInstructions = formData.get('context') || '';
         settings.selectedProvider = providerGemini?.checked ? 'gemini' : 'openai';
