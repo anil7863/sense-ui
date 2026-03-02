@@ -11,15 +11,15 @@ const CONFIG = {
     API: {
         OPENAI: {
             ENDPOINT: 'https://api.openai.com/v1/chat/completions',
-            MODEL: 'gpt-4o-mini',
-            MAX_TOKENS: 2000,
-            TEMPERATURE: 0.2
+            MODEL: 'gpt-4o',
+            MAX_TOKENS: 4000,
+            TEMPERATURE: 0.3
         },
         GEMINI: {
             ENDPOINT: 'https://generativelanguage.googleapis.com/v1beta/models',
             MODEL: 'gemini-3-flash-preview',
             MAX_TOKENS: 4000,
-            TEMPERATURE: 0.2
+            TEMPERATURE: 0.4
         }
     },
     STORAGE_KEYS: {
@@ -123,7 +123,7 @@ The #### Summary section has two parts:
 - Then, add a short "What works well" paragraph (1-4 sentences) that briefly highlights the strongest design aspects visible in the screenshot.
 If no violations are found in any category, skip the violations list and write only the "What works well" paragraph.
 
-EVALUATION CRITERIA (internal use only — do not reproduce these rules or their descriptions in your output):
+EVALUATION CRITERIA:
 
 Legibility and readability:
 - Body text must appear comfortably readable at a glance; titles must appear clearly larger than body text. A violation is when the body text looks too small to read comfortably, or a title does not visually stand out in size from surrounding content.
@@ -150,7 +150,7 @@ Use of images and media:
 IMPORTANT RULES:
 1. The evaluation criteria above are for your internal use only. Do not copy, list, or paraphrase them in your output.
 2. Be specific and visual in describing violations. Avoid vague statements like "poor contrast" or "bad layout".
-2. Do not cite pixel values, CSS properties, or selector names — you are working from a screenshot only.
+3. Do not cite pixel values, CSS properties, or selector names — you are working from a screenshot only.
 4. Never frame passing checks as meeting a requirement. If you mention a passing observation, state it naturally and positively.`
 
     },
@@ -223,7 +223,7 @@ async function getPromptForCommand(command, project) {
             // Check screenshot mode to determine which describe prompt to use
             const result = await chrome.storage.local.get(CONFIG.STORAGE_KEYS.USER_SETTINGS);
             const settings = result[CONFIG.STORAGE_KEYS.USER_SETTINGS] || {};
-            const screenshotMode = settings.screenshotMode || 'viewport';
+            const screenshotMode = settings.screenshotMode || 'fullpage';
             return screenshotMode === 'fullpage' ? CONFIG.PROMPTS.DESCRIBE_FULLPAGE : CONFIG.PROMPTS.DESCRIBE;
         case '/issues':
             return buildIssuesPrompt(project);
@@ -371,11 +371,15 @@ function formatResponse(responseText, options = {}) {
         </button>`;
     }
 
+    html += `<button class="view-screenshot-button btn-tertiary" style="display:none;" aria-label="View screenshot used for this analysis">
+        View screenshot
+    </button>`;
+
     html += '</div></div>';
     return html;
 }
 
-function attachResponseActions(container) {
+function attachResponseActions(container, screenshot) {
     const copyButtons = container.querySelectorAll('.copy-button');
     copyButtons.forEach(button => {
         button.addEventListener('click', async () => {
@@ -393,6 +397,20 @@ function attachResponseActions(container) {
             }
         });
     });
+
+    if (screenshot) {
+        const screenshotButtons = container.querySelectorAll('.view-screenshot-button');
+        screenshotButtons.forEach(button => {
+            button.style.display = '';
+            button.addEventListener('click', () => {
+                const win = window.open();
+                if (win) {
+                    win.document.write(`<img src="${screenshot}" style="max-width:100%;" alt="Screenshot used for analysis">`);
+                    win.document.title = 'SenseUI – Analysis screenshot';
+                }
+            });
+        });
+    }
 }
 
 // ============================================================================
@@ -403,7 +421,7 @@ async function captureFullPageScreenshot() {
         const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true });
         if (!activeTab) throw new Error('No active tab found');
 
-        // Get page dimensions and current scroll position
+        // Get page dimensions, scroll position, and device pixel ratio
         const [dimensions] = await chrome.scripting.executeScript({
             target: { tabId: activeTab.id },
             func: () => {
@@ -413,12 +431,13 @@ async function captureFullPageScreenshot() {
                     viewportHeight: window.innerHeight,
                     viewportWidth: window.innerWidth,
                     originalScrollX: window.scrollX,
-                    originalScrollY: window.scrollY
+                    originalScrollY: window.scrollY,
+                    devicePixelRatio: window.devicePixelRatio || 1
                 };
             }
         });
 
-        const { pageHeight, pageWidth, viewportHeight, viewportWidth, originalScrollX, originalScrollY } = dimensions.result;
+        const { pageHeight, pageWidth, viewportHeight, viewportWidth, originalScrollX, originalScrollY, devicePixelRatio } = dimensions.result;
 
         // If page fits in viewport, just capture normally
         if (pageHeight <= viewportHeight) {
@@ -429,9 +448,21 @@ async function captureFullPageScreenshot() {
             return dataUrl;
         }
 
+        // Hide scrollbars for all screenshots without affecting layout
+        await chrome.scripting.executeScript({
+            target: { tabId: activeTab.id },
+            func: () => {
+                const style = document.createElement('style');
+                style.id = '__sense_no_scrollbar';
+                style.textContent = '::-webkit-scrollbar { display: none !important; } * { scrollbar-width: none !important; }';
+                document.head.appendChild(style);
+            }
+        });
+
         // Calculate number of screenshots needed
         const screenshotsNeeded = Math.ceil(pageHeight / viewportHeight);
         const screenshots = [];
+        const scrollPositions = [];
 
         // Scroll through page and capture screenshots
         for (let i = 0; i < screenshotsNeeded; i++) {
@@ -447,33 +478,72 @@ async function captureFullPageScreenshot() {
             // Small delay to let page render
             await new Promise(resolve => setTimeout(resolve, 100));
 
+            // Read the actual (potentially clamped) scroll position
+            const [actualScroll] = await chrome.scripting.executeScript({
+                target: { tabId: activeTab.id },
+                func: () => window.scrollY
+            });
+            scrollPositions.push(actualScroll.result);
+
             // Capture this section
             const dataUrl = await chrome.tabs.captureVisibleTab(null, {
                 format: CONFIG.LIMITS.SCREENSHOT_FORMAT,
                 quality: Math.round(CONFIG.LIMITS.SCREENSHOT_QUALITY * 100)
             });
-
             screenshots.push(dataUrl);
+
+            // After the first screenshot, hide fixed/sticky elements so they
+            // don't repeat in every subsequent segment
+            if (i === 0) {
+                await chrome.scripting.executeScript({
+                    target: { tabId: activeTab.id },
+                    func: () => {
+                        window.__senseHiddenEls = [];
+                        document.querySelectorAll('*').forEach(el => {
+                            const pos = window.getComputedStyle(el).position;
+                            if (pos === 'fixed' || pos === 'sticky') {
+                                window.__senseHiddenEls.push({ el, visibility: el.style.visibility });
+                                el.style.visibility = 'hidden';
+                            }
+                        });
+                    }
+                });
+            }
         }
 
-        // Restore original scroll position
+        // Restore scroll position, fixed/sticky elements, and scrollbars
         await chrome.scripting.executeScript({
             target: { tabId: activeTab.id },
             func: (x, y) => window.scrollTo(x, y),
             args: [originalScrollX, originalScrollY]
         });
 
+        await chrome.scripting.executeScript({
+            target: { tabId: activeTab.id },
+            func: () => {
+                if (window.__senseHiddenEls) {
+                    window.__senseHiddenEls.forEach(({ el, visibility }) => {
+                        el.style.visibility = visibility;
+                    });
+                    delete window.__senseHiddenEls;
+                }
+                const style = document.getElementById('__sense_no_scrollbar');
+                if (style) style.remove();
+            }
+        });
+
         // Stitch screenshots together on a canvas
-        return await stitchScreenshots(screenshots, viewportWidth, viewportHeight, pageHeight);
+        return await stitchScreenshots(screenshots, scrollPositions, viewportWidth, viewportHeight, pageHeight, devicePixelRatio);
     } catch (error) {
         console.error('Error capturing full page screenshot:', error);
         return null;
     }
 }
 
-async function stitchScreenshots(screenshots, width, height, totalHeight) {
+async function stitchScreenshots(screenshots, scrollPositions, width, height, totalHeight, devicePixelRatio) {
     return new Promise((resolve) => {
         const canvas = document.createElement('canvas');
+        // Canvas is sized in CSS pixels so the output matches the page layout 1:1
         canvas.width = width;
         canvas.height = totalHeight;
         const ctx = canvas.getContext('2d');
@@ -488,12 +558,13 @@ async function stitchScreenshots(screenshots, width, height, totalHeight) {
                 loadedCount++;
 
                 if (loadedCount === screenshots.length) {
-                    // Draw all images onto canvas
                     images.forEach((image, i) => {
-                        ctx.drawImage(image, 0, i * height);
+                        // captureVisibleTab returns physical pixels (CSS px * devicePixelRatio).
+                        // Specifying destination size (width × height in CSS px) scales it
+                        // back down so the stitched image is never zoomed in on HiDPI screens.
+                        ctx.drawImage(image, 0, scrollPositions[i], width, height);
                     });
 
-                    // Convert to data URL
                     resolve(canvas.toDataURL(CONFIG.LIMITS.SCREENSHOT_FORMAT, CONFIG.LIMITS.SCREENSHOT_QUALITY));
                 }
             };
@@ -507,7 +578,7 @@ async function captureScreenshot() {
         // Get user's screenshot mode preference
         const result = await chrome.storage.local.get(CONFIG.STORAGE_KEYS.USER_SETTINGS);
         const settings = result[CONFIG.STORAGE_KEYS.USER_SETTINGS] || {};
-        const screenshotMode = settings.screenshotMode || 'viewport';
+        const screenshotMode = settings.screenshotMode || 'fullpage';
 
         if (screenshotMode === 'fullpage') {
             return await captureFullPageScreenshot();
@@ -968,6 +1039,7 @@ async function processUserInput(userInput, forceRefresh = false) {
     return {
         html: responseHTML,
         summary: `SenseUI said: ${summary}`,
+        screenshot: context.screenshot || null,
         error: null
     };
 }
@@ -1491,7 +1563,7 @@ async function sendMessage() {
         responseDiv.setAttribute('role', 'article');
         responseDiv.innerHTML = response.html;
         chatMessages.appendChild(responseDiv);
-        attachResponseActions(responseDiv);
+        attachResponseActions(responseDiv, response.screenshot);
         announce('Response received');
 
         // Save chat history after successful response
