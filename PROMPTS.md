@@ -17,6 +17,7 @@ SenseUI uses a **hierarchical prompt system** that eliminates redundancy and ens
 3. **Project Context** - Optional layer injected only when an active project exists
 
 This architecture ensures:
+
 - ~35-45% token reduction per query (eliminated redundant rules)
 - Single source of truth for formatting and language rules
 - Easier maintenance (update rules once in SYSTEM)
@@ -216,6 +217,7 @@ Identify specific misalignments — elements, styles, or patterns that clash wit
 ```
 
 **Injection Logic:**
+
 - Only added when user has an active project selected
 - Applied AFTER SYSTEM + command prompts
 - For `/issues`: project parameters embedded inline in the prompt instead of appended separately
@@ -225,56 +227,59 @@ Identify specific misalignments — elements, styles, or patterns that clash wit
 ## Development Process
 
 ### Initial Development (November 2025)
+
 The original prompts were created based on initial research for the SenseUI project (interviews where blind developers explained their needs and workflows).
 
 ### Prompt Engineering Refinement (November 2025)
+
 Through iterative prompt engineering, the prompts were refined to address:
 
 1. **Screen Reader Compatibility**
-   - Eliminated HTML tags in responses (screen readers would announce them literally)
-   - Removed markdown formatting that doesn't translate to audio (bold, italic)
-   - Prevented raw markdown symbols from being read aloud
-   - Restricted to h3 and below headings (h1/h2 reserved for UI structure)
+    - Eliminated HTML tags in responses (screen readers would announce them literally)
+    - Removed markdown formatting that doesn't translate to audio (bold, italic)
+    - Prevented raw markdown symbols from being read aloud
+    - Restricted to h3 and below headings (h1/h2 reserved for UI structure)
 
 2. **Output Structure**
-   - Enforced consistent heading hierarchy (h3, h4, h5 only)
-   - Ensured complete single-line bullet statements
-   - Prevented bullet points ending with colons (caused incomplete statements)
+    - Enforced consistent heading hierarchy (h3, h4, h5 only)
+    - Ensured complete single-line bullet statements
+    - Prevented bullet points ending with colons (caused incomplete statements)
 
 3. **Actionable Feedback**
-   - Required specific CSS selectors and values
-   - Mandated exact measurements over vague descriptions
-   - Provided bad vs. good examples to guide output quality
+    - Required specific CSS selectors and values
+    - Mandated exact measurements over vague descriptions
+    - Provided bad vs. good examples to guide output quality
 
 4. **Color Handling**
-   - Converted RGB to hex format (more useful for developers)
-   - Required citing actual CSS values when available
-   - Mandated name-first, hex-second format (e.g., "blue (#0000FF)")
+    - Converted RGB to hex format (more useful for developers)
+    - Required citing actual CSS values when available
+    - Mandated name-first, hex-second format (e.g., "blue (#0000FF)")
 
 5. **Factual Accuracy**
-   - Prohibited inventing issues that don't exist
-   - Required verification from HTML/CSS/screenshot only
-   - Prevented assumptions about content outside viewport
-   - Enforced CSS analysis rules to ignore overridden styles
+    - Prohibited inventing issues that don't exist
+    - Required verification from HTML/CSS/screenshot only
+    - Prevented assumptions about content outside viewport
+    - Enforced CSS analysis rules to ignore overridden styles
 
 ### Architecture Reorganization (February 2026)
+
 Major restructuring to eliminate redundancy and improve efficiency:
 
 1. **Hierarchical System Implementation**
-   - Established SYSTEM as universal foundation
-   - Removed duplicate rules from command prompts
-   - Achieved 35-45% token reduction per query
+    - Established SYSTEM as universal foundation
+    - Removed duplicate rules from command prompts
+    - Achieved 35-45% token reduction per query
 
 2. **Prompt Injection Logic**
-   - Changed from either/or to layered approach
-   - SYSTEM → Command → Project creates proper hierarchy
-   - Project context now only injected when project exists
+    - Changed from either/or to layered approach
+    - SYSTEM → Command → Project creates proper hierarchy
+    - Project context now only injected when project exists
 
 3. **Benefits Achieved**
-   - Single source of truth for formatting/language rules
-   - Easier maintenance (update once in SYSTEM)
-   - Consistent output across all interaction types
-   - Better integration between prompts
+    - Single source of truth for formatting/language rules
+    - Easier maintenance (update once in SYSTEM)
+    - Consistent output across all interaction types
+    - Better integration between prompts
 
 ---
 
@@ -283,6 +288,7 @@ Major restructuring to eliminate redundancy and improve efficiency:
 **Approach:** Zero-shot instruction-based prompting with in-context learning
 
 **Rationale:**
+
 - Zero-shot enables shorter prompts → faster responses, lower token usage
 - Few-shot approach could be implemented for "Comprehensive" feedback mode (future enhancement)
 - The provided HTML, CSS, and screenshot serve as rich context
@@ -308,6 +314,7 @@ GEMINI: {
 ```
 
 **Rationale:**
+
 - OpenAI temperature 0.3 / Gemini 0.4: Optimized for consistent, objective, factual output
 - Max tokens 6000: Sufficient for detailed full-page responses without truncation
 - Models: Default models; users can override with a custom model name in Settings
@@ -324,4 +331,4 @@ GEMINI: {
 
 ---
 
-**Last Updated:** March 2, 2026  
+**Last Updated:** March 2, 2026

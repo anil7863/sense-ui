@@ -7,7 +7,7 @@ const STORAGE_KEYS = {
     OPENAI_API_KEY: 'senseui_openai_key',
     GEMINI_API_KEY: 'senseui_gemini_key',
     SELECTED_PROVIDER: 'senseui_provider',
-    USER_SETTINGS: 'senseui_settings'
+    USER_SETTINGS: 'senseui_settings',
 };
 
 // ============================================================================
@@ -20,7 +20,7 @@ async function getEncryptionPassword() {
         const randomBytes = new Uint8Array(32);
         crypto.getRandomValues(randomBytes);
         sessionKey.senseui_session_key = Array.from(randomBytes)
-            .map(b => b.toString(16).padStart(2, '0'))
+            .map((b) => b.toString(16).padStart(2, '0'))
             .join('');
         await chrome.storage.local.set(sessionKey);
     }
@@ -31,11 +31,18 @@ async function deriveKey(password, salt) {
     const encoder = new TextEncoder();
     const passwordBuffer = encoder.encode(password);
     const keyMaterial = await crypto.subtle.importKey(
-        'raw', passwordBuffer, { name: 'PBKDF2' }, false, ['deriveBits', 'deriveKey']
+        'raw',
+        passwordBuffer,
+        { name: 'PBKDF2' },
+        false,
+        ['deriveBits', 'deriveKey'],
     );
     return await crypto.subtle.deriveKey(
         { name: 'PBKDF2', salt: salt, iterations: 100000, hash: 'SHA-256' },
-        keyMaterial, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']
+        keyMaterial,
+        { name: 'AES-GCM', length: 256 },
+        false,
+        ['encrypt', 'decrypt'],
     );
 }
 
@@ -46,8 +53,14 @@ async function encryptData(plaintext) {
     const iv = crypto.getRandomValues(new Uint8Array(12));
     const password = await getEncryptionPassword();
     const key = await deriveKey(password, salt);
-    const encryptedData = await crypto.subtle.encrypt({ name: 'AES-GCM', iv: iv }, key, data);
-    const combined = new Uint8Array(salt.length + iv.length + encryptedData.byteLength);
+    const encryptedData = await crypto.subtle.encrypt(
+        { name: 'AES-GCM', iv: iv },
+        key,
+        data,
+    );
+    const combined = new Uint8Array(
+        salt.length + iv.length + encryptedData.byteLength,
+    );
     combined.set(salt, 0);
     combined.set(iv, salt.length);
     combined.set(new Uint8Array(encryptedData), salt.length + iv.length);
@@ -65,14 +78,22 @@ async function retrieveApiKey(keyName) {
         const encrypted = result[keyName];
         if (!encrypted) return null;
 
-        const combined = new Uint8Array(atob(encrypted).split('').map(c => c.charCodeAt(0)));
+        const combined = new Uint8Array(
+            atob(encrypted)
+                .split('')
+                .map((c) => c.charCodeAt(0)),
+        );
         const salt = combined.slice(0, 16);
         const iv = combined.slice(16, 28);
         const encryptedData = combined.slice(28);
 
         const password = await getEncryptionPassword();
         const key = await deriveKey(password, salt);
-        const decryptedData = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: iv }, key, encryptedData);
+        const decryptedData = await crypto.subtle.decrypt(
+            { name: 'AES-GCM', iv: iv },
+            key,
+            encryptedData,
+        );
 
         const decoder = new TextDecoder();
         return decoder.decode(decryptedData);
@@ -104,22 +125,24 @@ function getDefaultSettings() {
         screenshotMode: 'fullpage',
         openaiModel: '',
         geminiModel: '',
-        showButtons: false
+        showButtons: false,
     };
 }
 
 async function loadSettings() {
     const result = await chrome.storage.local.get([
         STORAGE_KEYS.SELECTED_PROVIDER,
-        STORAGE_KEYS.USER_SETTINGS
+        STORAGE_KEYS.USER_SETTINGS,
     ]);
     const settings = result[STORAGE_KEYS.USER_SETTINGS] || getDefaultSettings();
-    settings.selectedProvider = result[STORAGE_KEYS.SELECTED_PROVIDER] || 'openai';
+    settings.selectedProvider =
+        result[STORAGE_KEYS.SELECTED_PROVIDER] || 'openai';
 
     // Backfill defaults for newly added settings
     if (settings.openaiModel === undefined) settings.openaiModel = '';
     if (settings.geminiModel === undefined) settings.geminiModel = '';
-    if (settings.screenshotMode === undefined) settings.screenshotMode = 'fullpage';
+    if (settings.screenshotMode === undefined)
+        settings.screenshotMode = 'fullpage';
 
     const openaiKey = await retrieveApiKey(STORAGE_KEYS.OPENAI_API_KEY);
     const geminiKey = await retrieveApiKey(STORAGE_KEYS.GEMINI_API_KEY);
@@ -130,10 +153,13 @@ async function loadSettings() {
 }
 
 async function saveSettings(settings) {
-    const { openaiApiKey, geminiApiKey, selectedProvider, ...otherSettings } = settings;
+    const { openaiApiKey, geminiApiKey, selectedProvider, ...otherSettings } =
+        settings;
 
     if (selectedProvider) {
-        await chrome.storage.local.set({ [STORAGE_KEYS.SELECTED_PROVIDER]: selectedProvider });
+        await chrome.storage.local.set({
+            [STORAGE_KEYS.SELECTED_PROVIDER]: selectedProvider,
+        });
     }
     if (openaiApiKey) {
         await storeApiKey(STORAGE_KEYS.OPENAI_API_KEY, openaiApiKey);
@@ -141,15 +167,23 @@ async function saveSettings(settings) {
     if (geminiApiKey) {
         await storeApiKey(STORAGE_KEYS.GEMINI_API_KEY, geminiApiKey);
     }
-    await chrome.storage.local.set({ [STORAGE_KEYS.USER_SETTINGS]: otherSettings });
+    await chrome.storage.local.set({
+        [STORAGE_KEYS.USER_SETTINGS]: otherSettings,
+    });
 }
 
 function validateSettings(settings) {
     const errors = [];
-    if (settings.openaiApiKey && !validateApiKeyFormat(settings.openaiApiKey, 'openai')) {
+    if (
+        settings.openaiApiKey &&
+        !validateApiKeyFormat(settings.openaiApiKey, 'openai')
+    ) {
         errors.push('OpenAI API key format is invalid.');
     }
-    if (settings.geminiApiKey && !validateApiKeyFormat(settings.geminiApiKey, 'gemini')) {
+    if (
+        settings.geminiApiKey &&
+        !validateApiKeyFormat(settings.geminiApiKey, 'gemini')
+    ) {
         errors.push('Gemini API key format is invalid.');
     }
     return { valid: errors.length === 0, errors };
@@ -163,18 +197,23 @@ async function resetSettings() {
 }
 
 async function clearApiKey(provider) {
-    const keyName = provider === 'openai' ? STORAGE_KEYS.OPENAI_API_KEY : STORAGE_KEYS.GEMINI_API_KEY;
+    const keyName =
+        provider === 'openai'
+            ? STORAGE_KEYS.OPENAI_API_KEY
+            : STORAGE_KEYS.GEMINI_API_KEY;
     await chrome.storage.local.remove(keyName);
 }
 
 async function getApiKeyStatus() {
     const openaiKey = await retrieveApiKey(STORAGE_KEYS.OPENAI_API_KEY);
     const geminiKey = await retrieveApiKey(STORAGE_KEYS.GEMINI_API_KEY);
-    const result = await chrome.storage.local.get(STORAGE_KEYS.SELECTED_PROVIDER);
+    const result = await chrome.storage.local.get(
+        STORAGE_KEYS.SELECTED_PROVIDER,
+    );
     return {
         hasOpenAI: !!openaiKey,
         hasGemini: !!geminiKey,
-        selectedProvider: result[STORAGE_KEYS.SELECTED_PROVIDER] || 'openai'
+        selectedProvider: result[STORAGE_KEYS.SELECTED_PROVIDER] || 'openai',
     };
 }
 
@@ -211,14 +250,20 @@ function updateModelFieldsVisibility() {
     if (!openaiModelInput || !geminiModelInput) return;
 
     const selectedProvider = providerOpenAI.checked ? 'openai' : 'gemini';
-    const hasOpenAI = hasOpenAIKeyConfigured || (openaiKeyInput && openaiKeyInput.value.trim() !== '');
-    const hasGemini = hasGeminiKeyConfigured || (geminiKeyInput && geminiKeyInput.value.trim() !== '');
+    const hasOpenAI =
+        hasOpenAIKeyConfigured ||
+        (openaiKeyInput && openaiKeyInput.value.trim() !== '');
+    const hasGemini =
+        hasGeminiKeyConfigured ||
+        (geminiKeyInput && geminiKeyInput.value.trim() !== '');
 
     // Get the OpenAI combobox container
     const openaiCombobox = openaiModelInput.closest('.combobox');
 
     // Show or hide the entire model section
-    const shouldShowSection = (selectedProvider === 'openai' && hasOpenAI) || (selectedProvider === 'gemini' && hasGemini);
+    const shouldShowSection =
+        (selectedProvider === 'openai' && hasOpenAI) ||
+        (selectedProvider === 'gemini' && hasGemini);
     if (modelSection) {
         modelSection.style.display = shouldShowSection ? '' : 'none';
     }
@@ -341,8 +386,12 @@ async function loadCurrentSettings() {
         }
 
         // Set the screenshot mode radio button
-        const screenshotViewport = document.getElementById('screenshot-viewport');
-        const screenshotFullpage = document.getElementById('screenshot-fullpage');
+        const screenshotViewport = document.getElementById(
+            'screenshot-viewport',
+        );
+        const screenshotFullpage = document.getElementById(
+            'screenshot-fullpage',
+        );
         if (settings.screenshotMode === 'viewport') {
             screenshotViewport.checked = true;
             screenshotFullpage.checked = false;
@@ -384,7 +433,9 @@ async function handleSubmit(event) {
         settings.screenshotMode = formData.get('screenshot') || 'fullpage';
 
         settings.contextInstructions = formData.get('context') || '';
-        settings.selectedProvider = providerGemini?.checked ? 'gemini' : 'openai';
+        settings.selectedProvider = providerGemini?.checked
+            ? 'gemini'
+            : 'openai';
         settings.showButtons = formData.get('showButtons') === 'on';
 
         // Model selections (optional strings; treated as-is at runtime)
@@ -405,7 +456,10 @@ async function handleSubmit(event) {
 
         const validation = validateSettings(settings);
         if (!validation.valid) {
-            showStatus(`Validation errors: ${validation.errors.join(', ')}`, true);
+            showStatus(
+                `Validation errors: ${validation.errors.join(', ')}`,
+                true,
+            );
             return;
         }
 
@@ -416,7 +470,7 @@ async function handleSubmit(event) {
 
         await updateApiKeyStatus();
         showStatus('Settings saved successfully!');
-        
+
         // Navigate back to chat page and focus on input
         setTimeout(() => {
             window.location.href = 'index.html';
@@ -556,37 +610,40 @@ class ComboboxAutocomplete {
 
         this.comboboxNode.addEventListener(
             'keydown',
-            this.onComboboxKeyDown.bind(this)
+            this.onComboboxKeyDown.bind(this),
         );
         this.comboboxNode.addEventListener(
             'keyup',
-            this.onComboboxKeyUp.bind(this)
+            this.onComboboxKeyUp.bind(this),
         );
         this.comboboxNode.addEventListener(
             'click',
-            this.onComboboxClick.bind(this)
+            this.onComboboxClick.bind(this),
         );
         this.comboboxNode.addEventListener(
             'focus',
-            this.onComboboxFocus.bind(this)
+            this.onComboboxFocus.bind(this),
         );
-        this.comboboxNode.addEventListener('blur', this.onComboboxBlur.bind(this));
+        this.comboboxNode.addEventListener(
+            'blur',
+            this.onComboboxBlur.bind(this),
+        );
 
         document.body.addEventListener(
             'pointerup',
             this.onBackgroundPointerUp.bind(this),
-            true
+            true,
         );
 
         // initialize pop up menu
 
         this.listboxNode.addEventListener(
             'pointerover',
-            this.onListboxPointerover.bind(this)
+            this.onListboxPointerover.bind(this),
         );
         this.listboxNode.addEventListener(
             'pointerout',
-            this.onListboxPointerout.bind(this)
+            this.onListboxPointerout.bind(this),
         );
 
         // Traverse the element children of domNode: configure each with
@@ -598,15 +655,24 @@ class ComboboxAutocomplete {
             this.allOptions.push(node);
 
             node.addEventListener('click', this.onOptionClick.bind(this));
-            node.addEventListener('pointerover', this.onOptionPointerover.bind(this));
-            node.addEventListener('pointerout', this.onOptionPointerout.bind(this));
+            node.addEventListener(
+                'pointerover',
+                this.onOptionPointerover.bind(this),
+            );
+            node.addEventListener(
+                'pointerout',
+                this.onOptionPointerout.bind(this),
+            );
         }
 
         this.filterOptions();
 
         // Open Button
         if (this.buttonNode) {
-            this.buttonNode.addEventListener('click', this.onButtonClick.bind(this));
+            this.buttonNode.addEventListener(
+                'click',
+                this.onButtonClick.bind(this),
+            );
         }
     }
 
@@ -640,7 +706,10 @@ class ComboboxAutocomplete {
     setValue(value) {
         this.filter = value;
         this.comboboxNode.value = this.filter;
-        this.comboboxNode.setSelectionRange(this.filter.length, this.filter.length);
+        this.comboboxNode.setSelectionRange(
+            this.filter.length,
+            this.filter.length,
+        );
         this.filterOptions();
     }
 
@@ -659,12 +728,12 @@ class ComboboxAutocomplete {
                 if (flag) {
                     this.comboboxNode.setSelectionRange(
                         this.option.textContent.length,
-                        this.option.textContent.length
+                        this.option.textContent.length,
                     );
                 } else {
                     this.comboboxNode.setSelectionRange(
                         this.filter.length,
-                        this.option.textContent.length
+                        this.option.textContent.length,
                     );
                 }
             }
@@ -726,7 +795,10 @@ class ComboboxAutocomplete {
             this.firstOption = this.filteredOptions[0];
             this.lastOption = this.filteredOptions[numItems - 1];
 
-            if (currentOption && this.filteredOptions.indexOf(currentOption) >= 0) {
+            if (
+                currentOption &&
+                this.filteredOptions.indexOf(currentOption) >= 0
+            ) {
                 option = currentOption;
             } else {
                 option = this.firstOption;
@@ -750,7 +822,9 @@ class ComboboxAutocomplete {
                     opt.offsetTop + opt.offsetHeight
                 ) {
                     this.listboxNode.scrollTop =
-                        opt.offsetTop + opt.offsetHeight - this.listboxNode.offsetHeight;
+                        opt.offsetTop +
+                        opt.offsetHeight -
+                        this.listboxNode.offsetHeight;
                 } else if (this.listboxNode.scrollTop > opt.offsetTop + 2) {
                     this.listboxNode.scrollTop = opt.offsetTop;
                 }
@@ -851,7 +925,10 @@ class ComboboxAutocomplete {
                             this.listboxHasVisualFocus ||
                             (this.isBoth && this.filteredOptions.length > 1)
                         ) {
-                            this.setOption(this.getNextOption(this.option), true);
+                            this.setOption(
+                                this.getNextOption(this.option),
+                                true,
+                            );
                             this.setVisualFocusListbox();
                         } else {
                             this.setOption(this.firstOption, true);
@@ -866,7 +943,10 @@ class ComboboxAutocomplete {
             case 'ArrowUp':
                 if (this.hasOptions()) {
                     if (this.listboxHasVisualFocus) {
-                        this.setOption(this.getPreviousOption(this.option), true);
+                        this.setOption(
+                            this.getPreviousOption(this.option),
+                            true,
+                        );
                     } else {
                         this.open();
                         if (!altKey) {
@@ -982,13 +1062,16 @@ class ComboboxAutocomplete {
                     if (this.isList || this.isBoth) {
                         option = this.filterOptions();
                         if (option) {
-                            if (this.isClosed() && this.comboboxNode.value.length) {
+                            if (
+                                this.isClosed() &&
+                                this.comboboxNode.value.length
+                            ) {
                                 this.open();
                             }
 
                             if (
                                 this.getLowercaseContent(option).indexOf(
-                                    this.comboboxNode.value.toLowerCase()
+                                    this.comboboxNode.value.toLowerCase(),
                                 ) === 0
                             ) {
                                 this.option = option;

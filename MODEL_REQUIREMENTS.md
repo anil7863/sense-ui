@@ -11,32 +11,32 @@ This document specifies the capabilities an AI model must provide in order to wo
 ## 2. Input and context handling
 
 - Accepts long-text prompts that may include:
-  - Page metadata (title and URL),
-  - Truncated HTML source (up to tens of thousands of characters),
-  - Truncated CSS (up to tens of thousands of characters),
-  - The user’s question and SenseUI’s system prompt.
+    - Page metadata (title and URL),
+    - Truncated HTML source (up to tens of thousands of characters),
+    - Truncated CSS (up to tens of thousands of characters),
+    - The user’s question and SenseUI’s system prompt.
 - Supports multimodal input:
-  - Joint processing of text and at least one screenshot (viewport or full-page) in a single request.
-  - For OpenAI-compatible APIs: `image_url` content within a chat completion request.
-  - For Gemini-compatible APIs: text plus `inlineData` image parts in a `generateContent` request.
+    - Joint processing of text and at least one screenshot (viewport or full-page) in a single request.
+    - For OpenAI-compatible APIs: `image_url` content within a chat completion request.
+    - For Gemini-compatible APIs: text plus `inlineData` image parts in a `generateContent` request.
 
 ## 3. Output format and behavior
 
 - Produces plain-text responses using markdown
 - Avoids:
-  - HTML tags of any kind in the output.
-  - Tables, bold, italic text, and emojis when instructed not to use them.
+    - HTML tags of any kind in the output.
+    - Tables, bold, italic text, and emojis when instructed not to use them.
 
 ## 4. Design and accessibility reasoning
 
 - Interprets HTML and CSS to:
-  - Identify layout, alignment, spacing, and consistency issues.
-  - Assess readability (font size, line height, text density, line length, alignment).
-  - Reason about color contrast and accessibility (for example, alignment with WCAG-style expectations).
+    - Identify layout, alignment, spacing, and consistency issues.
+    - Assess readability (font size, line height, text density, line length, alignment).
+    - Reason about color contrast and accessibility (for example, alignment with WCAG-style expectations).
 - Grounds all claims in the provided HTML, CSS, and/or screenshot:
-  - Does not fabricate unverifiable measurements.
-  - Clearly indicates uncertainty when information is missing or ambiguous.
-  - May provide improvement suggestions even when no critical issues are present.
+    - Does not fabricate unverifiable measurements.
+    - Clearly indicates uncertainty when information is missing or ambiguous.
+    - May provide improvement suggestions even when no critical issues are present.
 
 ## 5. Language handling
 
@@ -47,15 +47,15 @@ This document specifies the capabilities an AI model must provide in order to wo
 ## 6. API and operational constraints
 
 - Exposes an HTTPS JSON API compatible with one of:
-  - OpenAI-style `chat/completions` endpoints with role-based messages and optional `image_url` parts.
-  - Google Gemini-style `generateContent` endpoints with text and `inlineData` image parts.
+    - OpenAI-style `chat/completions` endpoints with role-based messages and optional `image_url` parts.
+    - Google Gemini-style `generateContent` endpoints with text and `inlineData` image parts.
 - Returns a single primary text answer in a stable response field:
-  - For OpenAI-compatible APIs: `choices[0].message.content`.
-  - For Gemini-compatible APIs: concatenated `candidates[0].content.parts[].text`.
+    - For OpenAI-compatible APIs: `choices[0].message.content`.
+    - For Gemini-compatible APIs: concatenated `candidates[0].content.parts[].text`.
 - Supports:
-  - Configurable model name and basic generation parameters (for example, temperature, max tokens).
-  - Non-streaming responses (SenseUI waits for the full response).
-  - Sufficient context length to handle the combined system prompt, user query, HTML/CSS excerpts, and screenshot description.
+    - Configurable model name and basic generation parameters (for example, temperature, max tokens).
+    - Non-streaming responses (SenseUI waits for the full response).
+    - Sufficient context length to handle the combined system prompt, user query, HTML/CSS excerpts, and screenshot description.
 
 ## 7. Performance, Safety, and Reliability
 
@@ -69,12 +69,12 @@ This document specifies the capabilities an AI model must provide in order to wo
 While any compatible model that satisfies the requirements above may work, SenseUI is currently designed and tested with the following model options:
 
 - OpenAI (chat/completions):
-  - auto (gpt-4o-mini)
-  - gpt-4o
-  - gpt-4.1-mini
+    - auto (gpt-4o-mini)
+    - gpt-4o
+    - gpt-4.1-mini
 - Gemini (generateContent):
-  - auto (gemini-3-flash-preview)
-  - gemini-3-pro-preview
+    - auto (gemini-3-flash-preview)
+    - gemini-3-pro-preview
 
 Other models may function, but are not explicitly validated and may produce different performance or behavior.
 

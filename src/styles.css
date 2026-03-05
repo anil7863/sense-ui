@@ -1,6 +1,6 @@
 :root {
     --primary-color: #f4c653;
-    --secondary-color: #BEDAFF;
+    --secondary-color: #bedaff;
     --background-color: #02031a;
     --chat-background: #ededed;
     --background-gray: #6f6f75;
@@ -15,7 +15,18 @@ html {
 }
 
 body {
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-family:
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        'Segoe UI',
+        Roboto,
+        Oxygen,
+        Ubuntu,
+        Cantarell,
+        'Open Sans',
+        'Helvetica Neue',
+        sans-serif;
     background: var(--background-color);
     margin: 0;
     padding: 0;
@@ -82,11 +93,11 @@ nav a {
     display: inline-block;
 }
 
-nav a[aria-current="page"] {
+nav a[aria-current='page'] {
     color: var(--primary-color);
     border: 2px solid var(--primary-color);
 }
-            
+
 a {
     color: var(--primary-color);
     text-decoration: none;
@@ -107,7 +118,18 @@ button:active,
 }
 
 h1 {
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-family:
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        'Segoe UI',
+        Roboto,
+        Oxygen,
+        Ubuntu,
+        Cantarell,
+        'Open Sans',
+        'Helvetica Neue',
+        sans-serif;
     font-weight: bold;
     color: var(--primary-color);
     font-size: 2rem;
@@ -117,7 +139,6 @@ h2 {
     color: var(--secondary-color);
     font-size: 1.25rem;
 }
-
 
 h3 {
     font-size: 1.15rem;
@@ -156,7 +177,6 @@ summary h3 {
     display: inline;
 }
 
-
 /* CHAT INTERFACE */
 .chat-container {
     position: fixed;
@@ -182,7 +202,7 @@ summary h3 {
     display: block;
 }
 
-.chat-controls{
+.chat-controls {
     display: flex;
     flex-direction: column;
     padding: 0.5rem 1rem;
@@ -282,9 +302,6 @@ footer .btn-tertiary {
     text-align: center;
 }
 
-
-
-
 .sr-only {
     position: absolute;
     width: 1px;
@@ -316,7 +333,7 @@ footer .btn-tertiary {
     color: var(--primary-color);
 }
 
-#reset-warning-dialog p[tabindex="0"]:focus {
+#reset-warning-dialog p[tabindex='0']:focus {
     outline: 2px solid var(--primary-color);
     outline-offset: 2px;
 }
@@ -449,7 +466,7 @@ summary h2 {
     color: var(--primary-color);
 }
 
-#delete-dialog p[tabindex="0"]:focus {
+#delete-dialog p[tabindex='0']:focus {
     outline: 2px solid var(--primary-color);
     outline-offset: 2px;
 }
@@ -485,7 +502,7 @@ summary h2 {
     font-weight: bold;
 }
 
-#project-form input[type="text"] {
+#project-form input[type='text'] {
     width: 100%;
     padding: 0.5rem;
     font-size: 1rem;
@@ -496,12 +513,12 @@ summary h2 {
     box-sizing: border-box;
 }
 
-#project-form input[type="text"]:focus {
+#project-form input[type='text']:focus {
     outline: 3px solid var(--primary-color);
     outline-offset: 2px;
 }
 
-#project-form button[type="submit"] {
+#project-form button[type='submit'] {
     margin-top: 1.5rem;
 }
 
@@ -557,11 +574,11 @@ select option {
     border-radius: 0 4px 4px 0;
 }
 
-.combobox button[aria-expanded="true"] svg {
+.combobox button[aria-expanded='true'] svg {
     transform: rotate(180deg) translate(0, -3px);
 }
 
-ul[role="listbox"] {
+ul[role='listbox'] {
     margin: 0;
     padding: 0;
     position: absolute;
@@ -582,7 +599,7 @@ ul[role="listbox"] {
     border-radius: 4px;
 }
 
-ul[role="listbox"] li[role="option"] {
+ul[role='listbox'] li[role='option'] {
     margin: 0;
     display: block;
     padding: 0.5rem;
@@ -615,8 +632,8 @@ ul[role="listbox"] li[role="option"] {
     border-color: var(--primary-color);
 }
 
-[role="listbox"].focus [role="option"][aria-selected="true"],
-[role="listbox"] [role="option"]:hover {
+[role='listbox'].focus [role='option'][aria-selected='true'],
+[role='listbox'] [role='option']:hover {
     background-color: var(--primary-color);
     color: var(--background-color);
     padding-top: 0.25rem;
@@ -636,92 +653,90 @@ ul[role="listbox"] li[role="option"] {
 
 /* END OF COMBOBOX STYLES */
 /* WELCOME PAGE STYLES */
-   .welcome-container {
-            text-align: center;
-        }
+.welcome-container {
+    text-align: center;
+}
 
-        .welcome-header {
-            margin-bottom: 1.5rem;
-        }
+.welcome-header {
+    margin-bottom: 1.5rem;
+}
 
-        .welcome-header h1 {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-            color: var(--primary-color);
-        }
+.welcome-header h1 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    color: var(--primary-color);
+}
 
-        .welcome-header p {
-            font-size: 1rem;
-            color: var(--secondary-color);
-            line-height: 1.4;
-        }
+.welcome-header p {
+    font-size: 1rem;
+    color: var(--secondary-color);
+    line-height: 1.4;
+}
 
-        .steps-container {
-            text-align: left;
-            margin: 2rem auto;
-            max-width: 100%;
-        }
+.steps-container {
+    text-align: left;
+    margin: 2rem auto;
+    max-width: 100%;
+}
 
-        .steps-container h2 {
-            text-align: center;
-            color: var(--secondary-color);
-            margin-bottom: 1.5rem;
-            font-size: 1.1rem;
-        }
+.steps-container h2 {
+    text-align: center;
+    color: var(--secondary-color);
+    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+}
 
-        .steps-container ol {
-            list-style: none;
-            padding: 0;
-        }
+.steps-container ol {
+    list-style: none;
+    padding: 0;
+}
 
-        .step {
-            background: rgba(255, 255, 255, 0.05);
-            border-left: 4px solid var(--primary-color);
-            padding: 1rem;
-            margin-bottom: 1rem;
-            border-radius: 4px;
-        }
+.step {
+    background: rgba(255, 255, 255, 0.05);
+    border-left: 4px solid var(--primary-color);
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 4px;
+}
 
-        .step span {
-            color: var(--primary-color);
-            font-size: 1rem;
-            margin-top: 0;
-            margin-bottom: 0.5rem;
-            display: block;
-            font-weight: bold;
-        }
+.step span {
+    color: var(--primary-color);
+    font-size: 1rem;
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    display: block;
+    font-weight: bold;
+}
 
-        .step p {
-            margin: 0.5rem 0 0 0;
-            line-height: 1.5;
-            font-size: 0.9rem;
-            display: block;
-        }
+.step p {
+    margin: 0.5rem 0 0 0;
+    line-height: 1.5;
+    font-size: 0.9rem;
+    display: block;
+}
 
-        .cta-buttons {
-            display: flex;
-            gap: 0.75rem;
-            justify-content: center;
-            margin-top: 2rem;
-            flex-wrap: wrap;
-        }
+.cta-buttons {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+}
 
+.features {
+    margin: 1.5rem 0;
+    text-align: left;
+    max-width: 100%;
+}
 
-        .features {
-            margin: 1.5rem 0;
-            text-align: left;
-            max-width: 100%;
-        }
+.features h2 {
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+}
 
-        .features h2 {
-            font-size: 1.1rem;
-            margin-bottom: 0.75rem;
-        }
-
-
-        .features li {
-            padding: 0.5rem 0;
-            position: relative;
-            font-size: 0.9rem;
-            line-height: 1.4;
-        }
+.features li {
+    padding: 0.5rem 0;
+    position: relative;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}

@@ -26,8 +26,8 @@ Your browser extension has been successfully scaffolded with modular AI function
 2. Navigate to **Settings**
 3. Choose your AI provider (OpenAI or Gemini)
 4. Enter your API key:
-   - **OpenAI**: Get from https://platform.openai.com/api-keys
-   - **Gemini**: Get from https://makersuite.google.com/app/apikey
+    - **OpenAI**: Get from https://platform.openai.com/api-keys
+    - **Gemini**: Get from https://makersuite.google.com/app/apikey
 5. Click **Save**
 6. Verify the status shows "✓ Key configured"
 
@@ -50,10 +50,10 @@ Look for the `CONFIG` object near the top of the file (around line 17).
 1. Open any webpage you want to analyze
 2. Click the SenseUI extension icon
 3. Try these commands:
-   - `/describe` - Get a comprehensive page description
-   - `/issues` - Identify accessibility and design issues
-   - Type any question about the page
-   - `/clear` - Clear the chat
+    - `/describe` - Get a comprehensive page description
+    - `/issues` - Identify accessibility and design issues
+    - Type any question about the page
+    - `/clear` - Clear the chat
 
 ## 📁 Project Structure
 
@@ -73,6 +73,7 @@ src/
 ## ✅ Implementation Checklist
 
 ### Phase 1: Basic Setup
+
 - [x] Module structure created
 - [x] Manifest configured
 - [x] All core modules implemented
@@ -80,12 +81,14 @@ src/
 - [ ] **Add API key in Settings**
 
 ### Phase 2: Customization
+
 - [ ] **Replace PLACEHOLDER prompts in config.js**
 - [ ] Test with /describe command
 - [ ] Test with /issues command
 - [ ] Refine prompts based on results
 
 ### Phase 3: Testing
+
 - [ ] Test on simple webpage
 - [ ] Test on complex webpage
 - [ ] Test error handling (wrong API key)
@@ -93,6 +96,7 @@ src/
 - [ ] Test copy/favorite buttons
 
 ### Phase 4: Refinement
+
 - [ ] Optimize prompt engineering
 - [ ] Adjust token limits if needed
 - [ ] Customize styling in styles.css
@@ -101,30 +105,35 @@ src/
 ## 🎯 Key Features Implemented
 
 ### ✅ Content Extraction
+
 - Extracts HTML from active page
 - Captures CSS rules and inline styles
 - Gets computed styles for key elements
 - Collects page metadata
 
 ### ✅ Screenshot Capture
+
 - Full-page screenshot capability
 - Viewport capture
 - Automatic scroll management
 - Image compression options
 
 ### ✅ LLM Integration
+
 - **OpenAI** (GPT-4, GPT-4 Vision)
 - **Gemini** (Gemini 1.5 Pro)
 - Vision analysis with screenshots
 - Unified interface for both providers
 
 ### ✅ Secure Storage
+
 - API keys encrypted with AES-GCM
 - Web Crypto API implementation
 - Keys never stored in plaintext
 - Secure key derivation
 
 ### ✅ Settings Panel
+
 - API key management
 - Provider selection
 - Detail level configuration
@@ -132,6 +141,7 @@ src/
 - Visual status indicators
 
 ### ✅ Response Formatting
+
 - Markdown to HTML conversion
 - Semantic structure
 - Copy to clipboard
@@ -139,6 +149,7 @@ src/
 - Screen reader friendly
 
 ### ✅ Accessibility
+
 - ARIA labels throughout
 - Screen reader announcements
 - Keyboard navigation
@@ -169,28 +180,33 @@ Is this page accessible?
 ## 🐛 Troubleshooting
 
 ### Extension doesn't load
+
 - Check browser console for errors
 - Verify all files are in `src/` folder
 - Reload extension from chrome://extensions/
 
 ### "No API key configured" error
+
 - Go to Settings
 - Add OpenAI or Gemini API key
 - Click Save
 - Try again
 
 ### No response from AI
+
 - Check browser console for API errors
 - Verify API key is valid
 - Check internet connection
 - Verify API has available credits/quota
 
 ### Screenshot not working
+
 - Ensure you're on a normal webpage (not chrome:// or extension pages)
 - Check "tabs" permission in manifest.json
 - Try a simpler page first
 
 ### Content extraction fails
+
 - Verify "scripting" and "activeTab" permissions
 - Check if page allows content access
 - Some pages block extension scripts
@@ -204,7 +220,9 @@ Is this page accessible?
 ## 🎨 Customization Tips
 
 ### Change AI Model
+
 Edit `src/modules/config.js`:
+
 ```javascript
 API: {
     OPENAI: {
@@ -217,6 +235,7 @@ API: {
 ```
 
 ### Adjust Response Length
+
 ```javascript
 API: {
     OPENAI: {
@@ -226,7 +245,9 @@ API: {
 ```
 
 ### Disable Screenshots
+
 In `src/modules/orchestrator.js`, change:
+
 ```javascript
 const { includeScreenshot = false } = options; // set to false
 ```
@@ -260,6 +281,7 @@ const { includeScreenshot = false } = options; // set to false
 ## 📞 Support
 
 If you encounter issues:
+
 1. Check browser console for errors
 2. Review IMPLEMENTATION_GUIDE.md for detailed troubleshooting
 3. Verify API keys are valid and have credits

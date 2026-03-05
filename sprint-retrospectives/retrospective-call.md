@@ -16,7 +16,7 @@ During this meeting we opened a discussion about the development and testing pro
 
 ### User Experience & Functionality
 
-Anil shared that the UX in SenseUI has helped him understand the structure of websites by creating mental models—enabling him to "see" through imagination rather than requiring sight. 
+Anil shared that the UX in SenseUI has helped him understand the structure of websites by creating mental models—enabling him to "see" through imagination rather than requiring sight.
 Anil noted that even government websites, which are often inaccessible with screen readers alone, become understandable through SenseUI's analysis. This shows tool's value not just in webside design but an added bonus of making poorly-designed websites more navigable.
 
 ### Development & Contribution Process
@@ -32,6 +32,7 @@ Both Anil and Paul found the development process straightforward and rewarding:
 ## What Went Not So Well
 
 ### Panel's closing behavior
+
 Anil identified that SenseUI's panel closes when users switch tabs or windows, requiring them to reopen it. While this doesn't start a new session, the automatic closure can be unexpected. Anil suggested keeping the panel open across tab and window changes unless the user explicitly closes it.
 Anil has kindly volunteered to research a solution and try to implement this feature.
 
@@ -50,9 +51,9 @@ Recommendation: Document this as a known limitation of the development process. 
 
 ### Add Context Feature Expansion
 
-The team discussed enhancements to the "Add Context" feature, which allows users to provide contextual information to improve AI feedback accuracy. 
+The team discussed enhancements to the "Add Context" feature, which allows users to provide contextual information to improve AI feedback accuracy.
 We discussed about the importance of [this ticket](https://github.com/reginacas/sense-ui/issues/85), which request that different sets of context/instructions can be used for different projects simultaneously (e.g., Project A and Project B).
-We agree this needs to be prioritized for this feature, which will be live on next sprint. 
+We agree this needs to be prioritized for this feature, which will be live on next sprint.
 
 We also talked about what type of data points could be included in this context, which include:
 
@@ -62,7 +63,7 @@ Users can specify which frameworks their website uses (e.g., Tailwind, Angular, 
 
 #### Desired Aesthetic
 
-Users define the visual direction they want (e.g., elegant, professional, minimalist, playful, corporate). 
+Users define the visual direction they want (e.g., elegant, professional, minimalist, playful, corporate).
 
 #### Website Type & Purpose
 
@@ -72,12 +73,12 @@ Users specify the website category (e.g., e-commerce, landing page, personal por
 
 ## Announcements
 
-The University of Siegen has approved funding to distribute 10 AI API keys with $5 USD worth of credit each to support participants. 
+The University of Siegen has approved funding to distribute 10 AI API keys with $5 USD worth of credit each to support participants.
 
 ---
 
 ## Next Steps for Sprint 4
 
 - Implement the expanded "Add Context" feature with framework, aesthetic, and website type inputs
-- Implement [Ticket 85](https://github.com/reginacas/sense-ui/issues/85) 
+- Implement [Ticket 85](https://github.com/reginacas/sense-ui/issues/85)
 - Evaluate how contextualized prompts improve feedback quality and relevance

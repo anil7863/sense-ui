@@ -1,54 +1,83 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Welcome to SenseUI</title>
+        <link rel="stylesheet" href="styles.css" />
+    </head>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to SenseUI</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-
-<body>
-    <main>
-        <div class="welcome-container">
-            <div class="welcome-header">
-                <h1>Welcome to SenseUI! <span aria-hidden="true">👋</span></h1>
-                <p>The AI-powered design feedback for blind and visually impaired developers</p>
-            </div>
-            <hr>
-            <p style="font-size: 0.9rem; text-align: left;">To open and close it, you can use the keyboard shortcut <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>S</kbd> (or <kbd>Cmd</kbd> + <kbd>Shift</kbd> + <kbd>S</kbd> on Mac).</p>
-
-            <div class="steps-container">
-                <h2>Get Started in 3 Easy Steps:</h2>
-                <ol>
-                    <li class="step">
-                    <span>1. Configure Your AI Provider</span>
-                    <p>Add your OpenAI or Google Gemini API key in the Settings page. Don't worry, your keys are stored securely and never leave your browser.</p>
-                    </li>
-
-                <li class="step">
-                    <span>2. Create Your First Project</span>
-                    <p>Improve and get more tailored AI feedback by creating projects.
-                        Switch between projects using a dropdown in the chat interface. For quick, one-off analyses of random websites, you can skip creating a project.
+    <body>
+        <main>
+            <div class="welcome-container">
+                <div class="welcome-header">
+                    <h1>
+                        Welcome to SenseUI! <span aria-hidden="true">👋</span>
+                    </h1>
+                    <p>
+                        The AI-powered design feedback for blind and visually
+                        impaired developers
                     </p>
-                </li>
+                </div>
+                <hr />
+                <p style="font-size: 0.9rem; text-align: left">
+                    To open and close it, you can use the keyboard shortcut
+                    <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>S</kbd> (or
+                    <kbd>Cmd</kbd> + <kbd>Shift</kbd> + <kbd>S</kbd> on Mac).
+                </p>
 
-                <li class="step">
-                    <span>3. Get AI Feedback</span>
-                    <p>Open SenseUI on any webpage to analyze the current page within the chat using the commands available or giving a custom prompt. If you change something in your page, simply refresh it and the AI will analyze the updated version.</p>
-                </li>
-                </ol>
+                <div class="steps-container">
+                    <h2>Get Started in 3 Easy Steps:</h2>
+                    <ol>
+                        <li class="step">
+                            <span>1. Configure Your AI Provider</span>
+                            <p>
+                                Add your OpenAI or Google Gemini API key in the
+                                Settings page. Don't worry, your keys are stored
+                                securely and never leave your browser.
+                            </p>
+                        </li>
+
+                        <li class="step">
+                            <span>2. Create Your First Project</span>
+                            <p>
+                                Improve and get more tailored AI feedback by
+                                creating projects. Switch between projects using
+                                a dropdown in the chat interface. For quick,
+                                one-off analyses of random websites, you can
+                                skip creating a project.
+                            </p>
+                        </li>
+
+                        <li class="step">
+                            <span>3. Get AI Feedback</span>
+                            <p>
+                                Open SenseUI on any webpage to analyze the
+                                current page within the chat using the commands
+                                available or giving a custom prompt. If you
+                                change something in your page, simply refresh it
+                                and the AI will analyze the updated version.
+                            </p>
+                        </li>
+                    </ol>
+                </div>
+                <h2>Important note</h2>
+                <p>
+                    SenseUI is still in beta, and AI feedback might not always
+                    be accurate. Keep the same caution you would use when
+                    evaluating any AI-generated content.
+                </p>
+
+                <div class="cta-buttons">
+                    <a href="settings.html" class="btn btn-primary"
+                        >Set up your API key</a
+                    >
+                    <a href="help.html" class="btn btn-secondary"
+                        >Visit Help Page</a
+                    >
+                </div>
+                <br />
             </div>
-            <h2>Important note</h2>
-            <p>SenseUI is still in beta, and AI feedback might not always be accurate. Keep the same caution you would use when evaluating any AI-generated content.</p>
-
-            <div class="cta-buttons">
-                <a href="settings.html" class="btn btn-primary">Set up your API key</a>
-                <a href="help.html" class="btn btn-secondary">Visit Help Page</a>
-            </div>
-            <br>
-        </div>
-    </main>
-</body>
-
+        </main>
+    </body>
 </html>
