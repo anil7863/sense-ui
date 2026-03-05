@@ -11,10 +11,10 @@ The Projects feature allows you to save project contexts so SenseUI can provide 
 1. Open SenseUI
 2. Navigate to **Projects** from the main navigation
 3. Fill out the project form:
-   - **Project Name**: Give it a memorable name (e.g., "Portfolio Website")
-   - **Framework & Technologies**: List your stack (e.g., "React, Tailwind CSS, TypeScript")
-   - **Desired Aesthetic**: Describe your visual direction (e.g., "Minimalist and professional")
-   - **Website Type & Purpose**: What's it for? (e.g., "Portfolio website")
+    - **Project Name**: Give it a memorable name (e.g., "Portfolio Website")
+    - **Framework & Technologies**: List your stack (e.g., "React, Tailwind CSS, TypeScript")
+    - **Desired Aesthetic**: Describe your visual direction (e.g., "Minimalist and professional")
+    - **Website Type & Purpose**: What's it for? (e.g., "Portfolio website")
 4. Click **Create Project**
 
 Your project is now saved and will appear in the projects list!
@@ -30,16 +30,18 @@ Your project is now saved and will appear in the projects list!
 ### 3. Example Usage
 
 **Without Projects:**
+
 ```
 You: /describe
 AI: The page has a blue header with white text...
 ```
 
 **With Projects (React + Tailwind CSS):**
+
 ```
 You: /describe
-AI: The page has a blue header with white text. Consider using Tailwind's 
-bg-blue-600 class for consistency. The layout could benefit from React 
+AI: The page has a blue header with white text. Consider using Tailwind's
+bg-blue-600 class for consistency. The layout could benefit from React
 component structure...
 ```
 
@@ -115,6 +117,7 @@ Context about the website's purpose helps AI prioritize relevant feedback.
 ### Evolving Projects
 
 As your project evolves:
+
 1. Edit the project to update frameworks or aesthetic
 2. Changes apply immediately if the project is active
 3. No need to create a new project
@@ -122,6 +125,7 @@ As your project evolves:
 ### Sharing Context with AI
 
 When asking custom questions:
+
 - Project context is automatically included
 - You don't need to repeat your tech stack
 - AI will consider your frameworks when answering
@@ -131,18 +135,21 @@ When asking custom questions:
 Here are some example project configurations:
 
 ### E-commerce Store
+
 - **Name**: My Online Shop
 - **Frameworks**: Shopify Liquid, JavaScript, SCSS
 - **Aesthetic**: Modern and vibrant with playful colors
 - **Purpose**: E-commerce platform for clothing
 
 ### Portfolio Site
+
 - **Name**: Personal Portfolio
 - **Frameworks**: HTML, CSS, Vanilla JavaScript
 - **Aesthetic**: Minimalist and professional
 - **Purpose**: Portfolio website
 
 ### SaaS Dashboard
+
 - **Name**: Analytics Dashboard
 - **Frameworks**: React, Material-UI, TypeScript, Chart.js
 - **Aesthetic**: Corporate and formal with data visualization focus

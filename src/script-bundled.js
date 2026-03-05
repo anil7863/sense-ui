@@ -13,14 +13,14 @@ const CONFIG = {
             ENDPOINT: 'https://api.openai.com/v1/chat/completions',
             MODEL: 'gpt-4o',
             MAX_TOKENS: 6000,
-            TEMPERATURE: 0.3
+            TEMPERATURE: 0.3,
         },
         GEMINI: {
             ENDPOINT: 'https://generativelanguage.googleapis.com/v1beta/models',
             MODEL: 'gemini-3-flash-preview',
             MAX_TOKENS: 6000,
-            TEMPERATURE: 0.4
-        }
+            TEMPERATURE: 0.4,
+        },
     },
     STORAGE_KEYS: {
         OPENAI_API_KEY: 'senseui_openai_key',
@@ -29,10 +29,10 @@ const CONFIG = {
         USER_SETTINGS: 'senseui_settings',
         CHAT_HISTORY: 'senseui_chat_history',
         PROJECTS: 'senseui_projects',
-        ACTIVE_PROJECT: 'senseui_active_project'
+        ACTIVE_PROJECT: 'senseui_active_project',
     },
     PROMPTS: {
-         SYSTEM: `You are a web design assistant helping a blind developer understand and improve their webpage's visual design. You answer questions based on the website screenshot provided.
+        SYSTEM: `You are a web design assistant helping a blind developer understand and improve their webpage's visual design. You answer questions based on the website screenshot provided.
 
 CRITICAL RULES:
 - NEVER use HTML tags in your response (e.g., don't write "<h1>" or "<div>")
@@ -108,7 +108,7 @@ Describe all visible content from top to bottom, using clear positional language
 
 End with: "Want me to analyze a specific section in more detail?"`,
 
-         ISSUES: `Analyze the current webpage for design issues.
+        ISSUES: `Analyze the current webpage for design issues.
 
 OUTPUT FORMAT:
 Start with: ### Issue checklist for [Website Name]
@@ -146,25 +146,31 @@ IMPORTANT RULES:
 1. Be specific and visual in describing violations. Avoid vague statements like "poor contrast" or "bad layout".
 2. Do not cite pixel values, hex color codes, CSS properties, or selector names — you are working from a screenshot only. Describe colors by name (e.g., "light grey", "dark navy") without inventing hex values.
 3. Every response must translate visual observations into meaning — explain not just what something looks like, but what that visual property does for the user experience and how the developer can act on it.
-`
+`,
     },
 
     LIMITS: {
         MAX_HTML_LENGTH: 100000,
         MAX_CSS_LENGTH: 50000,
         SCREENSHOT_QUALITY: 0.8,
-        SCREENSHOT_FORMAT: 'jpeg'
-    }
+        SCREENSHOT_FORMAT: 'jpeg',
+    },
 };
 
 // Parse command from user input
 function parseCommand(userInput) {
     const trimmed = userInput.trim();
     if (trimmed.startsWith('/describe')) {
-        return { command: '/describe', text: trimmed.replace('/describe', '').trim() };
+        return {
+            command: '/describe',
+            text: trimmed.replace('/describe', '').trim(),
+        };
     }
     if (trimmed.startsWith('/issues')) {
-        return { command: '/issues', text: trimmed.replace('/issues', '').trim() };
+        return {
+            command: '/issues',
+            text: trimmed.replace('/issues', '').trim(),
+        };
     }
     return { command: null, text: trimmed };
 }
@@ -172,7 +178,9 @@ function parseCommand(userInput) {
 // Get active project from storage
 async function getActiveProject() {
     try {
-        const result = await chrome.storage.local.get(CONFIG.STORAGE_KEYS.ACTIVE_PROJECT);
+        const result = await chrome.storage.local.get(
+            CONFIG.STORAGE_KEYS.ACTIVE_PROJECT,
+        );
         return result[CONFIG.STORAGE_KEYS.ACTIVE_PROJECT] || null;
     } catch (error) {
         console.error('Error getting active project:', error);
@@ -186,10 +194,10 @@ function enhancePromptWithProject(basePrompt, project) {
         console.log('🔍 No project context - using base prompt only');
         return basePrompt;
     }
-    
+
     const projectContext = `\n\nPROJECT CONTEXT:
 The desired aesthetic is ${project.aesthetic}. The website purpose is ${project.purpose}. Keep these parameters in mind when providing feedback and ensure your suggestions align with the project's design direction.`;
-    
+
     console.log('✅ Project context injected:', projectContext);
     return basePrompt + projectContext;
 }
@@ -217,17 +225,20 @@ async function getPromptForCommand(command, project) {
     switch (command) {
         case '/describe':
             // Check screenshot mode to determine which describe prompt to use
-            const result = await chrome.storage.local.get(CONFIG.STORAGE_KEYS.USER_SETTINGS);
+            const result = await chrome.storage.local.get(
+                CONFIG.STORAGE_KEYS.USER_SETTINGS,
+            );
             const settings = result[CONFIG.STORAGE_KEYS.USER_SETTINGS] || {};
             const screenshotMode = settings.screenshotMode || 'fullpage';
-            return screenshotMode === 'fullpage' ? CONFIG.PROMPTS.DESCRIBE_FULLPAGE : CONFIG.PROMPTS.DESCRIBE;
+            return screenshotMode === 'fullpage'
+                ? CONFIG.PROMPTS.DESCRIBE_FULLPAGE
+                : CONFIG.PROMPTS.DESCRIBE;
         case '/issues':
             return buildIssuesPrompt(project);
         default:
             return ''; // No additional prompt - SYSTEM prompt will be used
     }
 }
-
 
 // ============================================================================
 // ENCRYPTION UTILITIES
@@ -239,7 +250,7 @@ async function getEncryptionPassword() {
         const randomBytes = new Uint8Array(32);
         crypto.getRandomValues(randomBytes);
         sessionKey.senseui_session_key = Array.from(randomBytes)
-            .map(b => b.toString(16).padStart(2, '0'))
+            .map((b) => b.toString(16).padStart(2, '0'))
             .join('');
         await chrome.storage.local.set(sessionKey);
     }
@@ -250,11 +261,18 @@ async function deriveKey(password, salt) {
     const encoder = new TextEncoder();
     const passwordBuffer = encoder.encode(password);
     const keyMaterial = await crypto.subtle.importKey(
-        'raw', passwordBuffer, { name: 'PBKDF2' }, false, ['deriveBits', 'deriveKey']
+        'raw',
+        passwordBuffer,
+        { name: 'PBKDF2' },
+        false,
+        ['deriveBits', 'deriveKey'],
     );
     return await crypto.subtle.deriveKey(
         { name: 'PBKDF2', salt: salt, iterations: 100000, hash: 'SHA-256' },
-        keyMaterial, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']
+        keyMaterial,
+        { name: 'AES-GCM', length: 256 },
+        false,
+        ['encrypt', 'decrypt'],
     );
 }
 
@@ -264,7 +282,11 @@ async function retrieveApiKey(keyName) {
         const encrypted = result[keyName];
         if (!encrypted) return null;
 
-        const combined = new Uint8Array(atob(encrypted).split('').map(c => c.charCodeAt(0)));
+        const combined = new Uint8Array(
+            atob(encrypted)
+                .split('')
+                .map((c) => c.charCodeAt(0)),
+        );
         const salt = combined.slice(0, 16);
         const iv = combined.slice(16, 28);
         const encryptedData = combined.slice(28);
@@ -272,7 +294,9 @@ async function retrieveApiKey(keyName) {
         const password = await getEncryptionPassword();
         const key = await deriveKey(password, salt);
         const decryptedData = await crypto.subtle.decrypt(
-            { name: 'AES-GCM', iv: iv }, key, encryptedData
+            { name: 'AES-GCM', iv: iv },
+            key,
+            encryptedData,
         );
 
         const decoder = new TextDecoder();
@@ -316,7 +340,10 @@ function markdownToHTML(markdown) {
     html = html.replace(/_(.+?)_/g, '<em>$1</em>');
 
     // Process links
-    html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+    html = html.replace(
+        /\[([^\]]+)\]\(([^)]+)\)/g,
+        '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>',
+    );
 
     // Split into lines and wrap paragraphs intelligently
     const lines = html.split('\n');
@@ -329,7 +356,12 @@ function markdownToHTML(markdown) {
         if (!line) continue;
 
         // Don't wrap headings or lists in paragraphs
-        if (line.startsWith('<h') || line.startsWith('<li>') || line.startsWith('<ul>') || line.startsWith('</ul>')) {
+        if (
+            line.startsWith('<h') ||
+            line.startsWith('<li>') ||
+            line.startsWith('<ul>') ||
+            line.startsWith('</ul>')
+        ) {
             processedLines.push(line);
         } else {
             // Wrap plain text in paragraph tags
@@ -348,7 +380,7 @@ function formatResponse(responseText, options = {}) {
         includeHeading = true,
         headingText = 'SenseUI Response',
         addCopyButton = true,
-        responseId = `response-${Date.now()}`
+        responseId = `response-${Date.now()}`,
     } = options;
 
     const contentHTML = markdownToHTML(responseText);
@@ -376,7 +408,7 @@ function formatResponse(responseText, options = {}) {
 
 function attachResponseActions(container, screenshot) {
     const copyButtons = container.querySelectorAll('.copy-button');
-    copyButtons.forEach(button => {
+    copyButtons.forEach((button) => {
         button.addEventListener('click', async () => {
             const targetId = button.getAttribute('data-target');
             const content = document.getElementById(targetId);
@@ -385,16 +417,18 @@ function attachResponseActions(container, screenshot) {
                 try {
                     await navigator.clipboard.writeText(text);
                     button.textContent = 'Copied!';
-                    setTimeout(() => { button.textContent = 'Copy to clipboard'; }, 2000);
+                    setTimeout(() => {
+                        button.textContent = 'Copy to clipboard';
+                    }, 2000);
                 } catch (err) {
                     console.error('Failed to copy:', err);
                 }
-  }
+            }
         });
     });
 
     const downloadButtons = container.querySelectorAll('.download-button');
-    downloadButtons.forEach(button => {
+    downloadButtons.forEach((button) => {
         button.addEventListener('click', () => {
             const targetId = button.getAttribute('data-target');
             const content = document.getElementById(targetId);
@@ -410,7 +444,6 @@ function attachResponseActions(container, screenshot) {
             }
         });
     });
-
 }
 
 // ============================================================================
@@ -418,7 +451,10 @@ function attachResponseActions(container, screenshot) {
 // ============================================================================
 async function captureFullPageScreenshot() {
     try {
-        const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        const [activeTab] = await chrome.tabs.query({
+            active: true,
+            currentWindow: true,
+        });
         if (!activeTab) throw new Error('No active tab found');
 
         // Get page dimensions, scroll position, and device pixel ratio
@@ -432,18 +468,26 @@ async function captureFullPageScreenshot() {
                     viewportWidth: window.innerWidth,
                     originalScrollX: window.scrollX,
                     originalScrollY: window.scrollY,
-                    devicePixelRatio: window.devicePixelRatio || 1
+                    devicePixelRatio: window.devicePixelRatio || 1,
                 };
-            }
+            },
         });
 
-        const { pageHeight, pageWidth, viewportHeight, viewportWidth, originalScrollX, originalScrollY, devicePixelRatio } = dimensions.result;
+        const {
+            pageHeight,
+            pageWidth,
+            viewportHeight,
+            viewportWidth,
+            originalScrollX,
+            originalScrollY,
+            devicePixelRatio,
+        } = dimensions.result;
 
         // If page fits in viewport, just capture normally
         if (pageHeight <= viewportHeight) {
             const dataUrl = await chrome.tabs.captureVisibleTab(null, {
                 format: CONFIG.LIMITS.SCREENSHOT_FORMAT,
-                quality: Math.round(CONFIG.LIMITS.SCREENSHOT_QUALITY * 100)
+                quality: Math.round(CONFIG.LIMITS.SCREENSHOT_QUALITY * 100),
             });
             return dataUrl;
         }
@@ -454,9 +498,10 @@ async function captureFullPageScreenshot() {
             func: () => {
                 const style = document.createElement('style');
                 style.id = '__sense_no_scrollbar';
-                style.textContent = '::-webkit-scrollbar { display: none !important; } * { scrollbar-width: none !important; }';
+                style.textContent =
+                    '::-webkit-scrollbar { display: none !important; } * { scrollbar-width: none !important; }';
                 document.head.appendChild(style);
-            }
+            },
         });
 
         // Calculate number of screenshots needed
@@ -472,23 +517,23 @@ async function captureFullPageScreenshot() {
             await chrome.scripting.executeScript({
                 target: { tabId: activeTab.id },
                 func: (y) => window.scrollTo(0, y),
-                args: [scrollY]
+                args: [scrollY],
             });
 
             // Small delay to let page render
-            await new Promise(resolve => setTimeout(resolve, 100));
+            await new Promise((resolve) => setTimeout(resolve, 100));
 
             // Read the actual (potentially clamped) scroll position
             const [actualScroll] = await chrome.scripting.executeScript({
                 target: { tabId: activeTab.id },
-                func: () => window.scrollY
+                func: () => window.scrollY,
             });
             scrollPositions.push(actualScroll.result);
 
             // Capture this section
             const dataUrl = await chrome.tabs.captureVisibleTab(null, {
                 format: CONFIG.LIMITS.SCREENSHOT_FORMAT,
-                quality: Math.round(CONFIG.LIMITS.SCREENSHOT_QUALITY * 100)
+                quality: Math.round(CONFIG.LIMITS.SCREENSHOT_QUALITY * 100),
             });
             screenshots.push(dataUrl);
 
@@ -499,14 +544,17 @@ async function captureFullPageScreenshot() {
                     target: { tabId: activeTab.id },
                     func: () => {
                         window.__senseHiddenEls = [];
-                        document.querySelectorAll('*').forEach(el => {
+                        document.querySelectorAll('*').forEach((el) => {
                             const pos = window.getComputedStyle(el).position;
                             if (pos === 'fixed' || pos === 'sticky') {
-                                window.__senseHiddenEls.push({ el, visibility: el.style.visibility });
+                                window.__senseHiddenEls.push({
+                                    el,
+                                    visibility: el.style.visibility,
+                                });
                                 el.style.visibility = 'hidden';
                             }
                         });
-                    }
+                    },
                 });
             }
         }
@@ -515,7 +563,7 @@ async function captureFullPageScreenshot() {
         await chrome.scripting.executeScript({
             target: { tabId: activeTab.id },
             func: (x, y) => window.scrollTo(x, y),
-            args: [originalScrollX, originalScrollY]
+            args: [originalScrollX, originalScrollY],
         });
 
         await chrome.scripting.executeScript({
@@ -529,18 +577,32 @@ async function captureFullPageScreenshot() {
                 }
                 const style = document.getElementById('__sense_no_scrollbar');
                 if (style) style.remove();
-            }
+            },
         });
 
         // Stitch screenshots together on a canvas
-        return await stitchScreenshots(screenshots, scrollPositions, viewportWidth, viewportHeight, pageHeight, devicePixelRatio);
+        return await stitchScreenshots(
+            screenshots,
+            scrollPositions,
+            viewportWidth,
+            viewportHeight,
+            pageHeight,
+            devicePixelRatio,
+        );
     } catch (error) {
         console.error('Error capturing full page screenshot:', error);
         return null;
     }
 }
 
-async function stitchScreenshots(screenshots, scrollPositions, width, height, totalHeight, devicePixelRatio) {
+async function stitchScreenshots(
+    screenshots,
+    scrollPositions,
+    width,
+    height,
+    totalHeight,
+    devicePixelRatio,
+) {
     return new Promise((resolve) => {
         const canvas = document.createElement('canvas');
         // Canvas is sized in CSS pixels so the output matches the page layout 1:1
@@ -562,10 +624,21 @@ async function stitchScreenshots(screenshots, scrollPositions, width, height, to
                         // captureVisibleTab returns physical pixels (CSS px * devicePixelRatio).
                         // Specifying destination size (width × height in CSS px) scales it
                         // back down so the stitched image is never zoomed in on HiDPI screens.
-                        ctx.drawImage(image, 0, scrollPositions[i], width, height);
+                        ctx.drawImage(
+                            image,
+                            0,
+                            scrollPositions[i],
+                            width,
+                            height,
+                        );
                     });
 
-                    resolve(canvas.toDataURL(CONFIG.LIMITS.SCREENSHOT_FORMAT, CONFIG.LIMITS.SCREENSHOT_QUALITY));
+                    resolve(
+                        canvas.toDataURL(
+                            CONFIG.LIMITS.SCREENSHOT_FORMAT,
+                            CONFIG.LIMITS.SCREENSHOT_QUALITY,
+                        ),
+                    );
                 }
             };
             img.src = dataUrl;
@@ -576,7 +649,9 @@ async function stitchScreenshots(screenshots, scrollPositions, width, height, to
 async function captureScreenshot() {
     try {
         // Get user's screenshot mode preference
-        const result = await chrome.storage.local.get(CONFIG.STORAGE_KEYS.USER_SETTINGS);
+        const result = await chrome.storage.local.get(
+            CONFIG.STORAGE_KEYS.USER_SETTINGS,
+        );
         const settings = result[CONFIG.STORAGE_KEYS.USER_SETTINGS] || {};
         const screenshotMode = settings.screenshotMode || 'fullpage';
 
@@ -585,12 +660,15 @@ async function captureScreenshot() {
         }
 
         // Default: viewport only
-        const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        const [activeTab] = await chrome.tabs.query({
+            active: true,
+            currentWindow: true,
+        });
         if (!activeTab) throw new Error('No active tab found');
 
         const dataUrl = await chrome.tabs.captureVisibleTab(null, {
             format: CONFIG.LIMITS.SCREENSHOT_FORMAT,
-            quality: Math.round(CONFIG.LIMITS.SCREENSHOT_QUALITY * 100)
+            quality: Math.round(CONFIG.LIMITS.SCREENSHOT_QUALITY * 100),
         });
 
         return dataUrl;
@@ -651,7 +729,10 @@ const contentExtractorCode = `
 
 async function extractPageContent() {
     try {
-        const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        const [activeTab] = await chrome.tabs.query({
+            active: true,
+            currentWindow: true,
+        });
         if (!activeTab) return null;
 
         const [result] = await chrome.scripting.executeScript({
@@ -665,15 +746,20 @@ async function extractPageContent() {
                     const styleSheets = Array.from(document.styleSheets);
                     for (const sheet of styleSheets) {
                         try {
-                            if (sheet.href && !sheet.href.startsWith(window.location.origin)) {
+                            if (
+                                sheet.href &&
+                                !sheet.href.startsWith(window.location.origin)
+                            ) {
                                 cssContent += `/* External stylesheet: ${sheet.href} */\\n`;
                                 continue;
                             }
-                            const rules = Array.from(sheet.cssRules || sheet.rules || []);
+                            const rules = Array.from(
+                                sheet.cssRules || sheet.rules || [],
+                            );
                             for (const rule of rules) {
                                 cssContent += rule.cssText + '\\n';
                             }
-                        } catch (e) { }
+                        } catch (e) {}
                     }
                     return cssContent;
                 }
@@ -681,18 +767,67 @@ async function extractPageContent() {
                     return {
                         title: document.title,
                         url: window.location.href,
-                        viewport: { width: window.innerWidth, height: window.innerHeight }
+                        viewport: {
+                            width: window.innerWidth,
+                            height: window.innerHeight,
+                        },
                     };
                 }
                 function extractComputedStyles() {
-                    const PROPS = ['font-size', 'line-height', 'font-family', 'color', 'background-color', 'margin', 'margin-top', 'margin-bottom', 'margin-left', 'margin-right', 'padding', 'padding-top', 'padding-bottom', 'padding-left', 'padding-right', 'text-align', 'width', 'border-color'];
-                    const SELECTORS = ['body', 'h1', 'h2', 'h3', 'h4', 'p', 'li', 'a', 'button', 'input', 'label', 'header', 'main', 'footer', 'nav', 'section', 'article', '[class*="container"]', '[class*="wrapper"]', '[class*="card"]'];
+                    const PROPS = [
+                        'font-size',
+                        'line-height',
+                        'font-family',
+                        'color',
+                        'background-color',
+                        'margin',
+                        'margin-top',
+                        'margin-bottom',
+                        'margin-left',
+                        'margin-right',
+                        'padding',
+                        'padding-top',
+                        'padding-bottom',
+                        'padding-left',
+                        'padding-right',
+                        'text-align',
+                        'width',
+                        'border-color',
+                    ];
+                    const SELECTORS = [
+                        'body',
+                        'h1',
+                        'h2',
+                        'h3',
+                        'h4',
+                        'p',
+                        'li',
+                        'a',
+                        'button',
+                        'input',
+                        'label',
+                        'header',
+                        'main',
+                        'footer',
+                        'nav',
+                        'section',
+                        'article',
+                        '[class*="container"]',
+                        '[class*="wrapper"]',
+                        '[class*="card"]',
+                    ];
                     const results = [];
                     for (const sel of SELECTORS) {
-                        const els = Array.from(document.querySelectorAll(sel)).slice(0, 3);
+                        const els = Array.from(
+                            document.querySelectorAll(sel),
+                        ).slice(0, 3);
                         for (const el of els) {
                             const cs = window.getComputedStyle(el);
-                            const identifier = el.id ? `#${el.id}` : el.className ? `${el.tagName.toLowerCase()}.${el.className.trim().split(' ')[0]}` : el.tagName.toLowerCase();
+                            const identifier = el.id
+                                ? `#${el.id}`
+                                : el.className
+                                  ? `${el.tagName.toLowerCase()}.${el.className.trim().split(' ')[0]}`
+                                  : el.tagName.toLowerCase();
                             const styles = {};
                             for (const prop of PROPS) {
                                 styles[prop] = cs.getPropertyValue(prop).trim();
@@ -706,9 +841,9 @@ async function extractPageContent() {
                     html: extractHTML().substring(0, 100000),
                     css: extractCSS().substring(0, 50000),
                     metadata: extractMetadata(),
-                    computedStyles: extractComputedStyles()
+                    computedStyles: extractComputedStyles(),
                 };
-            }
+            },
         });
 
         return result?.result || null;
@@ -725,7 +860,9 @@ async function extractPageContent() {
 // Helper to resolve which model to use for each provider based on settings
 async function getModelForProvider(provider) {
     try {
-        const result = await chrome.storage.local.get(CONFIG.STORAGE_KEYS.USER_SETTINGS);
+        const result = await chrome.storage.local.get(
+            CONFIG.STORAGE_KEYS.USER_SETTINGS,
+        );
         const settings = result[CONFIG.STORAGE_KEYS.USER_SETTINGS] || {};
 
         if (provider === 'openai') {
@@ -746,8 +883,13 @@ async function getModelForProvider(provider) {
             return raw.startsWith('models/') ? raw : raw;
         }
     } catch (error) {
-        console.error('Error reading model from settings, using defaults:', error);
-        return provider === 'openai' ? CONFIG.API.OPENAI.MODEL : CONFIG.API.GEMINI.MODEL;
+        console.error(
+            'Error reading model from settings, using defaults:',
+            error,
+        );
+        return provider === 'openai'
+            ? CONFIG.API.OPENAI.MODEL
+            : CONFIG.API.GEMINI.MODEL;
     }
 }
 
@@ -775,11 +917,15 @@ Once updated, retry your request.`;
 
 async function sendToLLM(userMessage, context, systemPrompt, provider) {
     const apiKey = await retrieveApiKey(
-        provider === 'openai' ? CONFIG.STORAGE_KEYS.OPENAI_API_KEY : CONFIG.STORAGE_KEYS.GEMINI_API_KEY
+        provider === 'openai'
+            ? CONFIG.STORAGE_KEYS.OPENAI_API_KEY
+            : CONFIG.STORAGE_KEYS.GEMINI_API_KEY,
     );
 
     if (!apiKey) {
-        throw new Error('API key not configured. Please add an API key in Settings.');
+        throw new Error(
+            'API key not configured. Please add an API key in Settings.',
+        );
     }
 
     // Build context text
@@ -794,10 +940,14 @@ async function sendToLLM(userMessage, context, systemPrompt, provider) {
         contextText += `\\n\\nCSS:\\n${context.css.substring(0, 15000)}`;
     }
     if (context.computedStyles && context.computedStyles.length > 0) {
-        const stylesText = context.computedStyles.map(entry => {
-            const props = Object.entries(entry.styles).map(([k, v]) => `  ${k}: ${v}`).join('\\n');
-            return `${entry.selector}:\\n${props}`;
-        }).join('\\n\\n');
+        const stylesText = context.computedStyles
+            .map((entry) => {
+                const props = Object.entries(entry.styles)
+                    .map(([k, v]) => `  ${k}: ${v}`)
+                    .join('\\n');
+                return `${entry.selector}:\\n${props}`;
+            })
+            .join('\\n\\n');
         contextText += `\\n\\nCOMPUTED STYLES (browser-resolved values):\\n${stylesText}`;
     }
 
@@ -805,24 +955,43 @@ async function sendToLLM(userMessage, context, systemPrompt, provider) {
     const model = await getModelForProvider(provider);
 
     if (provider === 'openai') {
-        return await sendToOpenAI(apiKey, systemPrompt, fullMessage, context.screenshot, model);
+        return await sendToOpenAI(
+            apiKey,
+            systemPrompt,
+            fullMessage,
+            context.screenshot,
+            model,
+        );
     } else {
-        return await sendToGemini(apiKey, systemPrompt, fullMessage, context.screenshot, model);
+        return await sendToGemini(
+            apiKey,
+            systemPrompt,
+            fullMessage,
+            context.screenshot,
+            model,
+        );
     }
 }
 
-async function sendToOpenAI(apiKey, systemPrompt, userMessage, screenshot, modelName) {
-    const messages = [
-        { role: 'system', content: systemPrompt }
-    ];
+async function sendToOpenAI(
+    apiKey,
+    systemPrompt,
+    userMessage,
+    screenshot,
+    modelName,
+) {
+    const messages = [{ role: 'system', content: systemPrompt }];
 
     if (screenshot) {
         messages.push({
             role: 'user',
             content: [
                 { type: 'text', text: userMessage },
-                { type: 'image_url', image_url: { url: screenshot, detail: 'high' } }
-            ]
+                {
+                    type: 'image_url',
+                    image_url: { url: screenshot, detail: 'high' },
+                },
+            ],
         });
     } else {
         messages.push({ role: 'user', content: userMessage });
@@ -833,24 +1002,30 @@ async function sendToOpenAI(apiKey, systemPrompt, userMessage, screenshot, model
     const body = {
         model: model,
         messages: messages,
-        temperature: CONFIG.API.OPENAI.TEMPERATURE
+        temperature: CONFIG.API.OPENAI.TEMPERATURE,
     };
 
     const response = await fetch(CONFIG.API.OPENAI.ENDPOINT, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${apiKey}`
+            Authorization: `Bearer ${apiKey}`,
         },
         body: JSON.stringify(body),
-        signal: currentAbortController?.signal
+        signal: currentAbortController?.signal,
     });
 
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        const rawMessage = errorData.error?.message || `OpenAI API error: ${response.status}`;
+        const rawMessage =
+            errorData.error?.message || `OpenAI API error: ${response.status}`;
         const lower = rawMessage.toLowerCase();
-        if (lower.includes('model') && (lower.includes('not found') || lower.includes('does not exist') || lower.includes('not valid'))) {
+        if (
+            lower.includes('model') &&
+            (lower.includes('not found') ||
+                lower.includes('does not exist') ||
+                lower.includes('not valid'))
+        ) {
             throw new Error(getUnknownModelHelpMessage());
         }
         throw new Error(rawMessage);
@@ -863,7 +1038,13 @@ async function sendToOpenAI(apiKey, systemPrompt, userMessage, screenshot, model
     return data.choices[0].message.content;
 }
 
-async function sendToGemini(apiKey, systemPrompt, userMessage, screenshot, modelName) {
+async function sendToGemini(
+    apiKey,
+    systemPrompt,
+    userMessage,
+    screenshot,
+    modelName,
+) {
     const model = modelName || CONFIG.API.GEMINI.MODEL;
     const endpoint = `${CONFIG.API.GEMINI.ENDPOINT}/${model}:generateContent?key=${apiKey}`;
 
@@ -875,7 +1056,7 @@ async function sendToGemini(apiKey, systemPrompt, userMessage, screenshot, model
         const matches = screenshot.match(/^data:(.+);base64,(.+)$/);
         if (matches) {
             parts.push({
-                inlineData: { mimeType: matches[1], data: matches[2] }
+                inlineData: { mimeType: matches[1], data: matches[2] },
             });
         }
     }
@@ -884,24 +1065,31 @@ async function sendToGemini(apiKey, systemPrompt, userMessage, screenshot, model
         contents: [{ role: 'user', parts: parts }],
         generationConfig: {
             temperature: CONFIG.API.GEMINI.TEMPERATURE,
-            maxOutputTokens: CONFIG.API.GEMINI.MAX_TOKENS
-        }
+            maxOutputTokens: CONFIG.API.GEMINI.MAX_TOKENS,
+        },
     };
 
     const response = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(requestBody),
-        signal: currentAbortController?.signal
+        signal: currentAbortController?.signal,
     });
 
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        const errorMessage = errorData.error?.message || `Gemini API error: ${response.status}`;
+        const errorMessage =
+            errorData.error?.message || `Gemini API error: ${response.status}`;
         console.error('Gemini API Error:', errorData);
 
         const lower = errorMessage.toLowerCase();
-        if (lower.includes('model') && (lower.includes('not found') || lower.includes('not valid') || lower.includes('does not exist') || lower.includes('unsupported'))) {
+        if (
+            lower.includes('model') &&
+            (lower.includes('not found') ||
+                lower.includes('not valid') ||
+                lower.includes('does not exist') ||
+                lower.includes('unsupported'))
+        ) {
             throw new Error(getUnknownModelHelpMessage());
         }
 
@@ -909,7 +1097,11 @@ async function sendToGemini(apiKey, systemPrompt, userMessage, screenshot, model
     }
 
     const data = await response.json();
-    if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
+    if (
+        !data.candidates ||
+        !data.candidates[0] ||
+        !data.candidates[0].content
+    ) {
         console.error('Invalid Gemini response:', data);
         throw new Error('Invalid response from Gemini API');
     }
@@ -917,11 +1109,19 @@ async function sendToGemini(apiKey, systemPrompt, userMessage, screenshot, model
     // Check if response was cut off due to safety filters or finish reason
     const candidate = data.candidates[0];
     if (candidate.finishReason && candidate.finishReason !== 'STOP') {
-        console.warn('⚠️ Gemini response ended early. Finish reason:', candidate.finishReason);
+        console.warn(
+            '⚠️ Gemini response ended early. Finish reason:',
+            candidate.finishReason,
+        );
         if (candidate.finishReason === 'MAX_TOKENS') {
-            console.warn('⚠️ Response hit token limit. Consider increasing MAX_TOKENS.');
+            console.warn(
+                '⚠️ Response hit token limit. Consider increasing MAX_TOKENS.',
+            );
         } else if (candidate.finishReason === 'SAFETY') {
-            console.warn('⚠️ Response blocked by safety filters:', candidate.safetyRatings);
+            console.warn(
+                '⚠️ Response blocked by safety filters:',
+                candidate.safetyRatings,
+            );
         }
     }
 
@@ -931,17 +1131,23 @@ async function sendToGemini(apiKey, systemPrompt, userMessage, screenshot, model
 
     // Log token usage if available
     if (data.usageMetadata) {
-        console.log(`📊 Tokens used - Input: ${data.usageMetadata.promptTokenCount}, Output: ${data.usageMetadata.candidatesTokenCount}, Total: ${data.usageMetadata.totalTokenCount}`);
+        console.log(
+            `📊 Tokens used - Input: ${data.usageMetadata.promptTokenCount}, Output: ${data.usageMetadata.candidatesTokenCount}, Total: ${data.usageMetadata.totalTokenCount}`,
+        );
     }
 
     // Safely extract text from content parts
     const contentParts = candidate.content.parts;
-    if (!contentParts || !Array.isArray(contentParts) || contentParts.length === 0) {
+    if (
+        !contentParts ||
+        !Array.isArray(contentParts) ||
+        contentParts.length === 0
+    ) {
         console.error('No text parts in Gemini response:', data);
         throw new Error('Gemini response has no content parts');
     }
 
-    return contentParts.map(part => part.text || '').join('');
+    return contentParts.map((part) => part.text || '').join('');
 }
 
 // ============================================================================
@@ -952,7 +1158,10 @@ async function capturePageContext() {
 
     try {
         context.screenshot = await captureScreenshot();
-        console.log('✅ Screenshot captured:', context.screenshot ? 'Yes' : 'No');
+        console.log(
+            '✅ Screenshot captured:',
+            context.screenshot ? 'Yes' : 'No',
+        );
         announce('Screenshot captured');
     } catch (error) {
         console.error('Screenshot error:', error);
@@ -967,7 +1176,10 @@ async function capturePageContext() {
             context.metadata = pageContent.metadata;
             context.computedStyles = pageContent.computedStyles;
             context.url = pageContent.metadata?.url;
-            console.log('✅ Page content extracted:', pageContent.metadata?.title || 'Unknown page');
+            console.log(
+                '✅ Page content extracted:',
+                pageContent.metadata?.title || 'Unknown page',
+            );
             announce('Page content extracted');
         }
     } catch (error) {
@@ -979,7 +1191,9 @@ async function capturePageContext() {
 
 async function processUserInput(userInput, forceRefresh = false) {
     // Check if API key is configured
-    const result = await chrome.storage.local.get(CONFIG.STORAGE_KEYS.SELECTED_PROVIDER);
+    const result = await chrome.storage.local.get(
+        CONFIG.STORAGE_KEYS.SELECTED_PROVIDER,
+    );
     const provider = result[CONFIG.STORAGE_KEYS.SELECTED_PROVIDER] || 'openai';
 
     // Parse command
@@ -988,8 +1202,10 @@ async function processUserInput(userInput, forceRefresh = false) {
     // Get active project first so it can be passed to prompt builders
     const activeProject = await getActiveProject();
 
-    const commandPrompt = command ? await getPromptForCommand(command, activeProject) : '';
-    
+    const commandPrompt = command
+        ? await getPromptForCommand(command, activeProject)
+        : '';
+
     // Build the complete system prompt:
     // 1. Always start with SYSTEM prompt (the foundation)
     // 2. Add command-specific prompt if a command was used
@@ -1007,7 +1223,10 @@ async function processUserInput(userInput, forceRefresh = false) {
     let context = {};
 
     // Get current page URL to detect navigation
-    const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    const [activeTab] = await chrome.tabs.query({
+        active: true,
+        currentWindow: true,
+    });
     const pageUrl = activeTab?.url;
 
     // Use cached context if available and page hasn't changed
@@ -1024,35 +1243,54 @@ async function processUserInput(userInput, forceRefresh = false) {
     }
 
     // Only send HTML/CSS/computed styles for /describe — all other commands use screenshot + metadata only
-    const llmContext = command === '/describe'
-        ? context
-        : { screenshot: context.screenshot, metadata: context.metadata ? { title: context.metadata.title, url: context.metadata.url } : null };
+    const llmContext =
+        command === '/describe'
+            ? context
+            : {
+                  screenshot: context.screenshot,
+                  metadata: context.metadata
+                      ? {
+                            title: context.metadata.title,
+                            url: context.metadata.url,
+                        }
+                      : null,
+              };
 
     const label = command || '(no command)';
     console.log(`[${label}] html included:`, 'html' in llmContext);
     console.log(`[${label}] css included:`, 'css' in llmContext);
-    console.log(`[${label}] computedStyles included:`, 'computedStyles' in llmContext);
+    console.log(
+        `[${label}] computedStyles included:`,
+        'computedStyles' in llmContext,
+    );
     console.log(`[${label}] screenshot included:`, !!llmContext.screenshot);
     console.log(`[${label}] metadata sent:`, llmContext.metadata);
 
     // Send to LLM
     const userMessage = text || userInput;
-    const responseText = await sendToLLM(userMessage, llmContext, systemPrompt, provider);
+    const responseText = await sendToLLM(
+        userMessage,
+        llmContext,
+        systemPrompt,
+        provider,
+    );
 
     // Format response
     const responseHTML = formatResponse(responseText, {
         headingText: 'SenseUI said:',
         includeHeading: true,
-        addCopyButton: true
+        addCopyButton: true,
     });
 
-    const summary = responseText.substring(0, 150) + (responseText.length > 150 ? '...' : '');
+    const summary =
+        responseText.substring(0, 150) +
+        (responseText.length > 150 ? '...' : '');
 
     return {
         html: responseHTML,
         summary: `SenseUI said: ${summary}`,
         screenshot: context.screenshot || null,
-        error: null
+        error: null,
     };
 }
 
@@ -1078,7 +1316,9 @@ async function saveChatHistory() {
     if (!chatMessages) return;
     const html = chatMessages.innerHTML;
     try {
-        await chrome.storage.local.set({ [CONFIG.STORAGE_KEYS.CHAT_HISTORY]: html });
+        await chrome.storage.local.set({
+            [CONFIG.STORAGE_KEYS.CHAT_HISTORY]: html,
+        });
     } catch (error) {
         console.error('Failed to save chat history:', error);
     }
@@ -1088,7 +1328,9 @@ async function saveChatHistory() {
 async function loadChatHistory() {
     if (!chatMessages) return;
     try {
-        const result = await chrome.storage.local.get(CONFIG.STORAGE_KEYS.CHAT_HISTORY);
+        const result = await chrome.storage.local.get(
+            CONFIG.STORAGE_KEYS.CHAT_HISTORY,
+        );
         const savedHtml = result[CONFIG.STORAGE_KEYS.CHAT_HISTORY];
         if (savedHtml) {
             chatMessages.innerHTML = savedHtml;
@@ -1114,7 +1356,9 @@ async function clearChatHistory() {
 // Load button visibility setting and show/hide buttons accordingly
 async function loadButtonVisibilitySetting() {
     try {
-        const result = await chrome.storage.local.get(CONFIG.STORAGE_KEYS.USER_SETTINGS);
+        const result = await chrome.storage.local.get(
+            CONFIG.STORAGE_KEYS.USER_SETTINGS,
+        );
         const settings = result[CONFIG.STORAGE_KEYS.USER_SETTINGS] || {};
         const showButtons = settings.showButtons || false;
 
@@ -1147,7 +1391,9 @@ async function loadButtonVisibilitySetting() {
  */
 async function getAllProjects() {
     try {
-        const result = await chrome.storage.local.get(CONFIG.STORAGE_KEYS.PROJECTS);
+        const result = await chrome.storage.local.get(
+            CONFIG.STORAGE_KEYS.PROJECTS,
+        );
         return result[CONFIG.STORAGE_KEYS.PROJECTS] || [];
     } catch (error) {
         console.error('Error getting projects:', error);
@@ -1161,9 +1407,13 @@ async function getAllProjects() {
 async function setActiveProject(project) {
     try {
         if (project === null) {
-            await chrome.storage.local.remove(CONFIG.STORAGE_KEYS.ACTIVE_PROJECT);
+            await chrome.storage.local.remove(
+                CONFIG.STORAGE_KEYS.ACTIVE_PROJECT,
+            );
         } else {
-            await chrome.storage.local.set({ [CONFIG.STORAGE_KEYS.ACTIVE_PROJECT]: project });
+            await chrome.storage.local.set({
+                [CONFIG.STORAGE_KEYS.ACTIVE_PROJECT]: project,
+            });
         }
     } catch (error) {
         console.error('Error setting active project:', error);
@@ -1176,18 +1426,18 @@ async function setActiveProject(project) {
  */
 async function loadProjectsDropdown() {
     if (!projectSelect) return;
-    
+
     const projects = await getAllProjects();
     const activeProject = await getActiveProject();
-    
+
     // Clear existing options except the first one (No project selected)
     projectSelect.innerHTML = '<option value="">No project selected</option>';
-    
+
     // Sort projects alphabetically
     projects.sort((a, b) => a.name.localeCompare(b.name));
-    
+
     // Add project options
-    projects.forEach(project => {
+    projects.forEach((project) => {
         const option = document.createElement('option');
         option.value = project.id;
         option.textContent = project.name;
@@ -1203,30 +1453,30 @@ async function loadProjectsDropdown() {
  */
 async function handleProjectChange() {
     const selectedId = projectSelect.value;
-    
+
     if (!selectedId) {
         // No project selected
         await setActiveProject(null);
-        
+
         // Add system message to chat
         const systemMsg = document.createElement('div');
         systemMsg.className = 'system-response';
         systemMsg.innerHTML = `<h2>System</h2><p>Project context cleared. Using generic feedback mode.</p>`;
         chatMessages.appendChild(systemMsg);
         chatMessages.scrollTop = chatMessages.scrollHeight;
-        
+
         announce('Project context cleared');
         await saveChatHistory();
         return;
     }
-    
+
     // Find the selected project
     const projects = await getAllProjects();
-    const selectedProject = projects.find(p => p.id === selectedId);
-    
+    const selectedProject = projects.find((p) => p.id === selectedId);
+
     if (selectedProject) {
         await setActiveProject(selectedProject);
-        
+
         // Add system message to chat
         const systemMsg = document.createElement('div');
         systemMsg.className = 'system-response';
@@ -1236,7 +1486,7 @@ async function handleProjectChange() {
         • Purpose: ${selectedProject.purpose}</p>`;
         chatMessages.appendChild(systemMsg);
         chatMessages.scrollTop = chatMessages.scrollHeight;
-        
+
         announce(`Project loaded: ${selectedProject.name}`);
         await saveChatHistory();
     }
@@ -1258,7 +1508,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     const result = await chrome.storage.local.get('senseui_first_time');
     if (result.senseui_first_time === true) {
         // Clear the flag and redirect to welcome page
-        await chrome.storage.local.set({ 'senseui_first_time': false });
+        await chrome.storage.local.set({ senseui_first_time: false });
         window.location.href = 'welcome.html';
         return; // Stop further initialization
     }
@@ -1271,7 +1521,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     // Load saved chat history
     await loadChatHistory();
-    
+
     // Load projects dropdown if it exists
     if (projectSelect) {
         await loadProjectsDropdown();
@@ -1302,13 +1552,17 @@ window.addEventListener('DOMContentLoaded', async () => {
 function setupCommandSuggestions() {
     if (!chatInput || !commandDatalist) return;
 
-    const allOptions = Array.from(commandDatalist.querySelectorAll('option')).map(o => o.value);
+    const allOptions = Array.from(
+        commandDatalist.querySelectorAll('option'),
+    ).map((o) => o.value);
     let lastAnnouncedCount = null;
     let previousValue = '';
 
     function countFilteredOptions(query) {
         if (!query) return allOptions.length;
-        return allOptions.filter(opt => opt.toLowerCase().includes(query.toLowerCase())).length;
+        return allOptions.filter((opt) =>
+            opt.toLowerCase().includes(query.toLowerCase()),
+        ).length;
     }
 
     chatInput._resetCommandState = () => {
@@ -1324,14 +1578,22 @@ function setupCommandSuggestions() {
             announce(`Commands menu available. ${allOptions.length} options.`);
             lastAnnouncedCount = allOptions.length;
         } else if (val.startsWith('/') && val.length > 1) {
-            if (!chatInput.hasAttribute('list')) chatInput.setAttribute('list', 'command-list');
+            if (!chatInput.hasAttribute('list'))
+                chatInput.setAttribute('list', 'command-list');
             const count = countFilteredOptions(val);
             if (count !== lastAnnouncedCount) {
-                announce(count === 0 ? 'No matching commands' : count === 1 ? '1 command available' : `${count} commands available`);
+                announce(
+                    count === 0
+                        ? 'No matching commands'
+                        : count === 1
+                          ? '1 command available'
+                          : `${count} commands available`,
+                );
                 lastAnnouncedCount = count;
             }
         } else if (!val.startsWith('/') && previousValue.startsWith('/')) {
-            if (chatInput.hasAttribute('list')) chatInput.removeAttribute('list');
+            if (chatInput.hasAttribute('list'))
+                chatInput.removeAttribute('list');
             lastAnnouncedCount = null;
         }
         previousValue = val;
@@ -1349,7 +1611,8 @@ function setupCommandSuggestions() {
     chatInput.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && chatInput.value.startsWith('/')) {
             announce('Commands closed');
-            if (chatInput.hasAttribute('list')) chatInput.removeAttribute('list');
+            if (chatInput.hasAttribute('list'))
+                chatInput.removeAttribute('list');
             lastAnnouncedCount = null;
         }
     });
@@ -1399,7 +1662,10 @@ async function downloadChatHistory() {
 
     announce('Preparing download...');
 
-    const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    const [activeTab] = await chrome.tabs.query({
+        active: true,
+        currentWindow: true,
+    });
     const pageUrl = activeTab?.url || 'Unknown page';
     const pageTitle = activeTab?.title || 'Unknown title';
     const timestamp = new Date().toLocaleString();
@@ -1483,18 +1749,24 @@ async function downloadChatHistory() {
     announce('Chat history downloaded as HTML');
 }
 
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-        const activeElement = document.activeElement;
-        if (activeElement &&
-            (activeElement.tagName === 'INPUT' ||
-                activeElement.tagName === 'TEXTAREA' ||
-                activeElement.isContentEditable)) {
-            e.preventDefault();
-            e.stopPropagation();
+document.addEventListener(
+    'keydown',
+    (e) => {
+        if (e.key === 'Escape') {
+            const activeElement = document.activeElement;
+            if (
+                activeElement &&
+                (activeElement.tagName === 'INPUT' ||
+                    activeElement.tagName === 'TEXTAREA' ||
+                    activeElement.isContentEditable)
+            ) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
         }
-    }
-}, true);
+    },
+    true,
+);
 
 async function sendMessage() {
     // If currently generating, stop it
@@ -1640,7 +1912,6 @@ async function sendMessage() {
 
         // Save chat history after successful response
         await saveChatHistory();
-
     } catch (error) {
         console.error('Error:', error);
         loadingDiv.remove();
@@ -1658,9 +1929,11 @@ async function sendMessage() {
             errorDiv.innerHTML = `
                 <h2>Error</h2>
                 <p>${error.message}</p>
-                ${error.message.includes('API key') ?
-                    '<p>Please visit <a href="settings.html">Settings</a> to configure your API key.</p>' :
-                    '<p>Please try again or check the console for more details.</p>'}
+                ${
+                    error.message.includes('API key')
+                        ? '<p>Please visit <a href="settings.html">Settings</a> to configure your API key.</p>'
+                        : '<p>Please try again or check the console for more details.</p>'
+                }
             `;
             chatMessages.appendChild(errorDiv);
             announce(`Error: ${error.message}`);

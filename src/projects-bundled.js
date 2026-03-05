@@ -8,7 +8,7 @@
 // ============================================================================
 const STORAGE_KEYS = {
     PROJECTS: 'senseui_projects',
-    ACTIVE_PROJECT: 'senseui_active_project'
+    ACTIVE_PROJECT: 'senseui_active_project',
 };
 
 // ============================================================================
@@ -40,10 +40,10 @@ async function saveProject(project, projectId = null) {
         console.log('💾 Attempting to save project:', { project, projectId });
         const projects = await getAllProjects();
         console.log('📋 Current projects count:', projects.length);
-        
+
         if (projectId) {
             // Update existing project - preserve existing fields like createdAt
-            const index = projects.findIndex(p => p.id === projectId);
+            const index = projects.findIndex((p) => p.id === projectId);
             if (index !== -1) {
                 projects[index] = { ...projects[index], ...project };
                 console.log('✏️ Updated existing project at index:', index);
@@ -53,15 +53,17 @@ async function saveProject(project, projectId = null) {
             const newProject = {
                 ...project,
                 id: Date.now().toString(),
-                createdAt: new Date().toISOString()
+                createdAt: new Date().toISOString(),
             };
             projects.push(newProject);
             console.log('➕ Created new project with ID:', newProject.id);
         }
-        
+
         await chrome.storage.local.set({ [STORAGE_KEYS.PROJECTS]: projects });
         console.log('✅ Project saved successfully to storage');
-        return projectId ? projects.find(p => p.id === projectId) : projects[projects.length - 1];
+        return projectId
+            ? projects.find((p) => p.id === projectId)
+            : projects[projects.length - 1];
     } catch (error) {
         console.error('❌ Error saving project:', error);
         console.error('Error details:', error.message, error.stack);
@@ -77,9 +79,9 @@ async function saveProject(project, projectId = null) {
 async function deleteProject(projectId) {
     try {
         const projects = await getAllProjects();
-        const filtered = projects.filter(p => p.id !== projectId);
+        const filtered = projects.filter((p) => p.id !== projectId);
         await chrome.storage.local.set({ [STORAGE_KEYS.PROJECTS]: filtered });
-        
+
         // Clear active project if it was deleted
         const activeProject = await getActiveProject();
         if (activeProject && activeProject.id === projectId) {
@@ -97,7 +99,9 @@ async function deleteProject(projectId) {
  */
 async function getActiveProject() {
     try {
-        const result = await chrome.storage.local.get(STORAGE_KEYS.ACTIVE_PROJECT);
+        const result = await chrome.storage.local.get(
+            STORAGE_KEYS.ACTIVE_PROJECT,
+        );
         return result[STORAGE_KEYS.ACTIVE_PROJECT] || null;
     } catch (error) {
         console.error('Error getting active project:', error);
@@ -115,7 +119,9 @@ async function setActiveProject(project) {
         if (project === null) {
             await chrome.storage.local.remove(STORAGE_KEYS.ACTIVE_PROJECT);
         } else {
-            await chrome.storage.local.set({ [STORAGE_KEYS.ACTIVE_PROJECT]: project });
+            await chrome.storage.local.set({
+                [STORAGE_KEYS.ACTIVE_PROJECT]: project,
+            });
         }
     } catch (error) {
         console.error('Error setting active project:', error);
@@ -135,77 +141,78 @@ let projectToDelete = null;
 async function renderProjectsList() {
     const projects = await getAllProjects();
     const projectsList = document.getElementById('projects-list');
-    
+
     if (!projectsList) {
         console.error('❌ projects-list element not found in DOM');
         return;
     }
-    
+
     // Clear the list
     projectsList.innerHTML = '';
-    
+
     if (projects.length === 0) {
         const noProjectsMessage = document.createElement('p');
         noProjectsMessage.id = 'no-projects-message';
-        noProjectsMessage.textContent = 'No projects yet. Create your first project below.';
+        noProjectsMessage.textContent =
+            'No projects yet. Create your first project below.';
         projectsList.appendChild(noProjectsMessage);
         return;
     }
-    
+
     // Sort projects alphabetically by name
     projects.sort((a, b) => a.name.localeCompare(b.name));
-    
-    projects.forEach(project => {
+
+    projects.forEach((project) => {
         const projectItem = document.createElement('div');
         projectItem.className = 'project-item';
         projectItem.role = 'listitem';
-        
+
         const projectInfo = document.createElement('div');
         projectInfo.className = 'project-info';
-        
+
         const projectName = document.createElement('h3');
         projectName.textContent = project.name;
         projectInfo.appendChild(projectName);
-        
+
         // Create collapsible details section
         const detailsElement = document.createElement('details');
         detailsElement.className = 'project-details-toggle';
-        
+
         const summary = document.createElement('summary');
         summary.textContent = 'Details';
-        
+
         const projectDetails = document.createElement('div');
         projectDetails.className = 'project-details-content';
         projectDetails.innerHTML = `<p><strong>Aesthetic:</strong> ${project.aesthetic}</p>
                                     <p><strong>Purpose:</strong> ${project.purpose}</p>`;
-        
+
         detailsElement.appendChild(summary);
         detailsElement.appendChild(projectDetails);
         projectInfo.appendChild(detailsElement);
-        
+
         const projectActions = document.createElement('div');
         projectActions.className = 'project-actions';
-        
+
         const editBtn = document.createElement('button');
         editBtn.type = 'button';
         editBtn.className = 'btn-secondary';
         editBtn.textContent = 'Edit';
         editBtn.setAttribute('aria-label', `Edit ${project.name}`);
         editBtn.onclick = () => editProject(project);
-        
+
         const deleteBtn = document.createElement('button');
         deleteBtn.type = 'button';
         deleteBtn.className = 'btn-secondary';
         deleteBtn.textContent = 'Delete';
         deleteBtn.setAttribute('aria-label', `Delete ${project.name}`);
         deleteBtn.onclick = () => showDeleteDialog(project);
-        
+
         projectActions.appendChild(editBtn);
         projectActions.appendChild(deleteBtn);
-        
+
         projectItem.appendChild(projectInfo);
         projectItem.appendChild(projectActions);
-        
+
         projectsList.appendChild(projectItem);
     });
 }
@@ -218,16 +225,19 @@ function editProject(project) {
     document.getElementById('project-aesthetic').value = project.aesthetic;
     document.getElementById('project-purpose').value = project.purpose;
     document.getElementById('edit-project-id').value = project.id;
-    
+
     // Update form heading and button text
-    document.getElementById('project-form-heading').textContent = 'Edit Project';
+    document.getElementById('project-form-heading').textContent =
+        'Edit Project';
     document.getElementById('save-project-btn').textContent = 'Save Changes';
     document.getElementById('cancel-edit-btn').style.display = 'inline-block';
-    
+
     // Scroll to form and move focus to the first field
-    document.getElementById('project-form').scrollIntoView({ behavior: 'smooth' });
+    document
+        .getElementById('project-form')
+        .scrollIntoView({ behavior: 'smooth' });
     document.getElementById('project-name').focus();
-    
+
     // Announce to screen readers
     announceToScreenReader('Editing project: ' + project.name);
 }
@@ -246,7 +256,8 @@ function cancelEdit() {
 function resetForm() {
     document.getElementById('project-form').reset();
     document.getElementById('edit-project-id').value = '';
-    document.getElementById('project-form-heading').textContent = 'Create New Project';
+    document.getElementById('project-form-heading').textContent =
+        'Create New Project';
     document.getElementById('save-project-btn').textContent = 'Create Project';
     document.getElementById('cancel-edit-btn').style.display = 'none';
 }
@@ -260,7 +271,7 @@ function showDeleteDialog(project) {
     const dialogText = document.getElementById('delete-dialog-text');
     dialogText.textContent = `Are you sure you want to delete "${project.name}"? This action cannot be undone.`;
     dialog.showModal();
-    
+
     // Focus on the dialog text for screen reader announcement
     setTimeout(() => dialogText.focus(), 100);
 }
@@ -270,15 +281,17 @@ function showDeleteDialog(project) {
  */
 async function handleDelete() {
     if (!projectToDelete) return;
-    
+
     try {
         await deleteProject(projectToDelete.id);
         const dialog = document.getElementById('delete-dialog');
         dialog.close();
-        
-        announceToScreenReader(`Project "${projectToDelete.name}" deleted successfully`);
+
+        announceToScreenReader(
+            `Project "${projectToDelete.name}" deleted successfully`,
+        );
         projectToDelete = null;
-        
+
         await renderProjectsList();
     } catch (error) {
         announceToScreenReader('Error deleting project. Please try again.');
@@ -299,24 +312,29 @@ function cancelDelete() {
  */
 async function handleFormSubmit(event) {
     event.preventDefault();
-    
+
     const name = document.getElementById('project-name').value.trim();
     const aesthetic = document.getElementById('project-aesthetic').value.trim();
     const purpose = document.getElementById('project-purpose').value.trim();
     const editId = document.getElementById('edit-project-id').value;
-    
+
     // Validation - only project name is required
     if (!name) {
         announceToScreenReader('Please enter a project name');
         return;
     }
-    
+
     const project = { name, aesthetic, purpose };
-    
+
     try {
-        console.log('📝 Form submitted with data:', { name, aesthetic, purpose, editId });
+        console.log('📝 Form submitted with data:', {
+            name,
+            aesthetic,
+            purpose,
+            editId,
+        });
         const savedProject = await saveProject(project, editId || null);
-        
+
         if (editId) {
             announceToScreenReader(`Project "${name}" updated successfully`);
             // Update active project if it was the one edited
@@ -338,13 +356,15 @@ async function handleFormSubmit(event) {
                 return;
             }
         }
-        
+
         resetForm();
         await renderProjectsList();
     } catch (error) {
         console.error('❌ Error in handleFormSubmit:', error);
         console.error('Error details:', error.message, error.stack);
-        announceToScreenReader(`Error saving project: ${error.message}. Please try again.`);
+        announceToScreenReader(
+            `Error saving project: ${error.message}. Please try again.`,
+        );
     }
 }
 
@@ -354,7 +374,7 @@ async function handleFormSubmit(event) {
 function announceToScreenReader(message) {
     const status = document.getElementById('project-status');
     status.textContent = message;
-    
+
     // Clear after a delay
     setTimeout(() => {
         status.textContent = '';
@@ -407,37 +427,40 @@ class ComboboxAutocomplete {
 
         this.comboboxNode.addEventListener(
             'keydown',
-            this.onComboboxKeyDown.bind(this)
+            this.onComboboxKeyDown.bind(this),
         );
         this.comboboxNode.addEventListener(
             'keyup',
-            this.onComboboxKeyUp.bind(this)
+            this.onComboboxKeyUp.bind(this),
         );
         this.comboboxNode.addEventListener(
             'click',
-            this.onComboboxClick.bind(this)
+            this.onComboboxClick.bind(this),
         );
         this.comboboxNode.addEventListener(
             'focus',
-            this.onComboboxFocus.bind(this)
+            this.onComboboxFocus.bind(this),
         );
-        this.comboboxNode.addEventListener('blur', this.onComboboxBlur.bind(this));
+        this.comboboxNode.addEventListener(
+            'blur',
+            this.onComboboxBlur.bind(this),
+        );
 
         document.body.addEventListener(
             'pointerup',
             this.onBackgroundPointerUp.bind(this),
-            true
+            true,
         );
 
         // initialize pop up menu
 
         this.listboxNode.addEventListener(
             'pointerover',
-            this.onListboxPointerover.bind(this)
+            this.onListboxPointerover.bind(this),
         );
         this.listboxNode.addEventListener(
             'pointerout',
-            this.onListboxPointerout.bind(this)
+            this.onListboxPointerout.bind(this),
         );
 
         // Traverse the element children of domNode: configure each with
@@ -449,15 +472,24 @@ class ComboboxAutocomplete {
             this.allOptions.push(node);
 
             node.addEventListener('click', this.onOptionClick.bind(this));
-            node.addEventListener('pointerover', this.onOptionPointerover.bind(this));
-            node.addEventListener('pointerout', this.onOptionPointerout.bind(this));
+            node.addEventListener(
+                'pointerover',
+                this.onOptionPointerover.bind(this),
+            );
+            node.addEventListener(
+                'pointerout',
+                this.onOptionPointerout.bind(this),
+            );
         }
 
         this.filterOptions();
 
         // Open Button
         if (this.buttonNode) {
-            this.buttonNode.addEventListener('click', this.onButtonClick.bind(this));
+            this.buttonNode.addEventListener(
+                'click',
+                this.onButtonClick.bind(this),
+            );
         }
     }
 
@@ -491,7 +523,10 @@ class ComboboxAutocomplete {
     setValue(value) {
         this.filter = value;
         this.comboboxNode.value = this.filter;
-        this.comboboxNode.setSelectionRange(this.filter.length, this.filter.length);
+        this.comboboxNode.setSelectionRange(
+            this.filter.length,
+            this.filter.length,
+        );
         this.filterOptions();
     }
 
@@ -510,12 +545,12 @@ class ComboboxAutocomplete {
                 if (flag) {
                     this.comboboxNode.setSelectionRange(
                         this.option.textContent.length,
-                        this.option.textContent.length
+                        this.option.textContent.length,
                     );
                 } else {
                     this.comboboxNode.setSelectionRange(
                         this.filter.length,
-                        this.option.textContent.length
+                        this.option.textContent.length,
                     );
                 }
             }
@@ -577,7 +612,10 @@ class ComboboxAutocomplete {
             this.firstOption = this.filteredOptions[0];
             this.lastOption = this.filteredOptions[numItems - 1];
 
-            if (currentOption && this.filteredOptions.indexOf(currentOption) >= 0) {
+            if (
+                currentOption &&
+                this.filteredOptions.indexOf(currentOption) >= 0
+            ) {
                 option = currentOption;
             } else {
                 option = this.firstOption;
@@ -601,7 +639,9 @@ class ComboboxAutocomplete {
                     opt.offsetTop + opt.offsetHeight
                 ) {
                     this.listboxNode.scrollTop =
-                        opt.offsetTop + opt.offsetHeight - this.listboxNode.offsetHeight;
+                        opt.offsetTop +
+                        opt.offsetHeight -
+                        this.listboxNode.offsetHeight;
                 } else if (this.listboxNode.scrollTop > opt.offsetTop + 2) {
                     this.listboxNode.scrollTop = opt.offsetTop;
                 }
@@ -702,7 +742,10 @@ class ComboboxAutocomplete {
                             this.listboxHasVisualFocus ||
                             (this.isBoth && this.filteredOptions.length > 1)
                         ) {
-                            this.setOption(this.getNextOption(this.option), true);
+                            this.setOption(
+                                this.getNextOption(this.option),
+                                true,
+                            );
                             this.setVisualFocusListbox();
                         } else {
                             this.setOption(this.firstOption, true);
@@ -717,7 +760,10 @@ class ComboboxAutocomplete {
             case 'ArrowUp':
                 if (this.hasOptions()) {
                     if (this.listboxHasVisualFocus) {
-                        this.setOption(this.getPreviousOption(this.option), true);
+                        this.setOption(
+                            this.getPreviousOption(this.option),
+                            true,
+                        );
                     } else {
                         this.open();
                         if (!altKey) {
@@ -833,13 +879,16 @@ class ComboboxAutocomplete {
                     if (this.isList || this.isBoth) {
                         option = this.filterOptions();
                         if (option) {
-                            if (this.isClosed() && this.comboboxNode.value.length) {
+                            if (
+                                this.isClosed() &&
+                                this.comboboxNode.value.length
+                            ) {
                                 this.open();
                             }
 
                             if (
                                 this.getLowercaseContent(option).indexOf(
-                                    this.comboboxNode.value.toLowerCase()
+                                    this.comboboxNode.value.toLowerCase(),
                                 ) === 0
                             ) {
                                 this.option = option;
@@ -961,13 +1010,23 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Render initial projects list
     await renderProjectsList();
-    
+
     // Set up event listeners
-    document.getElementById('project-form').addEventListener('submit', handleFormSubmit);
-    document.getElementById('cancel-edit-btn').addEventListener('click', cancelEdit);
-    document.getElementById('confirm-delete').addEventListener('click', handleDelete);
-    document.getElementById('cancel-delete').addEventListener('click', cancelDelete);
-    
+    document
+        .getElementById('project-form')
+        .addEventListener('submit', handleFormSubmit);
+    document
+        .getElementById('cancel-edit-btn')
+        .addEventListener('click', cancelEdit);
+    document
+        .getElementById('confirm-delete')
+        .addEventListener('click', handleDelete);
+    document
+        .getElementById('cancel-delete')
+        .addEventListener('click', cancelDelete);
+
     // Close dialog on ESC key
-    document.getElementById('delete-dialog').addEventListener('cancel', cancelDelete);
+    document
+        .getElementById('delete-dialog')
+        .addEventListener('cancel', cancelDelete);
 });

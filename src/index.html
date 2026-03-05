@@ -1,65 +1,108 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Sense UI</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="stylesheet" href="styles.css" />
+    </head>
 
-<head>
-    <meta charset="UTF-8">
-    <title>Sense UI</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="styles.css">
-</head>
-
-<body>
-    <!-- Skip link for keyboard/screen-reader users -->
-    <a href="#main" class="skip-link">Skip to main content</a>
-    <header>
-        <h1 class="sr-only">Sense UI</h1>
-        <nav>
-            <a href="index.html" aria-current="page">Chat</a>
-            <br>
-            <a href="projects.html">Projects</a>
-            <br>
-            <a href="settings.html">Settings</a>
-            <br>
-            <a href="help.html">Help</a>
-        </nav>
-    </header>
-    <main id="main">
-        <section class="chat-container" aria-label="Chat interface">
-            <div id="chat-messages" class="chat-messages" role="log"></div>
-            <!-- Project Selector -->
-        <section class="chat-controls" aria-label="Chat controls">
-            <div class="project-selector" aria-labelledby="project-selector-label">
-            <label for="active-project-select" id="project-selector-label">Active Project</label>
-            <select id="active-project-select" aria-describedby="project-selector-hint">
-                <option value="">No project selected</option>
-            </select>
-        </div>
-        <!-- Buttons container (hidden by default) -->
-         <div class="buttons-container">
-                <button type="button" id="describe-btn" class="btn-secondary">Describe webpage</button>
-                <button type="button" id="issues-btn" class="btn-secondary">Find issues</button>
-            </div>
-        <!-- Chat Input Area -->
-        <div class="chat-input-area" id="chat-form">
-            <label for="chat-input">Ask something about the page or use forward slash for commands</label>
-            <input id="chat-input" class="chat-input" type="text" list="command-list" autocomplete="off" />
-            <datalist id="command-list">
-                <option value="/describe">
-                <option value="/issues">
-                <option value="/refresh">
-                <option value="/clear">
-            </datalist>
-            <button type="submit" class="chat-send btn-primary">Send</button>
-        </div>
-        </section>
-            <!-- Footer actions -->
-            <footer class="chat-footer">
-                <button type="button" id="download-chat" class="btn-tertiary">Download current chat</button>
-                <a href="https://github.com/reginacas/sense-ui/issues" target="_blank" rel="noopener" class="btn-tertiary">Report issues in GitHub</a>
-            </footer>
-        </section>
-    </main>
-    <script src="script-bundled.js"></script>
-</body>
-
+    <body>
+        <!-- Skip link for keyboard/screen-reader users -->
+        <a href="#main" class="skip-link">Skip to main content</a>
+        <header>
+            <h1 class="sr-only">Sense UI</h1>
+            <nav>
+                <a href="index.html" aria-current="page">Chat</a>
+                <br />
+                <a href="projects.html">Projects</a>
+                <br />
+                <a href="settings.html">Settings</a>
+                <br />
+                <a href="help.html">Help</a>
+            </nav>
+        </header>
+        <main id="main">
+            <section class="chat-container" aria-label="Chat interface">
+                <div id="chat-messages" class="chat-messages" role="log"></div>
+                <!-- Project Selector -->
+                <section class="chat-controls" aria-label="Chat controls">
+                    <div
+                        class="project-selector"
+                        aria-labelledby="project-selector-label"
+                    >
+                        <label
+                            for="active-project-select"
+                            id="project-selector-label"
+                            >Active Project</label
+                        >
+                        <select
+                            id="active-project-select"
+                            aria-describedby="project-selector-hint"
+                        >
+                            <option value="">No project selected</option>
+                        </select>
+                    </div>
+                    <!-- Buttons container (hidden by default) -->
+                    <div class="buttons-container">
+                        <button
+                            type="button"
+                            id="describe-btn"
+                            class="btn-secondary"
+                        >
+                            Describe webpage
+                        </button>
+                        <button
+                            type="button"
+                            id="issues-btn"
+                            class="btn-secondary"
+                        >
+                            Find issues
+                        </button>
+                    </div>
+                    <!-- Chat Input Area -->
+                    <div class="chat-input-area" id="chat-form">
+                        <label for="chat-input"
+                            >Ask something about the page or use forward slash
+                            for commands</label
+                        >
+                        <input
+                            id="chat-input"
+                            class="chat-input"
+                            type="text"
+                            list="command-list"
+                            autocomplete="off"
+                        />
+                        <datalist id="command-list">
+                            <option value="/describe"></option>
+                            <option value="/issues"></option>
+                            <option value="/refresh"></option>
+                            <option value="/clear"></option>
+                        </datalist>
+                        <button type="submit" class="chat-send btn-primary">
+                            Send
+                        </button>
+                    </div>
+                </section>
+                <!-- Footer actions -->
+                <footer class="chat-footer">
+                    <button
+                        type="button"
+                        id="download-chat"
+                        class="btn-tertiary"
+                    >
+                        Download current chat
+                    </button>
+                    <a
+                        href="https://github.com/reginacas/sense-ui/issues"
+                        target="_blank"
+                        rel="noopener"
+                        class="btn-tertiary"
+                        >Report issues in GitHub</a
+                    >
+                </footer>
+            </section>
+        </main>
+        <script src="script-bundled.js"></script>
+    </body>
 </html>

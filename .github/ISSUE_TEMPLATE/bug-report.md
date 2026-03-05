@@ -4,7 +4,6 @@ about: Add a report to improve usability and accessibility
 title: ''
 labels: bug
 assignees: regina-castro
-
 ---
 
 **Describe the bug**

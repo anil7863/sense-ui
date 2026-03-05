@@ -38,14 +38,14 @@ SenseUI uses an AI API (pending) to analyze your code and provide feedback. Here
 **Important:** We are still evaluating which AI service to use. Before you share code, check back here for which service we've chosen and review their privacy policy.
 
 **Your responsibility:**
+
 - Do not share confidential, proprietary, or sensitive information through SenseUI
 - If your code contains secrets, API keys, or private information, remove them first
 - Check your employer's policies about using third-party AI services
 
+## Rights of data subjects according to the GDPR
 
-## Rights of data subjects according to the GDPR 
-
-You are entitled to data subject rights. To exercise these rights, it is sufficient to notify the controller in text form (letter, e-mail or fax). However, exercising your rights will only have an effect if the processed data allows a natural person to be identified. 
+You are entitled to data subject rights. To exercise these rights, it is sufficient to notify the controller in text form (letter, e-mail or fax). However, exercising your rights will only have an effect if the processed data allows a natural person to be identified.
 
 1. Revocation (Art. 7 para. 3 GDPR): The provision of personal data is voluntary. Consent to the processing of personal data can be revoked at any time in accordance with Art. 7 para. 3 GDPR with the consequence that the personal data of the person concerned will no longer be processed.
 

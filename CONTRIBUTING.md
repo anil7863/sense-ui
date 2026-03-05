@@ -1,7 +1,7 @@
 # Contributing to SenseUI
 
 SenseUI is an open-source project and its success relies on the collaboration and input from our talented and dedicated contributors.
-We don't simply have "useYour willingness to join this cause and community is extremely valued. 
+We don't simply have "useYour willingness to join this cause and community is extremely valued.
 Please take a moment to read the project values first.
 
 ## Project Values
@@ -14,25 +14,25 @@ Please take a moment to read the project values first.
 
 1. Download the latest build from [Releases](https://github.com/reginacas/sense-ui/releases)
 
-4. Open Chrome and go to the [Extensions page](chrome://extensions) or write: chrome://extensions in the address bar (this link can only be opened with Chrome)
+2. Open Chrome and go to the [Extensions page](chrome://extensions) or write: chrome://extensions in the address bar (this link can only be opened with Chrome)
 
-5. Turn on "Developer mode" (toggle in the top right)
+3. Turn on "Developer mode" (toggle in the top right)
 
-6. Click "Load unpacked"
+4. Click "Load unpacked"
 
-7. Select the folder you downloaded, called "sprint-#-senseUI". This folder should include all the folders with the code, including the manifest file.
+5. Select the folder you downloaded, called "sprint-#-senseUI". This folder should include all the folders with the code, including the manifest file.
 
-8. SenseUI should now appear in your extensions
+6. SenseUI should now appear in your extensions
 
-9. To open it, press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd> (or <kbd>Command</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd> on Mac)
+7. To open it, press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd> (or <kbd>Command</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd> on Mac)
 
 ## Pull Request Guidelines
 
 1. Create a feature branch from `main`
 2. Follow accessibility standards: All code must be WCAG 2.2 AA compliant
 3. Write semantic HTML with proper ARIA labels
-5. Document your changes in the PR description
-6. Reference related issues (e.g., "Fixes #42")
+4. Document your changes in the PR description
+5. Reference related issues (e.g., "Fixes #42")
 
 ## Communication Channels
 

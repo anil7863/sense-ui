@@ -1,133 +1,278 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Projects - SenseUI</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="stylesheet" href="styles.css" />
+    </head>
 
-<head>
-    <meta charset="UTF-8">
-    <title>Projects - SenseUI</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="styles.css">
-</head>
+    <body>
+        <!-- Skip link for keyboard/screen-reader users -->
+        <a href="#main" class="skip-link">Skip to main content</a>
+        <header>
+            <h1 class="sr-only">Sense UI</h1>
+            <nav>
+                <a href="index.html">Chat</a>
+                <br />
+                <a href="projects.html" aria-current="page">Projects</a>
+                <br />
+                <a href="settings.html">Settings</a>
+                <br />
+                <a href="help.html">Help</a>
+            </nav>
+        </header>
 
-<body>
-    <!-- Skip link for keyboard/screen-reader users -->
-    <a href="#main" class="skip-link">Skip to main content</a>
-    <header>
-        <h1 class="sr-only">Sense UI</h1>
-        <nav>
-            <a href="index.html">Chat</a>
-            <br>
-            <a href="projects.html" aria-current="page">Projects</a>
-            <br>
-            <a href="settings.html">Settings</a>
-            <br>
-            <a href="help.html">Help</a>
-        </nav>
-    </header>
+        <main id="main">
+            <h1>Projects</h1>
+            <p>
+                Manage project contexts to receive design-aligned AI feedback.
+                <a href="help.html#projects-help">Learn how to use Projects</a>.
+            </p>
 
-    <main id="main">
-        <h1>Projects</h1>
-        <p>Manage project contexts to receive design-aligned AI feedback. <a href="help.html#projects-help">Learn how to use Projects</a>.</p>
+            <!-- Projects List -->
+            <section aria-labelledby="projects-list-heading">
+                <h2 id="projects-list-heading">Your Projects</h2>
+                <div id="projects-list" role="list">
+                    <p id="no-projects-message">
+                        No projects yet. Create your first project below.
+                    </p>
+                </div>
+            </section>
 
-        <!-- Projects List -->
-        <section aria-labelledby="projects-list-heading">
-            <h2 id="projects-list-heading">Your Projects</h2>
-            <div id="projects-list" role="list">
-                <p id="no-projects-message">No projects yet. Create your first project below.</p>
-            </div>
-        </section>
+            <!-- Create/Edit Project Form -->
+            <section aria-labelledby="project-form-heading">
+                <h2 id="project-form-heading">Create New Project</h2>
+                <form id="project-form" novalidate>
+                    <input type="hidden" id="edit-project-id" value="" />
 
-        <!-- Create/Edit Project Form -->
-        <section aria-labelledby="project-form-heading">
-            <h2 id="project-form-heading">Create New Project</h2>
-            <form id="project-form" novalidate>
-                <input type="hidden" id="edit-project-id" value="">
-                
-                <label for="project-name">Project Name <span aria-label="required">*</span></label>
-                <input type="text" id="project-name" name="projectName" required 
-                    autocomplete="off" />
-                <br>
+                    <label for="project-name"
+                        >Project Name
+                        <span aria-label="required">*</span></label
+                    >
+                    <input
+                        type="text"
+                        id="project-name"
+                        name="projectName"
+                        required
+                        autocomplete="off"
+                    />
+                    <br />
 
-                <label for="project-aesthetic">Desired Aesthetic</label>
-                <div class="combobox combobox-list">
-                    <div class="group">
-                        <input id="project-aesthetic" name="aesthetic" class="cb_edit" type="text" role="combobox" 
-                            aria-autocomplete="list" aria-expanded="false" aria-controls="aesthetic-listbox" 
-                            aria-describedby="aesthetic-desc" autocomplete="off">
-                        <button id="aesthetic-button" type="button" tabindex="-1" aria-label="Aesthetic styles" 
-                            aria-expanded="false" aria-controls="aesthetic-listbox">
-                             <svg width="18" height="16" aria-hidden="true" focusable="false" style="forced-color-adjust: auto">
-                                <polygon class="arrow" stroke-width="0" fill-opacity="0.75" fill="currentcolor" points="3,6 15,6 9,14"></polygon>
-                            </svg>
-                        </button>
+                    <label for="project-aesthetic">Desired Aesthetic</label>
+                    <div class="combobox combobox-list">
+                        <div class="group">
+                            <input
+                                id="project-aesthetic"
+                                name="aesthetic"
+                                class="cb_edit"
+                                type="text"
+                                role="combobox"
+                                aria-autocomplete="list"
+                                aria-expanded="false"
+                                aria-controls="aesthetic-listbox"
+                                aria-describedby="aesthetic-desc"
+                                autocomplete="off"
+                            />
+                            <button
+                                id="aesthetic-button"
+                                type="button"
+                                tabindex="-1"
+                                aria-label="Aesthetic styles"
+                                aria-expanded="false"
+                                aria-controls="aesthetic-listbox"
+                            >
+                                <svg
+                                    width="18"
+                                    height="16"
+                                    aria-hidden="true"
+                                    focusable="false"
+                                    style="forced-color-adjust: auto"
+                                >
+                                    <polygon
+                                        class="arrow"
+                                        stroke-width="0"
+                                        fill-opacity="0.75"
+                                        fill="currentcolor"
+                                        points="3,6 15,6 9,14"
+                                    ></polygon>
+                                </svg>
+                            </button>
+                        </div>
+                        <ul
+                            id="aesthetic-listbox"
+                            role="listbox"
+                            aria-label="Aesthetic styles"
+                        >
+                            <li id="aes-minimal" role="option">
+                                Minimalist and professional
+                            </li>
+                            <li id="aes-modern" role="option">
+                                Modern and vibrant
+                            </li>
+                            <li id="aes-classic" role="option">
+                                Classic and elegant
+                            </li>
+                            <li id="aes-playful" role="option">
+                                Playful and colorful
+                            </li>
+                            <li id="aes-bold" role="option">
+                                Bold and experimental
+                            </li>
+                            <li id="aes-corporate" role="option">
+                                Corporate and formal
+                            </li>
+                            <li id="aes-warm" role="option">
+                                Warm and friendly
+                            </li>
+                            <li id="aes-dark" role="option">Dark and sleek</li>
+                            <li id="aes-light" role="option">Light and airy</li>
+                            <li id="aes-artistic" role="option">
+                                Artistic and creative
+                            </li>
+                        </ul>
                     </div>
-                    <ul id="aesthetic-listbox" role="listbox" aria-label="Aesthetic styles">
-                        <li id="aes-minimal" role="option">Minimalist and professional</li>
-                        <li id="aes-modern" role="option">Modern and vibrant</li>
-                        <li id="aes-classic" role="option">Classic and elegant</li>
-                        <li id="aes-playful" role="option">Playful and colorful</li>
-                        <li id="aes-bold" role="option">Bold and experimental</li>
-                        <li id="aes-corporate" role="option">Corporate and formal</li>
-                        <li id="aes-warm" role="option">Warm and friendly</li>
-                        <li id="aes-dark" role="option">Dark and sleek</li>
-                        <li id="aes-light" role="option">Light and airy</li>
-                        <li id="aes-artistic" role="option">Artistic and creative</li>
-                    </ul>
-                </div>
-                <small id="aesthetic-desc" class="hint">Describe the visual style you're aiming for</small>
-                <br>
+                    <small id="aesthetic-desc" class="hint"
+                        >Describe the visual style you're aiming for</small
+                    >
+                    <br />
 
-                <label for="project-purpose">Website Type & Purpose</label>
-                <div class="combobox combobox-list">
-                    <div class="group">
-                        <input id="project-purpose" name="purpose" class="cb_edit" type="text" role="combobox" 
-                            aria-autocomplete="list" aria-expanded="false" aria-controls="purpose-listbox" 
-                            aria-describedby="purpose-desc" autocomplete="off">
-                        <button id="purpose-button" type="button" tabindex="-1" aria-label="Website types" 
-                            aria-expanded="false" aria-controls="purpose-listbox">
-                            <svg width="18" height="16" aria-hidden="true" focusable="false" style="forced-color-adjust: auto">
-                                <polygon class="arrow" stroke-width="0" fill-opacity="0.75" fill="currentcolor" points="3,6 15,6 9,14"></polygon>
-                            </svg>
-                        </button>
+                    <label for="project-purpose">Website Type & Purpose</label>
+                    <div class="combobox combobox-list">
+                        <div class="group">
+                            <input
+                                id="project-purpose"
+                                name="purpose"
+                                class="cb_edit"
+                                type="text"
+                                role="combobox"
+                                aria-autocomplete="list"
+                                aria-expanded="false"
+                                aria-controls="purpose-listbox"
+                                aria-describedby="purpose-desc"
+                                autocomplete="off"
+                            />
+                            <button
+                                id="purpose-button"
+                                type="button"
+                                tabindex="-1"
+                                aria-label="Website types"
+                                aria-expanded="false"
+                                aria-controls="purpose-listbox"
+                            >
+                                <svg
+                                    width="18"
+                                    height="16"
+                                    aria-hidden="true"
+                                    focusable="false"
+                                    style="forced-color-adjust: auto"
+                                >
+                                    <polygon
+                                        class="arrow"
+                                        stroke-width="0"
+                                        fill-opacity="0.75"
+                                        fill="currentcolor"
+                                        points="3,6 15,6 9,14"
+                                    ></polygon>
+                                </svg>
+                            </button>
+                        </div>
+                        <ul
+                            id="purpose-listbox"
+                            role="listbox"
+                            aria-label="Website types"
+                        >
+                            <li id="pur-ecom" role="option">
+                                E-commerce platform
+                            </li>
+                            <li id="pur-portfolio" role="option">
+                                Portfolio website
+                            </li>
+                            <li id="pur-blog" role="option">
+                                Blog or content site
+                            </li>
+                            <li id="pur-corporate" role="option">
+                                Corporate website
+                            </li>
+                            <li id="pur-landing" role="option">Landing page</li>
+                            <li id="pur-webapp" role="option">
+                                Web application
+                            </li>
+                            <li id="pur-saas" role="option">SaaS product</li>
+                            <li id="pur-edu" role="option">
+                                Educational platform
+                            </li>
+                            <li id="pur-community" role="option">
+                                Community or forum
+                            </li>
+                            <li id="pur-news" role="option">
+                                News or media site
+                            </li>
+                            <li id="pur-personal" role="option">
+                                Personal website
+                            </li>
+                            <li id="pur-nonprofit" role="option">
+                                Non-profit or charity
+                            </li>
+                        </ul>
                     </div>
-                    <ul id="purpose-listbox" role="listbox" aria-label="Website types">
-                        <li id="pur-ecom" role="option">E-commerce platform</li>
-                        <li id="pur-portfolio" role="option">Portfolio website</li>
-                        <li id="pur-blog" role="option">Blog or content site</li>
-                        <li id="pur-corporate" role="option">Corporate website</li>
-                        <li id="pur-landing" role="option">Landing page</li>
-                        <li id="pur-webapp" role="option">Web application</li>
-                        <li id="pur-saas" role="option">SaaS product</li>
-                        <li id="pur-edu" role="option">Educational platform</li>
-                        <li id="pur-community" role="option">Community or forum</li>
-                        <li id="pur-news" role="option">News or media site</li>
-                        <li id="pur-personal" role="option">Personal website</li>
-                        <li id="pur-nonprofit" role="option">Non-profit or charity</li>
-                    </ul>
-                </div>
-                <small id="purpose-desc" class="hint">What is this website for?</small>
-                <br>
+                    <small id="purpose-desc" class="hint"
+                        >What is this website for?</small
+                    >
+                    <br />
 
-                <div class="stay-on-page-option">
-                    <input type="checkbox" id="stay-on-page" name="stayOnPage">
-                    <label for="stay-on-page">Stay on page after saving</label>
-                </div>
-                <button type="submit" id="save-project-btn" class="btn-primary">Create Project</button>
-                <button type="button" id="cancel-edit-btn" class="btn-secondary" style="display: none;">Cancel</button>
-                
-                <div id="project-status" role="status" aria-live="polite" class="visually-hidden" aria-atomic="true"></div>
-            </form>
-        </section>
+                    <div class="stay-on-page-option">
+                        <input
+                            type="checkbox"
+                            id="stay-on-page"
+                            name="stayOnPage"
+                        />
+                        <label for="stay-on-page"
+                            >Stay on page after saving</label
+                        >
+                    </div>
+                    <button
+                        type="submit"
+                        id="save-project-btn"
+                        class="btn-primary"
+                    >
+                        Create Project
+                    </button>
+                    <button
+                        type="button"
+                        id="cancel-edit-btn"
+                        class="btn-secondary"
+                        style="display: none"
+                    >
+                        Cancel
+                    </button>
 
-        <!-- Delete Confirmation Dialog -->
-        <dialog id="delete-dialog">
-            <h3>Delete Project?</h3>
-            <p tabindex="0" id="delete-dialog-text">Are you sure you want to delete this project? This action cannot be undone.</p>
-                <button type="button" id="cancel-delete" class="btn-secondary">Cancel</button>
-                <button type="button" id="confirm-delete" class="btn-primary">Delete</button>
-        </dialog>
-    </main>
+                    <div
+                        id="project-status"
+                        role="status"
+                        aria-live="polite"
+                        class="visually-hidden"
+                        aria-atomic="true"
+                    ></div>
+                </form>
+            </section>
 
-    <script src="projects-bundled.js"></script>
-</body>
+            <!-- Delete Confirmation Dialog -->
+            <dialog id="delete-dialog">
+                <h3>Delete Project?</h3>
+                <p tabindex="0" id="delete-dialog-text">
+                    Are you sure you want to delete this project? This action
+                    cannot be undone.
+                </p>
+                <button type="button" id="cancel-delete" class="btn-secondary">
+                    Cancel
+                </button>
+                <button type="button" id="confirm-delete" class="btn-primary">
+                    Delete
+                </button>
+            </dialog>
+        </main>
 
+        <script src="projects-bundled.js"></script>
+    </body>
 </html>
